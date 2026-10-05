@@ -10,7 +10,6 @@ class AlumniService
 {
     public function current(): DataPribadiAlumni
     {
-
         // Jika login sebagai mahasiswa/alumni
         $nim = '017290654';
 //        if (session()->has('nim')) {
@@ -73,7 +72,6 @@ class AlumniService
             ? Storage::disk('public')->url($fotoPath)
             : null;
     }
-
 
     public function fotoIjazahAda(): bool
     {

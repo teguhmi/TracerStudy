@@ -14,15 +14,10 @@ class DataPribadiAlumni extends Model
     protected $connection = 'pgsql';
 
     protected $table = 'm_data_pribadi_alumni';
-
     protected $primaryKey = 'nim';
-
     public $incrementing = false;
-
     public $timestamps = false;
-
     protected $keyType = 'string';
-
     public function skRektor()
     {
         return $this->belongsTo(
@@ -31,7 +26,6 @@ class DataPribadiAlumni extends Model
             'nomor_sk_rektor'
         );
     }
-
     protected function tempatLahirFormat(): Attribute
     {
         return Attribute::make(
@@ -46,8 +40,6 @@ class DataPribadiAlumni extends Model
             }
         );
     }
-
-
     protected function tempatTanggalLahir(): Attribute
     {
         return Attribute::make(

@@ -1,0 +1,50 @@
+{
+    "menu": [
+
+        {
+            "url": "/",
+            "name": "Dashboard",
+            "icon": "ri ri-home-smile-line",
+            "slug": "pages-dashboard"
+        },
+        {
+            "menuHeader": "Data Mahasiswa/Alumni"
+        },
+
+        {
+            "url": "/alumni",
+            "name": "Data Pribadi",
+            "icon": "ri ri-graduation-cap-fill",
+            "slug": "pages-dashboard"
+        },
+
+        {
+            "name": "Layanan",
+            "icon": "ri ri-git-repository-commits-fill",
+            "slug": "laporan",
+            "submenu": [
+                {
+                    "url": "/suratketerangan",
+                    "name": "Surat Keterangan",
+                    "icon": "ri ri-pass-valid-line",
+                    "slug": "surat-keterangan",
+                    "target": "_self"
+                },
+                {
+                    "url": "/legalisir",
+                    "name": "Legalisir",
+                    "icon": "ri ri-newspaper-fill",
+                    "slug": "legalisir",
+                    "target": "_self"
+                },
+                {
+                    "url": "/sertifikat",
+                    "name": "Sertifikat",
+                    "icon": "ri ri-award-line",
+                    "slug": "legalisir",
+                    "target": "_self"
+                }
+            ]
+        }
+    ]
+}

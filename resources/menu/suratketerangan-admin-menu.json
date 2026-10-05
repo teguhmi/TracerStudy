@@ -1,0 +1,38 @@
+{
+    "menu": [
+        {
+            "url": "/",
+            "name": "Dashboard",
+            "icon": "ri ri-home-smile-line",
+            "slug": "pages-dashboard"
+        },
+        {
+            "menuHeader": "Layanan"
+        },
+        {
+            "url": "/suratketerangan/ajuan",
+            "name": "Ajuan Surat Keterangan",
+            "icon": "ri ri-home-smile-line",
+            "slug": "pages-dashboard"
+        },
+        {
+            "url": "/suratketerangan/raga",
+            "name": "Data Surat per NIM",
+            "icon": "ri ri-pass-valid-line",
+            "slug": "pages-dashboard"
+        },
+        {
+            "name": "Laporan",
+            "icon": "ri ri-graduation-cap-fill",
+            "slug": "pages-parent",
+            "submenu": [
+                {
+                    "url": "/suratketerangan/jumlah",
+                    "name": "Jumlah Surat Keterangan",
+                    "icon": "",
+                    "slug": "pages-page-2"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,130 @@
+{
+    "menu": [
+        {
+            "url": "/",
+            "name": "Dashboard",
+            "icon": "ri ri-home-smile-line",
+            "slug": "pages-dashboard"
+        },
+        {
+            "menuHeader": "Data Alumni"
+        },
+        {
+            "name": "Alumni",
+            "icon": "ri ri-graduation-cap-fill",
+            "slug": "pages-parent",
+            "submenu": [
+                {
+                    "url": "/alumni",
+                    "name": "Data Alumni",
+                    "icon": "",
+                    "slug": "pages-page-2"
+                },
+                {
+                    "url": "/cari-alumni",
+                    "name": "Peragaan Alumni",
+                    "icon": "",
+                    "slug": "peragaan-alumni",
+                    "target": "_self"
+                }
+            ]
+        },
+        {
+            "menuHeader": "Administrasi"
+        },
+        {
+            "name": "Validasi",
+            "icon": "ri ri-pass-valid-line",
+            "slug": "auth-parent",
+            "submenu": [
+                {
+                    "url": "kelulusan/berkas",
+                    "name": "Validasi Pernyataan",
+                    "icon": "",
+                    "slug": "validasi-surat-pernyataan",
+                    "target": "_self"
+                },
+                {
+                    "url": "kelulusan/foto",
+                    "name": "Validasi Foto",
+                    "icon": "",
+                    "slug": "validasi-foto",
+                    "target": "_self"
+                }
+            ]
+        },
+
+        {
+            "name": "Ijazah",
+            "icon": "ri ri-newspaper-fill",
+            "slug": "ijazah",
+            "submenu": [
+                {
+                    "url": "/ijazah/masuk",
+                    "name": "Ijazah Masuk",
+                    "icon": "",
+                    "slug": "ijazah-masuk",
+                    "target": "_self"
+                },
+                {
+                    "url": "/ijazah/keluar",
+                    "name": "Ijazah Keluar",
+                    "icon": "",
+                    "slug": "ijazah-keluar",
+                    "target": "_self"
+                }
+            ]
+        },
+
+
+        {
+            "name": "Laporan",
+            "icon": "ri ri-git-repository-commits-fill",
+            "slug": "laporan",
+            "submenu": [
+                {
+                    "url": "/ijazah/buku",
+                    "name": "Buku Besar",
+                    "icon": "",
+                    "slug": "buku-besar",
+                    "target": "_self"
+                },
+                {
+                    "url": "/alumni/daftar",
+                    "name": "Daftar Alumni",
+                    "icon": "",
+                    "slug": "daftar-alumni",
+                    "target": "_self"
+                },
+                {
+                    "url": "ijazah/status",
+                    "name": "Jumlah Pengambilan",
+                    "icon": "",
+                    "slug": "jumlah-pengambilan",
+                    "target": "_self"
+                },
+                {
+                    "url": "ijazah/posisi",
+                    "name": "Jumlah Posisi Ijazah",
+                    "icon": "",
+                    "slug": "jumlah-posisi-ijazah",
+                    "target": "_self"
+                },
+                {
+                    "url": "laporan/berkas",
+                    "name": "Jumlah Pernyataan",
+                    "icon": "",
+                    "slug": "jumlah-pernyataan",
+                    "target": "_self"
+                },
+                {
+                    "url": "ijazah/jumlahfoto",
+                    "name": "Jumlah Foto",
+                    "icon": "",
+                    "slug": "jumlah-foto",
+                    "target": "_self"
+                }
+            ]
+        }
+    ]
+}
