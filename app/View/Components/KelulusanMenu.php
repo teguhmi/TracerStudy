@@ -14,7 +14,7 @@ class KelulusanMenu extends Component
     public function __construct()
     {
 
-        $path = storage_path('app/menu/kelulusan-admin-menu.json');
+        $path = resource_path('menu/kelulusan-admin-menu.json');
 
         if (File::exists($path)) {
             $jsonContent = File::get($path);

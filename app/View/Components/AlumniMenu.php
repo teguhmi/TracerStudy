@@ -11,7 +11,7 @@ class AlumniMenu extends Component
 
     public function __construct()
     {
-        $path = storage_path('app/menu/alumni-user-menu.json');
+        $path = resource_path('menu/alumni-user-menu.json');
 
         if (File::exists($path)) {
             $parsed = json_decode(
