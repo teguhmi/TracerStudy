@@ -9,9 +9,7 @@ use Illuminate\Support\Str;
 
 class DataPribadiAlumni extends Model
 {
-    public mixed $masa_yudisium;
 
-    public mixed $nim;
 
     protected $connection = 'pgsql';
 
