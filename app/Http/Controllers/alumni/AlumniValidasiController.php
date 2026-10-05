@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\alumni;
 
 use App\Http\Controllers\Controller;
+use App\Models\DataPribadiAlumni;
 use App\Services\Api\AlumniService;
+use App\Services\Api\SikaService;
 use Illuminate\Support\Facades\Crypt;
 
 class AlumniValidasiController extends Controller
 {
     public function __construct(
-        protected AlumniService $alumniService
+        protected AlumniService $alumniService,
+        private SikaService $sikaService
     )
     {
     }
@@ -99,6 +102,19 @@ class AlumniValidasiController extends Controller
                 'form',
                 'surat', 'encryptedNim'
             )
+        );
+    }
+
+    public function data_sika()
+    {
+        $masa = '20252';
+        $skId = 1;
+
+        $result = $this->sikaService->pushYudisium($masa, $skId);
+
+        return response()->json(
+            $result,
+            $result['status']
         );
     }
 }

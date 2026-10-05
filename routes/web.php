@@ -59,3 +59,5 @@ Route::group(['prefix' => 'kelulusan'], function () {
 Route::group(['prefix' => 'suratketerangan'], function () {
   Route::get('/', [SuratKeteranganDashboard::class, 'index'])->name('suratketerangan-dashboard.index');
 });
+
+Route::get('/data-sika', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'data_sika'])->name('alumni-validasi.data-sika');

@@ -1209,16 +1209,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "4.3.3",
+            "version": "4.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "b25085af6275b94173c4ba43cfc34ae42bd9e8d2"
+                "reference": "b70df03b4fcc1e4c24c9d474ac034541cbf5e2f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/b25085af6275b94173c4ba43cfc34ae42bd9e8d2",
-                "reference": "b25085af6275b94173c4ba43cfc34ae42bd9e8d2",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/b70df03b4fcc1e4c24c9d474ac034541cbf5e2f9",
+                "reference": "b70df03b4fcc1e4c24c9d474ac034541cbf5e2f9",
                 "shasum": ""
             },
             "require": {
@@ -1264,7 +1264,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/4.3.3"
+                "source": "https://github.com/Intervention/image/tree/4.3.4"
             },
             "funding": [
                 {
@@ -1280,7 +1280,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-09-26T06:48:23+00:00"
+            "time": "2026-10-04T09:36:33+00:00"
         },
         {
             "name": "knplabs/knp-snappy",
@@ -6535,16 +6535,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.18.5",
+            "version": "2.18.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "baec851ad6ae00db8bd0fdd30d208afc1b71c56e"
+                "reference": "7d0a2cde892089bb09372f4366e9b960eb3001a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/baec851ad6ae00db8bd0fdd30d208afc1b71c56e",
-                "reference": "baec851ad6ae00db8bd0fdd30d208afc1b71c56e",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/7d0a2cde892089bb09372f4366e9b960eb3001a9",
+                "reference": "7d0a2cde892089bb09372f4366e9b960eb3001a9",
                 "shasum": ""
             },
             "require": {
@@ -6594,7 +6594,7 @@
             ],
             "support": {
                 "issues": "https://github.com/filp/whoops/issues",
-                "source": "https://github.com/filp/whoops/tree/2.18.5"
+                "source": "https://github.com/filp/whoops/tree/2.18.6"
             },
             "funding": [
                 {
@@ -6602,7 +6602,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-18T12:00:00+00:00"
+            "time": "2026-10-03T17:03:57+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -7577,16 +7577,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.56",
+            "version": "11.5.57",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5f83edffa6967c3db468d48a695ec7bcb02e9256"
+                "reference": "36b75bf56a8535623f5b3e24b27ea1823759da1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5f83edffa6967c3db468d48a695ec7bcb02e9256",
-                "reference": "5f83edffa6967c3db468d48a695ec7bcb02e9256",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/36b75bf56a8535623f5b3e24b27ea1823759da1a",
+                "reference": "36b75bf56a8535623f5b3e24b27ea1823759da1a",
                 "shasum": ""
             },
             "require": {
@@ -7596,7 +7596,7 @@
                 "ext-libxml": "*",
                 "ext-mbstring": "*",
                 "ext-xmlwriter": "*",
-                "myclabs/deep-copy": "^1.13.4",
+                "myclabs/deep-copy": "^1.14.0",
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.2",
@@ -7659,7 +7659,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.56"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.57"
             },
             "funding": [
                 {
@@ -7667,7 +7667,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-07-06T14:52:39+00:00"
+            "time": "2026-10-05T05:47:54+00:00"
         },
         {
             "name": "sebastian/cli-parser",

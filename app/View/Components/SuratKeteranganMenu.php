@@ -14,7 +14,7 @@ class SuratKeteranganMenu extends Component
     public function __construct()
     {
 
-        $path = storage_path('menu/suratketerangan-admin-menu.json');
+        $path = resource_path('menu/suratketerangan-admin-menu.json');
 
         if (File::exists($path)) {
             $jsonContent = File::get($path);

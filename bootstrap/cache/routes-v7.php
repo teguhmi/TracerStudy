@@ -13,7 +13,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::ZUS9hrNtmFALL2Be',
+            '_route' => 'generated::qdeLRjUaevM3BmVP',
           ),
           1 => NULL,
           2 => 
@@ -148,7 +148,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::s1JrJtNobIOUOjR2',
+            '_route' => 'generated::fYd3BtRmUthAHEei',
           ),
           1 => NULL,
           2 => 
@@ -220,10 +220,7 @@ app('router')->setCompiledRoutes(
           5 => false,
           6 => NULL,
         ),
-      ),
-      '/alumni/validasi/2' => 
-      array (
-        0 => 
+        1 => 
         array (
           0 => 
           array (
@@ -232,8 +229,7 @@ app('router')->setCompiledRoutes(
           1 => NULL,
           2 => 
           array (
-            'GET' => 0,
-            'HEAD' => 1,
+            'POST' => 0,
           ),
           3 => NULL,
           4 => false,
@@ -321,6 +317,26 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
+      '/data-sika' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'alumni-validasi.data-sika',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
     ),
     2 => 
     array (
@@ -334,7 +350,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::3O2lfijRrbwiGWQ6',
+            '_route' => 'generated::xxgcMakCHtatMnDA',
             'config' => NULL,
           ),
           1 => 
@@ -358,7 +374,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::us2fvw2EktQGHTRu',
+            '_route' => 'generated::QrSktcTV5dZuuQbJ',
             'config' => NULL,
           ),
           1 => 
@@ -433,7 +449,7 @@ app('router')->setCompiledRoutes(
   ),
   'attributes' => 
   array (
-    'generated::3O2lfijRrbwiGWQ6' => 
+    'generated::xxgcMakCHtatMnDA' => 
     array (
       'methods' => 
       array (
@@ -449,7 +465,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 'web',
         ),
-        'as' => 'generated::3O2lfijRrbwiGWQ6',
+        'as' => 'generated::xxgcMakCHtatMnDA',
       ),
       'fallback' => false,
       'defaults' => 
@@ -465,7 +481,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::us2fvw2EktQGHTRu' => 
+    'generated::QrSktcTV5dZuuQbJ' => 
     array (
       'methods' => 
       array (
@@ -481,7 +497,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 'web',
         ),
-        'as' => 'generated::us2fvw2EktQGHTRu',
+        'as' => 'generated::QrSktcTV5dZuuQbJ',
       ),
       'fallback' => false,
       'defaults' => 
@@ -497,7 +513,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::ZUS9hrNtmFALL2Be' => 
+    'generated::qdeLRjUaevM3BmVP' => 
     array (
       'methods' => 
       array (
@@ -525,8 +541,8 @@ app('router')->setCompiledRoutes(
                     return response(\\Illuminate\\Support\\Facades\\View::file(\'D:\\\\domain\\\\laravel_13.11\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Configuration\'.\'/../resources/health-up.blade.php\', [
                         \'exception\' => $exception,
                     ]), status: $exception ? 500 : 200);
-                }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"000000000000057d0000000000000000";}}',
-        'as' => 'generated::ZUS9hrNtmFALL2Be',
+                }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"000000000000057e0000000000000000";}}',
+        'as' => 'generated::qdeLRjUaevM3BmVP',
       ),
       'fallback' => false,
       'defaults' => 
@@ -762,7 +778,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::s1JrJtNobIOUOjR2' => 
+    'generated::fYd3BtRmUthAHEei' => 
     array (
       'methods' => 
       array (
@@ -778,13 +794,13 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:64:"function () {
   return \\view(\'content.pages.welcome\')->name();
-}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000005870000000000000000";}}',
+}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000005880000000000000000";}}',
         'namespace' => NULL,
         'prefix' => '',
         'where' => 
         array (
         ),
-        'as' => 'generated::s1JrJtNobIOUOjR2',
+        'as' => 'generated::fYd3BtRmUthAHEei',
       ),
       'fallback' => false,
       'defaults' => 
@@ -914,10 +930,9 @@ app('router')->setCompiledRoutes(
     array (
       'methods' => 
       array (
-        0 => 'GET',
-        1 => 'HEAD',
+        0 => 'POST',
       ),
-      'uri' => 'alumni/validasi/2',
+      'uri' => 'alumni/validasi',
       'action' => 
       array (
         'middleware' => 
@@ -1095,6 +1110,43 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
+    'alumni-validasi.data-sika' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'data-sika',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+        ),
+        'uses' => 'App\\Http\\Controllers\\alumni\\AlumniValidasiController@data_sika',
+        'controller' => 'App\\Http\\Controllers\\alumni\\AlumniValidasiController@data_sika',
+        'namespace' => NULL,
+        'prefix' => '',
+        'where' => 
+        array (
+        ),
+        'as' => 'alumni-validasi.data-sika',
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
     'storage.local' => 
     array (
       'methods' => 
@@ -1111,7 +1163,7 @@ app('router')->setCompiledRoutes(
                         $config,
                         $isProduction
                     ))($request, $path);
-                }";s:5:"scope";s:47:"Illuminate\\Filesystem\\FilesystemServiceProvider";s:4:"this";N;s:4:"self";s:32:"00000000000005890000000000000000";}}',
+                }";s:5:"scope";s:47:"Illuminate\\Filesystem\\FilesystemServiceProvider";s:4:"this";N;s:4:"self";s:32:"00000000000005930000000000000000";}}',
         'as' => 'storage.local',
       ),
       'fallback' => false,
@@ -1144,7 +1196,7 @@ app('router')->setCompiledRoutes(
                         $config,
                         $isProduction
                     ))($request, $path);
-                }";s:5:"scope";s:47:"Illuminate\\Filesystem\\FilesystemServiceProvider";s:4:"this";N;s:4:"self";s:32:"00000000000005930000000000000000";}}',
+                }";s:5:"scope";s:47:"Illuminate\\Filesystem\\FilesystemServiceProvider";s:4:"this";N;s:4:"self";s:32:"00000000000005950000000000000000";}}',
         'as' => 'storage.local.upload',
       ),
       'fallback' => false,
