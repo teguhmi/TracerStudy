@@ -22,14 +22,22 @@ class SikaService
         */
 
         $login = Http::withoutVerifying()
-            ->acceptJson()
-            ->asJson()
-            ->post($baseUrl . '/rest/api/login', [
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])
+            ->post($baseUrl . '/rest/api/auth/token', [
                 'username' => "alumni@ecampus.ut.ac.id",
                 'password' => "Ut12345!",
                 'expires_days' => 7,
             ]);
-        dd($login);
+
+        dd([
+            'status' => $login->status(),
+            'body' => $login->body(),
+            'json' => $login->json(),
+        ]);
+
         if ($login->failed()) {
             return [
                 'success' => false,
