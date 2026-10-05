@@ -3,10 +3,14 @@
 namespace App\Services\Api;
 
 use App\Models\DataPribadiAlumni;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class SikaService
 {
+    /**
+     * @throws ConnectionException
+     */
     public function pushYudisium(string $masa, int $skId)
     {
         $baseUrl = 'https://api.sika.ika-ut.id';
@@ -25,6 +29,7 @@ class SikaService
                 'password' => "Ut12345!",
                 'expires_days' => 7,
             ]);
+        dd($login);
         if ($login->failed()) {
             return [
                 'success' => false,
