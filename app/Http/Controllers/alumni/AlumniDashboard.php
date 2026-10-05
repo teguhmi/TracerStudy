@@ -20,22 +20,26 @@ class AlumniDashboard extends Controller
 
   {}
 
-  public function index()
-  {
-    $dpAlumni = $this->alumniService->current();
-    $nim = $dpAlumni->nim;
-    $masa = $dpAlumni->masa_yudisium;
-    $rpl = $this->rplApi->getRPL($nim);
-    $fotoPath = "alumni/foto-ijazah/{$masa}/{$nim}.jpg";
+    public function index()
+    {
+        $dpAlumni = $this->alumniService->current();
 
-    $fotoIjazah = Storage::disk('public')->exists($fotoPath)
-      ? Storage::disk('public')->url($fotoPath)
-      : null;
-    return view(
-      'content.pages.alumni-dashboard.AlumniDashboard',
-      compact('dpAlumni', 'rpl', 'fotoIjazah')
-    );
-  }
+        $nim  = $dpAlumni->nim;
+        $masa = $dpAlumni->masa_yudisium;
+
+        $rpl = $this->rplApi->getRPL($nim);
+
+        $fotoPath = "alumni/foto-ijazah/{$masa}/{$nim}.jpg";
+
+        $fotoIjazah = Storage::disk('public')->exists($fotoPath)
+            ? Storage::disk('public')->url($fotoPath)
+            : null;
+
+        return view(
+            'content.pages.alumni-dashboard.AlumniDashboard',
+            compact('dpAlumni', 'rpl', 'fotoIjazah')
+        );
+    }
 
 //  public function profile($nim)
 //  {
