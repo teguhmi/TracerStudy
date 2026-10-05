@@ -21,11 +21,10 @@ class SikaService
             ->acceptJson()
             ->asJson()
             ->post($baseUrl . '/rest/api/login', [
-                'username' => env('SIKA_USERNAME'),
-                'password' => env('SIKA_PASSWORD'),
+                'username' => "alumni@ecampus.ut.ac.id",
+                'password' => "Ut12345!",
                 'expires_days' => 7,
             ]);
-dd($login);
         if ($login->failed()) {
             return [
                 'success' => false,
