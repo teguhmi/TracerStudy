@@ -32,11 +32,6 @@ class SikaService
                 'expires_days' => 7,
             ]);
 
-        dd([
-            'status' => $login->status(),
-            'body' => $login->body(),
-            'json' => $login->json(),
-        ]);
 
         if ($login->failed()) {
             return [
@@ -57,8 +52,7 @@ class SikaService
         |
         */
 
-        $token = $login->json('token');
-
+        $token = $login->json('access_token');
         if (empty($token)) {
             return [
                 'success' => false,
@@ -76,30 +70,37 @@ class SikaService
 
         $items = DataPribadiAlumni::query()
             ->select([
+                'masa',
+                'nomor_sk_rektor',
                 'nim',
                 'nama_mahasiswa',
-                'tempat_lahir',
-                'tanggal_lahir',
                 'kode_program_studi',
-                'nama_program_studi',
-                'nama_fakultas',
+                'nama_singkat_ps',
                 'ipk',
+                'nama_jenjang',
+                'nama_fakultas',
+                'singkatan',
                 'kode_upbjj',
+                'nama_upbjj',
             ])
             ->where('masa_yudisium', $masa)
             ->orderBy('nim')
+            ->limit(10)
             ->get()
             ->map(function ($item) {
                 return [
+                    'masa' => $item->masa_yudisium,
+                    'nomor_sk_rektor' => $item->nomor_sk_rektor,
                     'nim' => $item->nim,
-                    'nama' => $item->nama_mahasiswa,
-                    'tempat_lahir' => $item->tempat_lahir,
-                    'tanggal_lahir' => $item->tanggal_lahir,
-                    'alamat' => $item->alamat,
-                    'program_studi' => $item->nama_program_studi,
-                    'fakultas' => $item->nama_fakultas,
-                    'ipk_yudisium' => $item->ipk,
-                    'ut_daerah' => $item->kode_upbjj,
+                    'nama_mahasiswa' => $item->nama_mahasiswa,
+                    'kode_program_studi' => $item->kode_program_studi,
+                    'nama_singkat_ps' => $item->nama_singkat_ps,
+                    'ipk' => $item->ipk,
+                    'nama_jenjang' => $item->nama_fakultas,
+                    'nama_fakultas' => $item->nama_fakultas,
+                    'singkatan' => $item->singkatan,
+                    'kode_upbjj' => $item->ipk,
+                    'nama_upbjj' => $item->kode_upbjj,
                 ];
             })
             ->values();
@@ -114,7 +115,7 @@ class SikaService
             'sk_id' => $skId,
             'items' => $items,
         ];
-
+        dd($data);
         /*
         |--------------------------------------------------------------------------
         | 5. PUSH KE API SIKA

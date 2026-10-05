@@ -107,7 +107,7 @@ class AlumniValidasiController extends Controller
 
     public function data_sika()
     {
-        $masa = '20252';
+        $masa = '20262';
         $skId = 1;
 
         $result = $this->sikaService->pushYudisium($masa, $skId);
