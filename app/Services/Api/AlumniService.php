@@ -12,10 +12,10 @@ class AlumniService
     {
 
         // Jika login sebagai mahasiswa/alumni
-        if (session()->has('nim')) {
+        $nim = '017290654';
+//        if (session()->has('nim')) {
 //            $nim = session('nim');
-            $nim = '017290654';
-        }
+//        }
 // Jika pegawai, NIM harus diberikan dari controller
         abort_if(
             empty($nim),
