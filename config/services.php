@@ -46,4 +46,10 @@ return [
     'url' => env('API_LKAM_URL'),
   ],
 
+
+    'sika' => [
+        'base_url' => env('SIKA_BASE_URL'),
+        'username' => env('SIKA_USERNAME'),
+        'password' => env('SIKA_PASSWORD'),
+    ],
 ];

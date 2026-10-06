@@ -9,11 +9,15 @@ use Illuminate\Support\Facades\Http;
 class SikaService
 {
     /**
+     * Push data yudisium ke SIKA.
+     *
+     * Data dikirim maksimal 2000 per batch.
+     *
      * @throws ConnectionException
      */
-    public function pushYudisium(string $masa, int $skId)
+    public function pushYudisium(string $masa): array
     {
-        $baseUrl = 'https://api.sika.ika-ut.id';
+        $baseUrl = config('services.sika.base_url');
 
         /*
         |--------------------------------------------------------------------------
@@ -22,16 +26,19 @@ class SikaService
         */
 
         $login = Http::withoutVerifying()
-            ->withHeaders([
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ])
+            ->acceptJson()
+            ->asJson()
             ->post($baseUrl . '/rest/api/auth/token', [
-                'username' => "alumni@ecampus.ut.ac.id",
-                'password' => "Ut12345!",
+                'username' => config('services.sika.username'),
+                'password' => config('services.sika.password'),
                 'expires_days' => 7,
             ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | 2. CEK LOGIN
+        |--------------------------------------------------------------------------
+        */
 
         if ($login->failed()) {
             return [
@@ -44,15 +51,12 @@ class SikaService
 
         /*
         |--------------------------------------------------------------------------
-        | 2. AMBIL BEARER TOKEN
+        | 3. AMBIL BEARER TOKEN
         |--------------------------------------------------------------------------
-        |
-        | Sesuaikan "token" apabila response login menggunakan:
-        | access_token, data.token, dan sebagainya.
-        |
         */
 
         $token = $login->json('access_token');
+
         if (empty($token)) {
             return [
                 'success' => false,
@@ -64,84 +68,185 @@ class SikaService
 
         /*
         |--------------------------------------------------------------------------
-        | 3. AMBIL DATA ALUMNI
+        | 4. INISIALISASI PROSES
         |--------------------------------------------------------------------------
         */
 
-        $items = DataPribadiAlumni::query()
-            ->select([
-                'masa',
-                'nomor_sk_rektor',
-                'nim',
-                'nama_mahasiswa',
-                'kode_program_studi',
-                'nama_singkat_ps',
-                'ipk',
-                'nama_jenjang',
-                'nama_fakultas',
-                'singkatan',
-                'kode_upbjj',
-                'nama_upbjj',
-            ])
-            ->where('masa_yudisium', $masa)
-            ->orderBy('nim')
-            ->limit(10)
-            ->get()
-            ->map(function ($item) {
+        $batch = 0;
+        $totalBerhasil = 0;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 5. PROSES DATA PER 2000
+        |--------------------------------------------------------------------------
+        */
+
+        while (true) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Ambil maksimal 2000 data yang belum dikirim
+            |--------------------------------------------------------------------------
+            */
+
+            $items = DataPribadiAlumni::query()
+                ->select([
+                    'masa_yudisium',
+                    'nomor_sk_rektor',
+                    'nim',
+                    'nama_mahasiswa',
+                    'kode_program_studi',
+                    'nama_singkat_ps',
+                    'ipk',
+                    'nama_jenjang',
+                    'nama_fakultas',
+                    'singkatan_fakultas',
+                    'kode_upbjj',
+                    'nama_upbjj',
+                ])
+                ->where('masa_yudisium', '=', $masa)
+                ->where('sika_synced', false)
+                ->orderBy('nim')
+                ->limit(2000)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'masa' => $item->masa_yudisium,
+                        'nomor_sk_rektor' => $item->nomor_sk_rektor,
+                        'nim' => $item->nim,
+                        'nama_mahasiswa' => $item->nama_mahasiswa,
+                        'kode_program_studi' => $item->kode_program_studi,
+                        'nama_singkat_ps' => $item->nama_singkat_ps,
+                        'ipk' => $item->ipk,
+                        'nama_jenjang' => $item->nama_jenjang,
+                        'nama_fakultas' => $item->nama_fakultas,
+                        'singkatan' => $item->singkatan_fakultas,
+                        'kode_upbjj' => $item->kode_upbjj,
+                        'nama_upbjj' => $item->nama_upbjj,
+                    ];
+                })
+                ->values();
+
+            /*
+            |--------------------------------------------------------------------------
+            | 6. JIKA DATA SUDAH HABIS
+            |--------------------------------------------------------------------------
+            */
+
+            if ($items->isEmpty()) {
+                break;
+            }
+
+            $batch++;
+
+            /*
+            |--------------------------------------------------------------------------
+            | 7. AMBIL NIM YANG AKAN DIKIRIM
+            |--------------------------------------------------------------------------
+            */
+
+            $nims = $items
+                ->pluck('nim')
+                ->toArray();
+
+            /*
+            |--------------------------------------------------------------------------
+            | 8. BENTUK PAYLOAD
+            |--------------------------------------------------------------------------
+            */
+
+            $payload = [
+                'items' => $items->toArray(),
+            ];
+
+            /*
+            |--------------------------------------------------------------------------
+            | 9. PUSH KE API SIKA
+            |--------------------------------------------------------------------------
+            */
+
+            $response = Http::withoutVerifying()
+                ->withToken($token)
+                ->acceptJson()
+                ->asJson()
+                ->timeout(120)
+                ->post(
+                    $baseUrl . '/rest/api/yudisium/bulk',
+                    $payload
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | 10. JIKA BATCH GAGAL
+            |--------------------------------------------------------------------------
+            */
+
+            if ($response->failed()) {
                 return [
-                    'masa' => $item->masa_yudisium,
-                    'nomor_sk_rektor' => $item->nomor_sk_rektor,
-                    'nim' => $item->nim,
-                    'nama_mahasiswa' => $item->nama_mahasiswa,
-                    'kode_program_studi' => $item->kode_program_studi,
-                    'nama_singkat_ps' => $item->nama_singkat_ps,
-                    'ipk' => $item->ipk,
-                    'nama_jenjang' => $item->nama_fakultas,
-                    'nama_fakultas' => $item->nama_fakultas,
-                    'singkatan' => $item->singkatan,
-                    'kode_upbjj' => $item->ipk,
-                    'nama_upbjj' => $item->kode_upbjj,
+                    'success' => false,
+                    'status' => $response->status(),
+                    'message' => "Pengiriman gagal pada batch {$batch}.",
+                    'masa' => $masa,
+                    'batch_gagal' => $batch,
+                    'total_batch_berhasil' => $batch - 1,
+                    'total_berhasil' => $totalBerhasil,
+                    'response' => $response->json(),
                 ];
-            })
-            ->values();
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | 11. TANDAI DATA BATCH SEBAGAI SUDAH TERKIRIM
+            |--------------------------------------------------------------------------
+            */
+
+            $totalUpdated = DataPribadiAlumni::query()
+                ->where('masa_yudisium', $masa)
+                ->whereIn('nim', $nims)
+                ->update([
+                    'sika_synced' => true,
+                    'sika_synced_at' => now(),
+                ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | 12. TAMBAHKAN TOTAL BERHASIL
+            |--------------------------------------------------------------------------
+            */
+
+            $totalBerhasil += $totalUpdated;
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | 4. SUSUN BODY JSON
+        | 13. JIKA DARI AWAL TIDAK ADA DATA
         |--------------------------------------------------------------------------
         */
 
-        $data = [
-            'sk_id' => $skId,
-            'items' => $items,
-        ];
-        dd($data);
-        /*
-        |--------------------------------------------------------------------------
-        | 5. PUSH KE API SIKA
-        |--------------------------------------------------------------------------
-        */
-
-        $response = Http::withToken($token)
-            ->acceptJson()
-            ->asJson()
-            ->timeout(120)
-            ->post($baseUrl . '/rest/api/yudisium/bulk', $data);
+        if ($batch === 0) {
+            return [
+                'success' => true,
+                'status' => 200,
+                'message' => 'Tidak ada data baru yang perlu dikirim ke SIKA.',
+                'masa' => $masa,
+                'total_batch' => 0,
+                'total_berhasil' => 0,
+            ];
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | 6. RETURN HASIL
+        | 14. SEMUA BATCH SELESAI
         |--------------------------------------------------------------------------
         */
 
         return [
-            'success' => $response->successful(),
-            'status' => $response->status(),
-            'message' => $response->successful()
-                ? 'Data berhasil dikirim ke SIKA.'
-                : 'Data gagal dikirim ke SIKA.',
-            'total' => $items->count(),
-            'response' => $response->json(),
+            'success' => true,
+            'status' => 200,
+            'message' => 'Seluruh data berhasil dikirim ke SIKA.',
+            'masa' => $masa,
+            'total_batch' => $batch,
+            'total_berhasil' => $totalBerhasil,
         ];
     }
 }

@@ -118,7 +118,7 @@
     'name' => 'AKSI',
     'env' => 'local',
     'debug' => true,
-    'url' => 'http://127.0.0.1:8000',
+    'url' => 'http://aksireborn.net',
     'frontend_url' => 'http://localhost:3000',
     'asset_url' => NULL,
     'timezone' => 'UTC',
@@ -402,6 +402,26 @@
         'prefix' => '',
         'prefix_indexes' => true,
       ),
+      'dbaksi' => 
+      array (
+        'driver' => 'mariadb',
+        'url' => NULL,
+        'host' => '127.0.0.1',
+        'port' => '3306',
+        'database' => 'dbaksi',
+        'username' => NULL,
+        'password' => NULL,
+        'unix_socket' => '',
+        'charset' => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        'prefix' => '',
+        'prefix_indexes' => true,
+        'strict' => true,
+        'engine' => NULL,
+        'options' => 
+        array (
+        ),
+      ),
     ),
     'migrations' => 
     array (
@@ -454,7 +474,7 @@
       array (
         'driver' => 'local',
         'root' => 'D:\\domain\\laravel_13.11\\storage\\app/public',
-        'url' => 'http://127.0.0.1:8000/storage',
+        'url' => 'http://aksireborn.net/storage',
         'visibility' => 'public',
         'throw' => false,
         'report' => false,
@@ -591,7 +611,7 @@
         'username' => 'aksi@ecampus.ut.ac.id',
         'password' => '4K5I!@UTterbuka',
         'timeout' => NULL,
-        'local_domain' => '127.0.0.1',
+        'local_domain' => 'aksireborn.net',
       ),
       'ses' => 
       array (
@@ -761,6 +781,12 @@
     'lkam' => 
     array (
       'url' => 'http://10.2.1.10/index_non_pendas_lkam_per_mhs.php',
+    ),
+    'sika' => 
+    array (
+      'base_url' => 'https://api.sika.ika-ut.id',
+      'username' => 'alumni@ecampus.ut.ac.id',
+      'password' => 'Ut12345!',
     ),
   ),
   'session' => 

@@ -82,6 +82,26 @@ return [
           ]) : [],
         ],
 
+        'dbaksi' => [
+            'driver' =>'mariadb',
+            'url' => env('DB_AKSI_URL'),
+            'host' => env('DB_AKSI_HOST', '127.0.0.1'),
+            'port' => env('DB_AKSI_PORT', '3306'),
+            'database' => env('DB_AKSI_DATABASE', 'dbaksi'),
+            'username' => env('DB_AKSI_USERNAME'),
+            'password' => env('DB_AKSI_PASSWORD'),
+            'unix_socket' => env('DB_AKSI_SOCKET', ''),
+            'charset' => env('DB_AKSI_CHARSET', 'utf8mb4'),
+            'collation' => env('DB_AKSI_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                Pdo\Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
