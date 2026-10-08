@@ -1,44 +1,237 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/vendor
+# ============================================================
+# LARAVEL PROJECT
+# ============================================================
 
-# .env
+
+# ------------------------------------------------------------
+# ENVIRONMENT / SECRETS
+# ------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
 .env.backup
 .env.production
+
+/auth.json
+auth.json
+
+*.pem
+*.key
+*.ppk
+
+# Jangan pernah commit private SSH keys
+id_rsa
+id_ed25519
+
+
+# ------------------------------------------------------------
+# COMPOSER / PHP
+# ------------------------------------------------------------
+
+/vendor
+
 .phpactor.json
+
+
+# ------------------------------------------------------------
+# NODE / NPM / YARN
+# ------------------------------------------------------------
+
+/node_modules
+
+npm-debug.log
+npm-debug.log.*
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+
+# ------------------------------------------------------------
+# VITE / BUILD
+# ------------------------------------------------------------
+
+/public/build
+/public/hot
+
+
+# ------------------------------------------------------------
+# LARAVEL PUBLIC STORAGE
+# ------------------------------------------------------------
+
+/public/storage
+
+
+# ------------------------------------------------------------
+# LARAVEL STORAGE
+# ------------------------------------------------------------
+
+/storage/*.key
+/storage/pail
+
+/storage/logs/*
+!/storage/logs/.gitignore
+
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+
+
+# ------------------------------------------------------------
+# USER UPLOADS
+# ------------------------------------------------------------
+# File upload alumni / foto ijazah jangan dimasukkan ke Git
+# Sesuaikan jika memang file upload berada di lokasi ini.
+
+/storage/app/public/alumni/
+
+
+# ------------------------------------------------------------
+# LARAVEL BOOTSTRAP CACHE
+# ------------------------------------------------------------
+
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+
+# ------------------------------------------------------------
+# PHPUNIT / TESTING
+# ------------------------------------------------------------
+
+/.phpunit.cache
+/.phpunit.cache/
 .phpunit.result.cache
+
+/coverage
+coverage.xml
+
+
+# ------------------------------------------------------------
+# DOCKER
+# ------------------------------------------------------------
 
 docker-compose.override.yml
 
+
+# ------------------------------------------------------------
+# HOMESTEAD / VAGRANT
+# ------------------------------------------------------------
+
 Homestead.json
 Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
+
+/.vagrant/
+
+
+# ------------------------------------------------------------
+# IDE / EDITOR
+# ------------------------------------------------------------
+
 /.fleet
 /.idea
 /.nova
 /.vscode
 /.zed
 
+*.sublime-project
+*.sublime-workspace
+
+
+# ------------------------------------------------------------
+# TEMPLATE / FRONTEND ASSETS
+# ------------------------------------------------------------
+
+# Public assets tetap diizinkan masuk Git
 !/public/assets
 !/public/assets/*
+
+
+# Vendor fonts yang tidak perlu di-track
 /resources/assets/vendor/fonts/flags/**
 /resources/assets/vendor/fonts/fontawesome/**
+
+
+# Generated frontend files
 /public/css
 /public/js
 /public/mix-manifest.json
+
+
+# ------------------------------------------------------------
+# PUBLIC ASSETS EXCEPTIONS
+# ------------------------------------------------------------
+
+# Jika nanti ingin mengatur file tertentu di dalam public/assets:
+#
 # /public/assets/*
-# But not these files...
 # !/public/assets/json
 # /public/assets/json/*
 # !/public/assets/json/search-vertical.json
 # !/public/assets/json/search-horizontal.json
 
-# Except for 'template-customizer.js' inside 'resources/assets/vendor/js/'
+
+# ------------------------------------------------------------
+# TEMPLATE CUSTOMIZER
+# ------------------------------------------------------------
+
+# Jangan abaikan file template-customizer.js
 !/resources/assets/vendor/js/template-customizer.js
+
+
+# ------------------------------------------------------------
+# LOG FILES
+# ------------------------------------------------------------
+
+*.log
+
+
+# ------------------------------------------------------------
+# TEMPORARY FILES
+# ------------------------------------------------------------
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.orig
+*~
+
+
+# ------------------------------------------------------------
+# DATABASE / DATABASE BACKUP
+# ------------------------------------------------------------
+
+*.sql
+*.sql.gz
+*.dump
+*.backup
+
+/database/*.sqlite
+/database/*.sqlite-journal
+
+
+# ------------------------------------------------------------
+# OPERATING SYSTEM
+# ------------------------------------------------------------
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/

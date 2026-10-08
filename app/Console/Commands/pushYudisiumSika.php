@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\ConnectionException;
 use Throwable;
 
 class pushYudisiumSika extends Command
@@ -14,12 +14,12 @@ class pushYudisiumSika extends Command
      * Nama perintah artisan.
      */
     protected $signature = 'aksi:ambil-yudisium
-                            {--masa=20252 : Masa yudisium}';
+                            {--masa=20252 : Masa yudisium minimum yang akan diproses}';
 
     /**
      * Deskripsi command.
      */
-    protected $description = 'Mengambil data yudisium dari database AKSI dan mengirimkannya ke SIKA';
+    protected $description = 'Mengirim data yudisium AKSI ke SIKA mulai dari masa yang ditentukan';
 
     /**
      * Jalankan command.
@@ -105,15 +105,33 @@ class pushYudisiumSika extends Command
 
         $batch = 0;
 
-        // Ubah menjadi 2000 jika ingin mengirim 2000 data per batch.
+        // Jumlah maksimal data yang dikirim ke SIKA dalam satu batch.
         $limit = 2000;
 
         $totalBerhasil = 0;
         $totalUpdated = 0;
 
+        /*
+        |--------------------------------------------------------------------------
+        | INFORMASI PROSES
+        |--------------------------------------------------------------------------
+        */
+
         $this->newLine();
 
-        $this->info("Mengambil data AKSI masa $masa...");
+        $this->info('========================================');
+        $this->info('SINKRONISASI YUDISIUM AKSI -> SIKA');
+        $this->info('========================================');
+
+        $this->line("Masa minimum : $masa");
+        $this->line("Kriteria     : masa >= $masa");
+        $this->line("Batch size   : $limit data");
+
+        $this->newLine();
+
+        $this->info(
+            "Mengambil data yudisium AKSI dengan masa >= $masa..."
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -127,6 +145,14 @@ class pushYudisiumSika extends Command
             |--------------------------------------------------------------------------
             | 6. AMBIL DATA DARI DATABASE AKSI
             |--------------------------------------------------------------------------
+            |
+            | Hanya mengambil:
+            |
+            | - masa >= masa minimum
+            | - sika_synced = false
+            |
+            | Data diurutkan berdasarkan masa kemudian NIM.
+            |
             */
 
             try {
@@ -146,13 +172,19 @@ class pushYudisiumSika extends Command
                         'kode_upbjj',
                         'nama_upbjj',
                     ])
-                    ->where('masa', $masa)
+                    ->where('masa', '>=', $masa)
                     ->where('sika_synced', false)
+                    ->orderBy('masa')
                     ->orderBy('nim')
                     ->limit($limit)
                     ->get();
             } catch (Throwable $e) {
-                $this->error('Gagal mengambil data dari database AKSI.');
+                $this->newLine();
+
+                $this->error(
+                    'Gagal mengambil data dari database AKSI.'
+                );
+
                 $this->error($e->getMessage());
 
                 return self::FAILURE;
@@ -172,11 +204,11 @@ class pushYudisiumSika extends Command
 
             /*
             |--------------------------------------------------------------------------
-            | 8. SIMPAN NIM BATCH YANG SEDANG DIPROSES
+            | 8. SIMPAN INFORMASI BATCH
             |--------------------------------------------------------------------------
             |
-            | NIM disimpan sebelum mapping agar bisa digunakan untuk update
-            | sika_synced setelah pengiriman berhasil.
+            | Informasi disimpan sebelum mapping agar NIM dan rentang masa
+            | batch dapat digunakan setelah pengiriman berhasil.
             |
             */
 
@@ -185,6 +217,9 @@ class pushYudisiumSika extends Command
                 ->filter()
                 ->values()
                 ->toArray();
+
+            $masaAwal = $items->min('masa');
+            $masaAkhir = $items->max('masa');
 
             /*
             |--------------------------------------------------------------------------
@@ -195,27 +230,38 @@ class pushYudisiumSika extends Command
             $items = $items
                 ->map(function ($item) {
                     return [
-                        'masa'                 => $item->masa,
-                        'nomor_sk_rektor'      => $item->nomor_sk_rektor,
-                        'nim'                  => $item->nim,
-                        'nama_mahasiswa'       => $item->nama_mahasiswa,
-                        'kode_program_studi'   => $item->kode_program_studi,
-                        'nama_singkat_ps'      => $item->nama_singkat_ps,
-                        'ipk'                  => $item->ipk,
-                        'nama_jenjang'         => $item->nama_jenjang,
-                        'nama_fakultas'        => $item->nama_fakultas,
-                        'singkatan'            => $item->singkatan,
-                        'kode_upbjj'           => $item->kode_upbjj,
-                        'nama_upbjj'           => $item->nama_upbjj,
+                        'masa'               => $item->masa,
+                        'nomor_sk_rektor'    => $item->nomor_sk_rektor,
+                        'nim'                => $item->nim,
+                        'nama_mahasiswa'     => $item->nama_mahasiswa,
+                        'kode_program_studi' => $item->kode_program_studi,
+                        'nama_singkat_ps'    => $item->nama_singkat_ps,
+                        'ipk'                => $item->ipk,
+                        'nama_jenjang'       => $item->nama_jenjang,
+                        'nama_fakultas'      => $item->nama_fakultas,
+                        'singkatan'          => $item->singkatan,
+                        'kode_upbjj'         => $item->kode_upbjj,
+                        'nama_upbjj'         => $item->nama_upbjj,
                     ];
                 })
                 ->values();
 
             $jumlahData = $items->count();
 
+            /*
+            |--------------------------------------------------------------------------
+            | INFORMASI BATCH
+            |--------------------------------------------------------------------------
+            */
+
             $this->newLine();
-            $this->info("Batch $batch");
+
+            $this->info('----------------------------------------');
+            $this->info("BATCH $batch");
+            $this->info('----------------------------------------');
+
             $this->line("Jumlah data : $jumlahData");
+            $this->line("Rentang masa: $masaAwal s.d. $masaAkhir");
 
             /*
             |--------------------------------------------------------------------------
@@ -233,7 +279,11 @@ class pushYudisiumSika extends Command
             |--------------------------------------------------------------------------
             */
 
-            $this->line("Mengirim batch $batch ke SIKA...");
+            $this->newLine();
+
+            $this->line(
+                "Mengirim $jumlahData data pada batch $batch ke SIKA..."
+            );
 
             try {
                 $response = Http::withoutVerifying()
@@ -248,7 +298,10 @@ class pushYudisiumSika extends Command
             } catch (ConnectionException $e) {
                 $this->newLine();
 
-                $this->error("Pengiriman batch $batch gagal.");
+                $this->error(
+                    "Pengiriman batch $batch gagal."
+                );
+
                 $this->error($e->getMessage());
 
                 $this->newLine();
@@ -262,8 +315,13 @@ class pushYudisiumSika extends Command
                 );
 
                 /*
-                | Data batch ini TIDAK di-update sika_synced karena
-                | pengiriman ke SIKA gagal.
+                |--------------------------------------------------------------------------
+                | PENTING
+                |--------------------------------------------------------------------------
+                |
+                | Data batch ini TIDAK diubah menjadi sika_synced = true
+                | karena pengiriman ke SIKA gagal.
+                |
                 */
 
                 return self::FAILURE;
@@ -278,7 +336,9 @@ class pushYudisiumSika extends Command
             if ($response->failed()) {
                 $this->newLine();
 
-                $this->error("Pengiriman gagal pada batch $batch.");
+                $this->error(
+                    "Pengiriman gagal pada batch $batch."
+                );
 
                 $this->error(
                     'HTTP Status: ' . $response->status()
@@ -302,9 +362,13 @@ class pushYudisiumSika extends Command
                 );
 
                 /*
-                | PENTING:
-                | Karena response SIKA gagal, sika_synced batch ini
-                | TIDAK boleh diubah menjadi true.
+                |--------------------------------------------------------------------------
+                | PENTING
+                |--------------------------------------------------------------------------
+                |
+                | Karena response dari SIKA gagal, data pada batch ini
+                | TIDAK boleh diubah menjadi sika_synced = true.
+                |
                 */
 
                 return self::FAILURE;
@@ -317,12 +381,16 @@ class pushYudisiumSika extends Command
             |
             | Bagian ini HANYA dijalankan jika HTTP response dari SIKA sukses.
             |
+            | Kondisi masa dibuat sama dengan query pengambilan:
+            |
+            | masa >= $masa
+            |
             */
 
             try {
                 $updated = DB::connection('mariadb')
                     ->table('t_yudisium')
-                    ->where('masa', $masa)
+                    ->where('masa', '>=', $masa)
                     ->whereIn('nim', $nims)
                     ->where('sika_synced', false)
                     ->update([
@@ -343,8 +411,8 @@ class pushYudisiumSika extends Command
                 | PERHATIAN
                 |--------------------------------------------------------------------------
                 |
-                | Pada kondisi ini data SUDAH masuk ke SIKA, tetapi status pada
-                | AKSI belum rubber menjadi true.
+                | Pada kondisi ini data SUDAH masuk ke SIKA, tetapi status
+                | sika_synced pada AKSI belum berhasil diubah menjadi true.
                 |
                 | Command dihentikan agar masalah dapat diperiksa terlebih dahulu.
                 |
@@ -362,16 +430,22 @@ class pushYudisiumSika extends Command
             $totalBerhasil += $jumlahData;
             $totalUpdated += $updated;
 
+            $this->newLine();
+
             $this->info(
-                "Batch $batch berhasil dikirim."
+                "Batch $batch berhasil dikirim ke SIKA."
             );
 
             $this->line(
-                "Status sika_synced diupdate : $updated data"
+                "Data terkirim        : $jumlahData"
             );
 
             $this->line(
-                "Total sementara              : $totalBerhasil data"
+                "Status diperbarui    : $updated"
+            );
+
+            $this->line(
+                "Total sudah terkirim : $totalBerhasil"
             );
 
             /*
@@ -379,15 +453,16 @@ class pushYudisiumSika extends Command
             | 15. LANJUT KE BATCH BERIKUTNYA
             |--------------------------------------------------------------------------
             |
-            | TIDAK menggunakan:
+            | Tidak menggunakan OFFSET.
             |
-            | $offset += $limit;
+            | Data batch yang sudah berhasil dikirim telah diubah menjadi:
             |
-            | Karena data batch sebelumnya sudah berubah menjadi
-            | sika_synced = true.
+            | sika_synced = true
             |
-            | Query berikutnya otomatis mengambil data berikutnya yang masih
-            | sika_synced = false.
+            | Query berikutnya otomatis mengambil maksimal $limit data berikutnya
+            | yang masih memiliki:
+            |
+            | sika_synced = false
             |
             */
         }
@@ -399,9 +474,10 @@ class pushYudisiumSika extends Command
         */
 
         $this->newLine();
+
         if ($batch === 0) {
             $this->warn(
-                "Tidak ada data yudisium masa $masa yang perlu dikirim."
+                "Tidak ada data yudisium dengan masa >= $masa dan sika_synced = false."
             );
 
             return self::SUCCESS;
@@ -414,13 +490,16 @@ class pushYudisiumSika extends Command
         */
 
         $this->info('========================================');
-        $this->info('PROSES SELESAI');
+        $this->info('SINKRONISASI SELESAI');
         $this->info('========================================');
 
-        $this->line("Masa            : $masa");
-        $this->line("Total batch     : $batch");
-        $this->line("Total terkirim  : $totalBerhasil");
-        $this->line("Total ter-update: $totalUpdated");
+        $this->line("Masa minimum        : $masa");
+        $this->line("Kriteria            : masa >= $masa");
+        $this->line("Total batch         : $batch");
+        $this->line("Total data terkirim : $totalBerhasil");
+        $this->line("Total status update : $totalUpdated");
+
+        $this->info('========================================');
 
         return self::SUCCESS;
     }
