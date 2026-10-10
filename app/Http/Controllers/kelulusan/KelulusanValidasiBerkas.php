@@ -9,6 +9,6 @@ class KelulusanValidasiBerkas extends Controller
 {
     public function index()
     {
-        return view('pages.kelulusan.kelulusan-validasi-berkas');
+        return view('content.pages.kelulusan.kelulusan-validasi-berkas');
     }
 }

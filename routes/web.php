@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\alumni\AlumniDashboard;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\kelulusan\KelulusanIjazahMasuk;
 use App\Http\Controllers\kelulusan\KelulusanValidasiBerkas;
 use App\Http\Controllers\kelulusan\KelulusanValidasiFoto;
 use App\Http\Controllers\suratketerangan\SuratKeteranganDashboard;
@@ -54,10 +55,19 @@ Route::group(['prefix' => 'kelulusan'], function () {
 
   Route::get('/berkas', [KelulusanValidasiBerkas::class, 'index'])->name('kelulusan.berkas.index');
 
+    Route::get('/im', [KelulusanIjazahMasuk::class, 'index'])
+        ->name('im.index');
+
+    Route::post('/im/cari', [KelulusanIjazahMasuk::class, 'cari'])
+        ->name('im.cari');
+
 });
 
 Route::group(['prefix' => 'suratketerangan'], function () {
   Route::get('/', [SuratKeteranganDashboard::class, 'index'])->name('suratketerangan-dashboard.index');
 });
+
+
+
 
 Route::get('/data-sika', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'data_sika'])->name('alumni-validasi.data-sika');
