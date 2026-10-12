@@ -5,6 +5,7 @@ namespace App\Http\Controllers\kelulusan;
 use App\Http\Controllers\Controller;
 use App\Models\query\QueryAKSIModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class KelulusanIjazahMasuk extends Controller
 {
@@ -27,16 +28,18 @@ class KelulusanIjazahMasuk extends Controller
         if (!$dpYudisium) {
             return back()->with('error', 'Data tidak ditemukan');
         }
-
         $daftarLulusan = QueryAKSIModel::getDaftarLulusanBySK(
-            $dpYudisium->nomor_sk_rektor
+            $dpYudisium->nomor_sk_rektor, $dpYudisium->kode_upbjj
         );
-
+        $fotoPath = "alumni/foto-ijazah/$dpYudisium->masa/$dpYudisium->nim.jpg";
+        $fotoIjazah = Storage::disk('public')->exists($fotoPath)
+            ? Storage::disk('public')->url($fotoPath)
+            : null;
         return view(
             'content.pages.kelulusan.kelulusan_ijazah_masuk',
             compact(
                 'dpYudisium',
-                'daftarLulusan'
+                'daftarLulusan','fotoIjazah'
             )
         );
     }

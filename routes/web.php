@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\alumni\AlumniDashboard;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\kelulusan\KelulusanIjazahKeluar;
 use App\Http\Controllers\kelulusan\KelulusanIjazahMasuk;
 use App\Http\Controllers\kelulusan\KelulusanValidasiBerkas;
 use App\Http\Controllers\kelulusan\KelulusanValidasiFoto;
@@ -34,40 +35,44 @@ Route::post('/auth/logout', [LoginBasic::class, 'logout'])->name('auth-logout');
 Route::get('/auth/register', [RegisterBasic::class, 'index'])->name('auth-register');
 
 Route::get('/', function () {
-  return view('content.pages.welcome')->name();
+    return view('content.pages.welcome')->name();
 });
 
 Route::group(['prefix' => 'alumni'], function () {
-  Route::get('/', [AlumniDashboard::class, 'index'])->name('alumni-dashboard.index');
-  Route::post('/alumni/foto-ijazah', [AlumniDashboard::class, 'uploadFotoIjazah'])->name('alumni.foto-ijazah');
+    Route::get('/', [AlumniDashboard::class, 'index'])->name('alumni-dashboard.index');
+    Route::post('/alumni/foto-ijazah', [AlumniDashboard::class, 'uploadFotoIjazah'])->name('alumni.foto-ijazah');
 
-  Route::get('/validasi', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'index'])->name('alumni-validasi.index');
-  Route::post('/validasi', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'index'])->name('alumni-validasi.view-pdf');
+    Route::get('/validasi', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'index'])->name('alumni-validasi.index');
+    Route::post('/validasi', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'index'])->name('alumni-validasi.view-pdf');
 //  Route::get('/validasi', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'index'])->name('alumni-validasi.index');
 });
 
 
 Route::group(['prefix' => 'kelulusan'], function () {
-  Route::get('/foto', [KelulusanValidasiFoto::class, 'index'])->name('kelulusan.foto.index');
-  Route::get('/foto/data', [KelulusanValidasiFoto::class, 'data'])->name('kelulusan.foto.data');
+    Route::get('/foto', [KelulusanValidasiFoto::class, 'index'])->name('kelulusan.foto.index');
+    Route::get('/foto/data', [KelulusanValidasiFoto::class, 'data'])->name('kelulusan.foto.data');
 //    Route::get('/detail/{nim}', [KelulusanValidasiFoto::class, 'show'])->name('kelulusanfoto..show');
 
 
-  Route::get('/berkas', [KelulusanValidasiBerkas::class, 'index'])->name('kelulusan.berkas.index');
+    Route::get('/berkas', [KelulusanValidasiBerkas::class, 'index'])->name('kelulusan.berkas.index');
 
     Route::get('/im', [KelulusanIjazahMasuk::class, 'index'])
         ->name('im.index');
 
-    Route::post('/im/cari', [KelulusanIjazahMasuk::class, 'cari'])
+    Route::post('/im', [KelulusanIjazahMasuk::class, 'cari'])
         ->name('im.cari');
+
+    Route::get('/ik', [KelulusanIjazahKeluar::class, 'index'])
+        ->name('ik.index');
+
+    Route::post('/ik', [KelulusanIjazahKeluar::class, 'cari'])
+        ->name('ik.cari');
 
 });
 
 Route::group(['prefix' => 'suratketerangan'], function () {
-  Route::get('/', [SuratKeteranganDashboard::class, 'index'])->name('suratketerangan-dashboard.index');
+    Route::get('/', [SuratKeteranganDashboard::class, 'index'])->name('suratketerangan-dashboard.index');
 });
-
-
 
 
 Route::get('/data-sika', [\App\Http\Controllers\alumni\AlumniValidasiController::class, 'data_sika'])->name('alumni-validasi.data-sika');

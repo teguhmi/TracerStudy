@@ -48,7 +48,7 @@ class AlumniService
     public function fotoPath(?DataPribadiAlumni $dpAlumni = null): string
     {
         $dpAlumni ??= $this->current();
-        return "alumni/foto-ijazah/{$dpAlumni->masa_yudisium}/{$dpAlumni->nim}.jpg";
+        return "alumni/foto-ijazah/$dpAlumni->masa_yudisium/$dpAlumni->nim.jpg";
     }
 
 

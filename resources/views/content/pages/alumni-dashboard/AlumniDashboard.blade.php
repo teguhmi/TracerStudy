@@ -1163,13 +1163,9 @@
                   "{{ route('alumni.foto-ijazah') }}",
 
                   {
-
                     method: 'POST',
-
                     headers: {
-
                       'X-CSRF-TOKEN': csrfToken,
-
                       'Accept': 'application/json'
 
                     },

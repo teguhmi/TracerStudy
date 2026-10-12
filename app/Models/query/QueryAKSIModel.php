@@ -11,17 +11,8 @@ class QueryAKSIModel
      */
     public static function getYudisiumByNim($nim)
     {
-        return DB::connection('mariadb')
+        return DB::connection('dbaksi')
             ->table('t_yudisium')
-            ->select(
-                'nim',
-                'nama_mahasiswa',
-                'nama_program_studi',
-                'masa',
-                'nomor_sk_rektor',
-                'nomor_surat_pengiriman',
-                'urut'
-            )
             ->where('nim', $nim)
             ->first();
     }
@@ -29,12 +20,13 @@ class QueryAKSIModel
     /**
      * Ambil 10 lulusan berdasarkan SK Rektor
      */
-    public static function getDaftarLulusanBySK($nomorSkRektor)
+    public static function getDaftarLulusanBySK($nomorSkRektor,$kodeUpbjj)
     {
         return DB::connection('dbaksi')
-            ->table('yudisium')
+            ->table('t_yudisium')
             ->where('nomor_sk_rektor', $nomorSkRektor)
-            ->orderBy('urut')
+            ->where('kode_upbjj',$kodeUpbjj)
+            ->orderBy('nomor_urut_ijasah', 'desc')
             ->limit(10)
             ->get();
     }

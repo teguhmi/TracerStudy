@@ -29,8 +29,7 @@ class AlumniDashboard extends Controller
 
         $rpl = $this->rplApi->getRPL($nim);
 
-        $fotoPath = "alumni/foto-ijazah/{$masa}/{$nim}.jpg";
-
+        $fotoPath = "alumni/foto-ijazah/$masa/$nim.jpg";
         $fotoIjazah = Storage::disk('public')->exists($fotoPath)
             ? Storage::disk('public')->url($fotoPath)
             : null;
@@ -67,14 +66,12 @@ class AlumniDashboard extends Controller
         'dimensions:width=600,height=800',
       ],
     ]);
-
     // =========================================================
     // SIMPAN FILE
     // =========================================================
     $path = $this->alumniService->simpanFotoIjazah(
       $request->file('foto_ijazah')
     );
-
     // =========================================================
     // RESPONSE
     // =========================================================

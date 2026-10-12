@@ -60,14 +60,14 @@
             "slug": "ijazah",
             "submenu": [
                 {
-                    "url": "/ijazah/masuk",
+                    "url": "/kelulusan/im",
                     "name": "Ijazah Masuk",
                     "icon": "",
                     "slug": "ijazah-masuk",
                     "target": "_self"
                 },
                 {
-                    "url": "/ijazah/keluar",
+                    "url": "/kelulusan/ik",
                     "name": "Ijazah Keluar",
                     "icon": "",
                     "slug": "ijazah-keluar",
