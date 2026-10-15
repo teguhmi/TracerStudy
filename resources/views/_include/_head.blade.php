@@ -32,8 +32,7 @@
           'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss'])
 
     <!-- Vendor Styles -->
-    @vite(['resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.scss',
-          'resources/assets/vendor/libs/typeahead-js/typeahead.scss',
+    @vite(['resources/assets/vendor/libs/typeahead-js/typeahead.scss',
           'resources/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.scss',
           'resources/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.scss'])
 

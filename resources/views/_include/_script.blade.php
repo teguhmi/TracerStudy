@@ -19,3 +19,5 @@
 <!-- app JS -->
 @vite("resources/js/app.js")
 <!-- END: app JS-->
+
+@vite("resources/assets/js/ui-toasts.js")

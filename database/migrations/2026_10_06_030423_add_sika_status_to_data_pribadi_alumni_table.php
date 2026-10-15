@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pgsql')
-            ->table('m_data_pribadi_alumni', function (Blueprint $table) {
-                $table->boolean('sika_synced')->default(false);
-                $table->timestamp('sika_synced_at')->nullable();
-            });
+//        Schema::connection('pgsql')
+//            ->table('m_data_pribadi_alumni', function (Blueprint $table) {
+//                $table->boolean('sika_synced')->default(false);
+//                $table->timestamp('sika_synced_at')->nullable();
+//            });
     }
 
     /**
@@ -23,12 +23,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('pgsql')
-            ->table('m_data_pribadi_alumni', function (Blueprint $table) {
-                $table->dropColumn([
-                    'sika_synced',
-                    'sika_synced_at',
-                ]);
-            });
+//        Schema::connection('pgsql')
+//            ->table('m_data_pribadi_alumni', function (Blueprint $table) {
+//                $table->dropColumn([
+//                    'sika_synced',
+//                    'sika_synced_at',
+//                ]);
+//            });
     }
 };
