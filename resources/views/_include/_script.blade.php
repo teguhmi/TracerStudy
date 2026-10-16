@@ -1,4 +1,4 @@
-@vite("resources/assets/vendor/libs/jquery/jquery.js")
+{{--@vite("resources/assets/vendor/libs/jquery/jquery.js")--}}
 @vite("resources/assets/vendor/libs/popper/popper.js")
 @vite("resources/assets/vendor/js/bootstrap.js")
 @vite("resources/assets/vendor/libs/node-waves/node-waves.js")
@@ -20,4 +20,4 @@
 @vite("resources/js/app.js")
 <!-- END: app JS-->
 
-@vite("resources/assets/js/ui-toasts.js")
+{{--@vite("resources/assets/js/ui-toasts.js")--}}

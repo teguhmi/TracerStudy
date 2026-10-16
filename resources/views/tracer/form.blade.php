@@ -29,7 +29,7 @@
             <div
               id="progressBar"
               class="progress-bar"
-              style="width:0%"
+              style="width:0"
             ></div>
           </div>
 
@@ -84,8 +84,12 @@
             {{--          <div class="card mb-3 shadow-sm">--}}
             <div
               class="card mb-3 shadow-sm pertanyaan"
+              id="card-{{ $q->kode }}"
               data-kode="{{ $q->kode }}"
               data-tampil-jika='@json($q->tampil_jika ?? [])'
+              @if(in_array($q->kode,['F5A1','F5A2']))
+                style="display:none"
+              @endif
             >
               <div class="card-body">
 
@@ -217,26 +221,57 @@
                   {{-- SELECT --}}
                 @elseif($q->jenis == 'select')
 
-                  <select
-                    class="form-select"
-                    name="jawaban[{{ $q->kode }}]"
-                  >
+                  @php
+                    $name = "jawaban[$q->kode]";
+                  @endphp
 
-                    <option value="">
-                      Pilih
-                    </option>
+                  @switch($q->kode)
 
-                    @foreach($q->opsi as $opsi)
+                    @case('F510')
+                      <select class="form-select" id="negara_id" name="{{ $name }}">
+                        <option value="">Pilih Negara</option>
+                        @foreach($negaras as $negara)
+                          <option value="{{ $negara->kode }}">
+                            {{ $negara->nama }}
+                          </option>
+                        @endforeach
+                      </select>
+                      @break
 
-                      <option value="{{ $opsi->nilai }}">
-                        {{ $opsi->label }}
-                      </option>
+                    @case('F5A1')
+                      <select id="f5a1" name="{{ $name }}" class="form-select">
+                        <option value="">Pilih Provinsi</option>
 
-                    @endforeach
+                        @foreach($provinsis as $provinsi)
+                          <option value="{{ $provinsi->kode }}">
+                            {{ $provinsi->nama }}
+                          </option>
+                        @endforeach
+                      </select>
 
-                  </select>
+
+                      @break
+
+                    @case('F5A2')
+                      <select class="form-select" id="f5a2" name="{{ $name }}">
+
+                      </select>
+                      @break
+
+                    @default
+                      <select class="form-select" name="{{ $name }}">
+                        <option value="">Pilih</option>
+
+                        @foreach($q->opsi as $opsi)
+                          <option value="{{ $opsi->nilai }}">
+                            {{ $opsi->label }}
+                          </option>
+                        @endforeach
+                      </select>
+                  @endswitch
 
                 @endif
+
 
               </div>
 
@@ -330,13 +365,11 @@
     | Rule Section
     |--------------------------------------------------------------------------
     */
-    function isSectionVisible(section)
-    {
+    function isSectionVisible(section) {
       const rule = section.dataset.rule;
 
       // section tanpa rule selalu tampil
-      if (!rule || rule === '{}' || rule === '[]')
-      {
+      if (!rule || rule === '{}' || rule === '[]') {
         return true;
       }
 
@@ -352,8 +385,7 @@
                 `[name="jawaban[${field}]"]:checked`
               );
 
-            if (!checked)
-            {
+            if (!checked) {
               return false;
             }
 
@@ -378,14 +410,13 @@
     | Rule Pertanyaan
     |--------------------------------------------------------------------------
     */
-    function evaluateRules()
-    {
+    function evaluateRules() {
+
       document
         .querySelectorAll('.pertanyaan')
         .forEach(card => {
 
-          const rule =
-            card.dataset.tampilJika;
+          const rule = card.dataset.tampilJika;
 
           if (
             !rule ||
@@ -400,28 +431,73 @@
 
             const rules = JSON.parse(rule);
 
-            const visible =
-              Object.keys(rules)
-                .every(field => {
+            const visible = Object.entries(rules)
+              .every(([field, allowed]) => {
 
-                  const checked =
-                    document.querySelector(
-                      `[name="jawaban[${field}]"]:checked`
-                    );
+                let value = null;
 
-                  return checked &&
-                    rules[field]
-                      .map(String)
-                      .includes(String(checked.value));
+                // radio
+                const radio = document.querySelector(
+                  `[name="jawaban[${field}]"]:checked`
+                );
 
-                });
+                if (radio) {
+                  value = radio.value;
+                }
+
+                // checkbox
+                const checkboxes = document.querySelectorAll(
+                  `[name="jawaban[${field}][]"]:checked`
+                );
+
+                if (!value && checkboxes.length > 0) {
+
+                  const values = [...checkboxes]
+                    .map(x => String(x.value));
+
+                  return allowed.some(item =>
+                    values.includes(String(item))
+                  );
+                }
+
+                // select / text / textarea
+                if (!value) {
+
+                  const fieldEl = document.querySelector(
+                    `[name="jawaban[${field}]"]`
+                  );
+
+                  if (fieldEl) {
+                    value = fieldEl.value;
+                  }
+                }
+
+                // wildcard *
+                if (
+                  allowed.length === 1 &&
+                  allowed[0] === '*'
+                ) {
+                  return value !== null &&
+                    value !== '';
+                }
+
+                return allowed
+                  .map(String)
+                  .includes(String(value));
+
+              });
 
             card.style.display =
               visible ? '' : 'none';
 
           } catch (e) {
 
-            console.error(e);
+            console.error(
+              'Rule Error:',
+              card.dataset.kode,
+              e
+            );
+
           }
 
         });
@@ -432,13 +508,11 @@
     | Section Tampil
     |--------------------------------------------------------------------------
     */
-    function getVisibleSections()
-    {
+    function getVisibleSections() {
       return allSections()
         .filter(section => {
 
-          if (!isSectionVisible(section))
-          {
+          if (!isSectionVisible(section)) {
             const kode = section.dataset.kode;
             const rule = section.dataset.rule;
 
@@ -466,20 +540,17 @@
     | Render Wizard
     |--------------------------------------------------------------------------
     */
-    function renderWizard()
-    {
+    function renderWizard() {
       evaluateRules();
 
       const visibleSections =
         getVisibleSections();
 
-      if (!visibleSections.length)
-      {
+      if (!visibleSections.length) {
         return;
       }
 
-      if (currentStep >= visibleSections.length)
-      {
+      if (currentStep >= visibleSections.length) {
         currentStep =
           visibleSections.length - 1;
       }
@@ -533,8 +604,7 @@
     | Validasi
     |--------------------------------------------------------------------------
     */
-    function validateCurrentSection()
-    {
+    function validateCurrentSection() {
       const section =
         getVisibleSections()[currentStep];
 
@@ -549,23 +619,20 @@
         .querySelectorAll('.pertanyaan')
         .forEach(card => {
 
-          if (card.style.display === 'none')
-          {
+          if (card.style.display === 'none') {
             return;
           }
 
           card.querySelectorAll('[required]')
             .forEach(field => {
 
-              if(field.type === 'radio')
-              {
+              if (field.type === 'radio') {
                 const checked =
                   section.querySelector(
                     `[name="${field.name}"]:checked`
                   );
 
-                if(!checked)
-                {
+                if (!checked) {
                   valid = false;
                   firstError ??= card;
                 }
@@ -573,15 +640,13 @@
                 return;
               }
 
-              if(field.type === 'checkbox')
-              {
+              if (field.type === 'checkbox') {
                 const checked =
                   section.querySelectorAll(
                     `[name="${field.name}"]:checked`
                   );
 
-                if(!checked.length)
-                {
+                if (!checked.length) {
                   valid = false;
                   firstError ??= card;
                 }
@@ -589,8 +654,7 @@
                 return;
               }
 
-              if(!field.value?.trim())
-              {
+              if (!field.value?.trim()) {
                 valid = false;
                 firstError ??= card;
               }
@@ -598,11 +662,10 @@
 
         });
 
-      if(!valid && firstError)
-      {
+      if (!valid && firstError) {
         firstError.scrollIntoView({
-          behavior:'smooth',
-          block:'center'
+          behavior: 'smooth',
+          block: 'center'
         });
 
         firstError.classList.add(
@@ -626,10 +689,8 @@
     | Navigation
     |--------------------------------------------------------------------------
     */
-    function nextSection()
-    {
-      if(!validateCurrentSection())
-      {
+    function nextSection() {
+      if (!validateCurrentSection()) {
         Swal.fire({
           icon: 'warning',
           title: 'Data Belum Lengkap',
@@ -644,10 +705,8 @@
       renderWizard();
     }
 
-    function prevSection()
-    {
-      if(currentStep > 0)
-      {
+    function prevSection() {
+      if (currentStep > 0) {
         currentStep--;
         renderWizard();
       }
@@ -669,4 +728,116 @@
     );
 
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      const negara = document.getElementById('negara_id');
+
+      if (!negara) return;
+
+      negara.addEventListener('change', function() {
+
+        const f5a1Card =
+          document.querySelector('[data-kode="F5A1"]');
+
+        const f5a2Card =
+          document.querySelector('[data-kode="F5A2"]');
+
+        if (this.value == 'ID') {
+
+          if (f5a1Card)
+            f5a1Card.style.display = '';
+
+        } else {
+
+          if (f5a1Card)
+            f5a1Card.style.display = 'none';
+
+          if (f5a2Card)
+            f5a2Card.style.display = 'none';
+        }
+
+      });
+
+    });
+
+  </script>
+  <script>
+    document.addEventListener('change', async function(e) {
+
+      if (e.target.id !== 'f5a1') return;
+
+      const provinsiId = e.target.value;
+      const kotaSelect = document.getElementById('f5a2');
+
+      if (!provinsiId) {
+        kotaSelect.innerHTML =
+          '<option value="">Pilih Kabupaten/Kota</option>';
+        return;
+      }
+
+      kotaSelect.innerHTML =
+        '<option value="">Loading...</option>';
+      try {
+        const response = await fetch(
+          "{{ url('tracer/kota') }}/" + provinsiId
+        );
+
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status);
+        }
+
+        const kotas = await response.json();
+
+        kotaSelect.innerHTML =
+          '<option value="">Pilih Kabupaten/Kota</option>';
+        kotas.forEach(kota => {
+          kotaSelect.innerHTML += `
+                <option value="${kota.kode}">
+                    ${kota.nama}
+                </option>
+            `;
+
+        });
+
+      } catch (error) {
+        console.error(error);
+        kotaSelect.innerHTML =
+          '<option value="">Gagal memuat data kota</option>';
+      }
+    });
+
+    function toggleIndonesiaFields() {
+
+      const negara = document.getElementById('negara_id');
+
+      const cardF5A1 = document.querySelector('[data-kode="F5A1"]');
+      const cardF5A2 = document.querySelector('[data-kode="F5A2"]');
+
+      if (!negara) return;
+
+      const isIndonesia = negara.value === 'ID';
+
+      if (cardF5A1) {
+        cardF5A1.style.display = isIndonesia ? '' : 'none';
+      }
+
+      if (cardF5A2) {
+        cardF5A2.style.display = isIndonesia ? '' : 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+      toggleIndonesiaFields();
+
+      const negara = document.getElementById('negara_id');
+
+      if (negara) {
+        negara.addEventListener('change', toggleIndonesiaFields);
+      }
+
+    });
+  </script>
+
 @endpush

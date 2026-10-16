@@ -53,7 +53,7 @@ Route::middleware(['auth'])->prefix('alumni')->group(function () {
 
 
 Route::get('/tracer',[TracerController::class, 'index'])->name('tracer.index');
-
+Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');
 Route::post('/tracer/simpan',[TracerController::class, 'simpan']
 )->name('tracer.simpan');
 

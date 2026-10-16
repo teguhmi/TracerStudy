@@ -59,25 +59,20 @@ class TracerPertanyaanSeeder extends Seeder
       [
         'section_id' => 3,
         'kode' => 'F510',
-        'parent_kode' => 'F8',
         'pertanyaan' => 'Di mana lokasi tempat Anda bekerja?',
         'jenis' => 'select',
         'wajib' => true,
-        'tampil_jika' => [
-          'F8' => ['1']
-        ],
         'urutan' => 3,
       ],
 
       [
         'section_id' => 3,
         'kode' => 'F5A1',
-        'parent_kode' => 'F510',
         'pertanyaan' => 'Provinsi tempat bekerja',
         'jenis' => 'select',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1'],
+          'F8' => ['1','3'],
           'F510' => ['ID']
         ],
         'urutan' => 4,
@@ -91,7 +86,7 @@ class TracerPertanyaanSeeder extends Seeder
         'jenis' => 'select',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1'],
+          'F8' => ['1','3'],
           'F510' => ['ID']
         ],
         'urutan' => 5,

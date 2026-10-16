@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TracerPeriode extends Model
 {
-//  protected $table = 'tracer_periodes';
-
+  protected $table = 'tracer_periodes';
   protected $fillable = [
     'nama_periode',
     'tahun_mulai',

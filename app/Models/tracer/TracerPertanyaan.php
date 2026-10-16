@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class TracerPertanyaan extends Model
 {
 
+
   protected $fillable = [
     'section_id',
     'kategori_id',
