@@ -17,6 +17,17 @@ class QueryAKSIModel
             ->first();
     }
 
+  public static function getDpByNimTanggalLahir(
+    string $nim,
+    string $tanggalLahir
+  ) {
+    return DB::connection('mariadb')
+      ->table('t_yudisium')
+      ->where('nim', $nim)
+      ->whereDate('tanggal_lahir', $tanggalLahir)
+      ->first();
+  }
+
     /**
      * Ambil 10 lulusan berdasarkan SK Rektor
      */
@@ -30,4 +41,6 @@ class QueryAKSIModel
             ->limit(10)
             ->get();
     }
+
+
 }

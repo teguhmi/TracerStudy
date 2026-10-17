@@ -14,16 +14,17 @@ class TracerResponden extends Model
     'periode_id',
     'nim',
     'nama',
+    'status',
     'tanggal_lulus',
     'tanggal_mulai',
-    'tanggal_submit',
+//    'tanggal_submit',
     'status',
   ];
 
   protected $casts = [
-    'tanggal_lulus' => 'date',
-    'tanggal_mulai' => 'datetime',
-    'tanggal_submit' => 'datetime',
+//    'tanggal_lulus' => 'date',
+//    'tanggal_mulai' => 'datetime',
+//    'tanggal_submit' => 'datetime',
   ];
 
   public function periode(): BelongsTo

@@ -87,7 +87,7 @@
 
       </div>
 
-      <a href="#"
+      <a href="{{route('login')}}"
          class="bg-ut-yellow px-5 py-3 rounded-xl font-semibold">
         Login Alumni
       </a>
@@ -124,7 +124,7 @@
 
         <div class="mt-8 flex gap-4 flex-wrap">
 
-          <a href="#"
+          <a href="{{route('login')}}"
              class="bg-ut-yellow text-ut-navy px-8 py-4 rounded-xl font-bold">
             Login Alumni
           </a>
@@ -345,7 +345,7 @@
         Pastikan data Anda selalu terbaru.
       </p>
 
-      <a href="#"
+      <a href="{{route('login')}}"
          class="inline-block mt-8 bg-ut-yellow text-ut-navy px-8 py-4 rounded-xl font-bold">
         Login Alumni
       </a>

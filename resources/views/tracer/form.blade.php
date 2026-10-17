@@ -6,8 +6,9 @@
     $groupedSections = $sections->groupBy('section_id')->values();
   @endphp
 
-  <form method="POST" action="{{ route('tracer.simpan') }}">
+  <form id="tracerForm" method="POST" action="{{ route('tracer.simpan') }}">
     @csrf
+    <input type="hidden" name="aksi" id="aksi" value="submit">
 
     <div class="container-xxl flex-grow-1 container-p-y">
 
@@ -163,6 +164,7 @@
                             name="jawaban[{{ $q->kode }}]"
                             value="{{ $opsi->nilai }}"
                             {{ $q->wajib ? 'required' : '' }}
+                            data-required="{{ $q->wajib ? 1 : 0 }}"
                           >
 
 
@@ -348,10 +350,16 @@
 
 @push('scripts')
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@endpush
+@push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
   <script>
 
     let currentStep = 0;
-
     /*
     |--------------------------------------------------------------------------
     | Utility
@@ -359,7 +367,8 @@
     */
     const allSections = () =>
       [...document.querySelectorAll('.wizard-section')];
-
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Rule Section
@@ -404,7 +413,8 @@
         return true;
       }
     }
-
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Rule Pertanyaan
@@ -423,7 +433,8 @@
             rule === '{}' ||
             rule === '[]'
           ) {
-            card.style.display = '';
+
+            toggleQuestion(card, true);
             return;
           }
 
@@ -436,7 +447,7 @@
 
                 let value = null;
 
-                // radio
+                // RADIO
                 const radio = document.querySelector(
                   `[name="jawaban[${field}]"]:checked`
                 );
@@ -445,27 +456,35 @@
                   value = radio.value;
                 }
 
-                // checkbox
-                const checkboxes = document.querySelectorAll(
-                  `[name="jawaban[${field}][]"]:checked`
-                );
+                // CHECKBOX
+                const checkboxes =
+                  document.querySelectorAll(
+                    `[name="jawaban[${field}][]"]:checked`
+                  );
 
-                if (!value && checkboxes.length > 0) {
+                if (
+                  !value &&
+                  checkboxes.length > 0
+                ) {
 
-                  const values = [...checkboxes]
-                    .map(x => String(x.value));
+                  const values =
+                    [...checkboxes]
+                      .map(x => String(x.value));
 
                   return allowed.some(item =>
-                    values.includes(String(item))
+                    values.includes(
+                      String(item)
+                    )
                   );
                 }
 
-                // select / text / textarea
+                // SELECT / TEXTAREA / TEXT
                 if (!value) {
 
-                  const fieldEl = document.querySelector(
-                    `[name="jawaban[${field}]"]`
-                  );
+                  const fieldEl =
+                    document.querySelector(
+                      `[name="jawaban[${field}]"]`
+                    );
 
                   if (fieldEl) {
                     value = fieldEl.value;
@@ -477,18 +496,25 @@
                   allowed.length === 1 &&
                   allowed[0] === '*'
                 ) {
-                  return value !== null &&
-                    value !== '';
+
+                  return (
+                    value !== null &&
+                    value !== ''
+                  );
                 }
 
                 return allowed
                   .map(String)
-                  .includes(String(value));
+                  .includes(
+                    String(value)
+                  );
 
               });
 
-            card.style.display =
-              visible ? '' : 'none';
+            toggleQuestion(
+              card,
+              visible
+            );
 
           } catch (e) {
 
@@ -501,28 +527,19 @@
           }
 
         });
-    }
 
+    }
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Section Tampil
     |--------------------------------------------------------------------------
     */
     function getVisibleSections() {
+
       return allSections()
         .filter(section => {
-
-          if (!isSectionVisible(section)) {
-            const kode = section.dataset.kode;
-            const rule = section.dataset.rule;
-
-            console.log(
-              'Section:',
-              kode,
-              'Rule:',
-              rule
-            );
-          }
 
           const visibleQuestions =
             [...section.querySelectorAll('.pertanyaan')]
@@ -533,8 +550,10 @@
           return visibleQuestions.length > 0;
 
         });
-    }
 
+    }
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Render Wizard
@@ -598,7 +617,59 @@
       stepLabel.innerText =
         `Langkah ${currentStep + 1} dari ${total}`;
     }
+  </script>
+  <script>
 
+    function toggleQuestion(card, visible) {
+
+      const inputs =
+        card.querySelectorAll(
+          'input, select, textarea'
+        );
+
+      card.style.display =
+        visible ? '' : 'none';
+
+      inputs.forEach(el => {
+
+        if (visible) {
+
+          if (
+            el.dataset.required === '1'
+          ) {
+            el.required = true;
+          }
+
+        } else {
+
+          el.required = false;
+        }
+
+      });
+    }
+  </script>
+  <script>
+
+
+    document
+      .getElementById('formTracer')
+      .addEventListener('submit', function() {
+
+        document
+          .querySelectorAll(
+            'input,select,textarea'
+          )
+          .forEach(el => {
+
+            if (el.offsetParent === null) {
+              el.required = false;
+            }
+
+          });
+
+      });
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Validasi
@@ -683,7 +754,8 @@
 
       return valid;
     }
-
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Navigation
@@ -711,7 +783,8 @@
         renderWizard();
       }
     }
-
+  </script>
+  <script>
     /*
     |--------------------------------------------------------------------------
     | Event
@@ -726,7 +799,6 @@
       'DOMContentLoaded',
       renderWizard
     );
-
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -827,7 +899,7 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
 
       toggleIndonesiaFields();
 

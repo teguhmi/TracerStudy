@@ -3,26 +3,27 @@
 namespace App\Http\Controllers\authentications;
 
 use App\Http\Controllers\Controller;
+use App\Models\query\QueryAKSIModel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class LoginBasic extends Controller
+class Login extends Controller
 {
   public function index()
   {
     // User Laravel sudah login
     if (Auth::check()) {
-      return redirect()->route('dashboard');
+      return redirect()->route('home');
     }
 
     // Alumni sudah login
     if (session('alumni_authenticated')) {
-      return redirect()->route('alumni-dashboard.index');
+      return redirect()->route('alumni.tracer-study');
     }
 
-    return view('content.authentications.auth-login-basic');
+    return view('auth.auth-login');
   }
 
 
@@ -37,11 +38,9 @@ class LoginBasic extends Controller
     $request->validate([
       'login_type' => 'required|in:alumni,user',
     ]);
-
     if ($request->login_type === 'alumni') {
       return $this->loginAlumni($request);
     }
-
     return $this->loginUser($request);
   }
 
@@ -63,7 +62,7 @@ class LoginBasic extends Controller
 
       'tanggal_lahir' => [
         'required',
-        'date_format:d/m/Y',
+        'date',
       ],
     ], [
       'nim.required' =>
@@ -89,9 +88,9 @@ class LoginBasic extends Controller
     */
 
     $tanggalLahir = Carbon::createFromFormat(
-      'd/m/Y',
+      'Y-m-d',
       $request->tanggal_lahir
-    )->format('Y-m-d');
+    )->format('d-m-Y');
 
 
     /*
@@ -100,13 +99,7 @@ class LoginBasic extends Controller
     |--------------------------------------------------------------------------
     */
 
-    $alumni = DB::connection('pgsql')
-      ->table('m_data_pribadi_alumni')
-      ->where('nim', $request->nim)
-      ->whereDate('tanggal_lahir', $tanggalLahir)
-      ->first();
-
-
+    $alumni = QueryAKSIModel::getDpByNimTanggalLahir($request->nim, $tanggalLahir);
     /*
     |--------------------------------------------------------------------------
     | Login gagal
@@ -115,7 +108,7 @@ class LoginBasic extends Controller
 
     if (!$alumni) {
       return back()
-        ->withInput($request->only('login_type','nim'))->withErrors(['login' =>'NIM atau tanggal lahir tidak sesuai.']);
+        ->withInput($request->only('login_type','alumni'))->withErrors(['login' =>'NIM atau tanggal lahir tidak sesuai.']);
     }
 
 
@@ -145,9 +138,9 @@ class LoginBasic extends Controller
         $alumni->nama_mahasiswa,
     ]);
 
-
-    return redirect()
-      ->intended(route('dashboard'));
+return redirect()->route('home');
+//    return redirect()
+//      ->intended(route('home'));
   }
 
 

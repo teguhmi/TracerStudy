@@ -10,6 +10,7 @@ class TracerJawaban extends Model
 {
   protected $fillable = [
     'responden_id',
+    'pertanyaan_id',
     'kode_pertanyaan',
     'jawaban'
   ];

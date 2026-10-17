@@ -3,6 +3,7 @@
 namespace App\Models\query;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class QuerySRSController extends Model
 {

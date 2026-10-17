@@ -44,285 +44,240 @@ class TracerController extends Controller
     return view('tracer.form', compact('periode', 'sections', 'negaras', 'provinsis', 'kotas'));
   }
 
-//  public function simpan___(Request $request)
-//  {
-//    dd($request->input('jawaban'));
-//    DB::beginTransaction();
-//
-//    try {
-//
-//      $periode = TracerPeriode::query()
-//        ->where('aktif', 1)
-//        ->first();
-//
-//      if (!$periode) {
-//        throw new \Exception(
-//          'Periode tracer aktif tidak ditemukan'
-//        );
-//      }
-//
-//      $responden = TracerResponden::updateOrCreate(
-//        [
-//          'periode_id' => $periode->id,
-//          'nim' => auth()->user()->nim ?? $request->nim,
-//        ],
-//        [
-//          'nama' => auth()->user()->name ?? $request->nama,
-//          'status' => 'draft',
-//        ]
-//      );
-//
-//      $jawabans = $request->input('jawaban', []);
-//
-//      foreach ($jawabans as $kode => $nilai) {
-//
-//        if (
-//          $nilai === null ||
-//          $nilai === '' ||
-//          $nilai === []
-//        ) {
-//          continue;
-//        }
-//
-//        /*
-//        |--------------------------------------------------------------------------
-//        | Checkbox Multiple
-//        |--------------------------------------------------------------------------
-//        */
-//        if (is_array($nilai)) {
-//
-//          $jawaban = TracerJawaban::updateOrCreate(
-//            [
-//              'responden_id' => $responden->id,
-//              'kode_pertanyaan' => $kode,
-//            ],
-//            [
-//              'jawaban' => json_encode($nilai),
-//            ]
-//          );
-//
-//          TracerJawabanDetail::where(
-//            'jawaban_id',
-//            $jawaban->id
-//          )->delete();
-//
-//          foreach ($nilai as $item) {
-//
-//            TracerJawabanDetail::create([
-//              'jawaban_id' => $jawaban->id,
-//              'pilihan' => $item,
-//            ]);
-//          }
-//        } /*
-//        |--------------------------------------------------------------------------
-//        | Single Value
-//        |--------------------------------------------------------------------------
-//        */
-//        else {
-//
-//          $jawaban = TracerJawaban::updateOrCreate(
-//            [
-//              'responden_id' => $responden->id,
-//              'kode_pertanyaan' => $kode,
-//            ],
-//            [
-//              'jawaban' => $nilai,
-//            ]
-//          );
-//
-//          TracerJawabanDetail::where(
-//            'jawaban_id',
-//            $jawaban->id
-//          )->delete();
-//
-//          TracerJawabanDetail::create([
-//            'jawaban_id' => $jawaban->id,
-//            'pilihan' => $nilai,
-//          ]);
-//        }
-//      }
-//
-//      $responden->update([
-//        'status' => 'selesai'
-//      ]);
-//
-//      DB::commit();
-//
-//      return redirect()
-//        ->back()
-//        ->with(
-//          'success',
-//          'Tracer study berhasil disimpan.'
-//        );
-//
-//    } catch (\Throwable $e) {
-//
-//      DB::rollBack();
-//
-//      report($e);
-//
-//      return redirect()
-//        ->back()
-//        ->with(
-//          'error',
-//          $e->getMessage()
-//        );
-//    }
-//  }
 
-  public function simpan(Request $request)
+  public function store(Request $request)
   {
 
     DB::beginTransaction();
-
+//    dd($request->input('jawaban'));
     try {
 
-      $periode = TracerPeriode::query()
-        ->where('aktif', 1)
-        ->first();
+      $nim = '017290654';
+      $nama = 'WIWIT KARYANTI';
 
-      if (!$periode) {
-        throw new \Exception(
-          'Periode tracer aktif tidak ditemukan.'
-        );
-      }
+      // $nim  = auth()->user()->nim;
+      // $nama = auth()->user()->nama;
 
-      $responden = TracerResponden::updateOrCreate(
+      $aksi = $request->input('aksi', 'draft');
+
+      $responden = TracerResponden::firstOrCreate(
         [
-          'periode_id' => $periode->id,
-          'nim' => auth()->user()->nim ?? $request->nim,
+          'nim' => $nim,
+          'periode_id' => 1,
         ],
         [
-          'nama' => auth()->user()->name ?? $request->nama,
+          'nama' => $nama,
+          'tanggal_lulus' => '2003-12-01',
+          'tanggal_mulai' => now(),
           'status' => 'draft',
         ]
       );
 
-      $jawabans = $request->input('jawaban', []);
+      if (!$responden) {
+        throw new \Exception('Data responden tidak ditemukan');
+      }
 
-      foreach ($jawabans as $kode => $nilai) {
+      $pertanyaans = TracerPertanyaan::where('aktif', 1)
+        ->orderBy('urutan')
+        ->get();
+      $no = 0;
+
+      foreach ($pertanyaans as $pertanyaan) {
+
+        $nilai = $request->input(
+          'jawaban.' . $pertanyaan->kode,
+          null
+        );
 
         /*
         |--------------------------------------------------------------------------
-        | Jawaban kosong => hapus data lama
+        | Evaluasi Rule tampil_jika
         |--------------------------------------------------------------------------
         */
-        if (
-          is_null($nilai) ||
-          $nilai === '' ||
-          $nilai === 'null' ||
-          (is_array($nilai) && empty($nilai))
-        ) {
+        $tampil = true;
 
-          $jawabanLama = TracerJawaban::query()
-            ->where('responden_id', $responden->id)
-            ->where('kode_pertanyaan', $kode)
-            ->first();
+        $rules = $pertanyaan->tampil_jika ?? [];
 
-          if ($jawabanLama) {
+        if (is_string($rules)) {
+          $rules = json_decode($rules, true) ?? [];
+        }
 
-            TracerJawabanDetail::query()
-              ->where('jawaban_id', $jawabanLama->id)
-              ->delete();
+        if (!empty($rules)) {
 
-            $jawabanLama->delete();
+          foreach ($rules as $field => $allowed) {
+
+            $nilaiParent = $request->input(
+              'jawaban.' . $field
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Wildcard *
+            |--------------------------------------------------------------------------
+            */
+            if (
+              count($allowed) === 1 &&
+              $allowed[0] === '*'
+            ) {
+
+              if (is_array($nilaiParent)) {
+
+                if (count($nilaiParent) === 0) {
+                  $tampil = false;
+                  break;
+                }
+
+              } else {
+
+                if (
+                  $nilaiParent === null ||
+                  $nilaiParent === ''
+                ) {
+                  $tampil = false;
+                  break;
+                }
+
+              }
+
+              continue;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Checkbox
+            |--------------------------------------------------------------------------
+            */
+            if (is_array($nilaiParent)) {
+
+              $match = false;
+
+              foreach ($nilaiParent as $item) {
+
+                if (
+                  in_array(
+                    (string)$item,
+                    array_map('strval', $allowed)
+                  )
+                ) {
+                  $match = true;
+                  break;
+                }
+              }
+
+              if (!$match) {
+                $tampil = false;
+                break;
+              }
+
+            } else {
+
+              if (
+                !in_array(
+                  (string)$nilaiParent,
+                  array_map('strval', $allowed)
+                )
+              ) {
+                $tampil = false;
+                break;
+              }
+            }
           }
-
-          continue;
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Simpan Header Jawaban
+        | Jika rule tidak terpenuhi
         |--------------------------------------------------------------------------
         */
-        $jawaban = TracerJawaban::updateOrCreate(
+        if (!$tampil) {
+          $nilai = null;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Validasi Wajib
+        | Hanya saat submit final
+        |--------------------------------------------------------------------------
+        */
+        if (
+          $aksi === 'submit' &&
+          $pertanyaan->wajib &&
+          $tampil
+        ) {
+
+          $kosong =
+            $nilai === null ||
+            $nilai === '' ||
+            (is_array($nilai) && count($nilai) === 0);
+
+          if ($kosong) {
+
+            throw new \Exception(
+              '[' . $pertanyaan->kode . '] '
+              . $pertanyaan->pertanyaan
+              . ' wajib diisi'
+            );
+
+          }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Simpan Jawaban
+        |--------------------------------------------------------------------------
+        */
+
+        TracerJawaban::updateOrCreate(
           [
-            'responden_id'    => $responden->id,
-            'kode_pertanyaan' => $kode,
+            'responden_id' => $responden->id,
+            'pertanyaan_id' => $pertanyaan->id,
           ],
           [
+            'kode_pertanyaan' => $pertanyaan->kode,
             'jawaban' => is_array($nilai)
               ? json_encode($nilai)
               : $nilai,
           ]
         );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Hapus Detail Lama
-        |--------------------------------------------------------------------------
-        */
-        TracerJawabanDetail::query()
-          ->where('jawaban_id', $jawaban->id)
-          ->delete();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Checkbox Multiple
-        |--------------------------------------------------------------------------
-        */
-        if (is_array($nilai)) {
-
-          foreach ($nilai as $item) {
-
-            if (
-              is_null($item) ||
-              $item === '' ||
-              $item === 'null'
-            ) {
-              continue;
-            }
-
-            TracerJawabanDetail::create([
-              'jawaban_id' => $jawaban->id,
-              'pilihan'    => $item,
-            ]);
-          }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Single Value
-        |--------------------------------------------------------------------------
-        */
-        else {
-
-          TracerJawabanDetail::create([
-            'jawaban_id' => $jawaban->id,
-            'pilihan'    => $nilai,
-          ]);
-        }
       }
 
-      $responden->update([
-        'status' => 'selesai',
-        'tanggal_submit' => now(),
-      ]);
+      /*
+      |--------------------------------------------------------------------------
+      | Update Status Responden
+      |--------------------------------------------------------------------------
+      */
+      if ($aksi === 'submit') {
+
+        $responden->update([
+          'status' => 'submitted',
+          'tanggal_submit' => now(),
+        ]);
+
+        $message = 'Tracer berhasil dikirim';
+
+      } else {
+
+        $responden->update([
+          'status' => 'draft',
+        ]);
+
+        $message = 'Draft berhasil disimpan';
+      }
 
       DB::commit();
 
-      return redirect()
-        ->back()
-        ->with(
-          'success',
-          'Tracer study berhasil disimpan.'
-        );
 
-    } catch (\Throwable $e) {
+      return view('tracer.tracer_submit', [
+        'responden' => $responden,
+      ]);
 
+    } catch (\Exception $e) {
       DB::rollBack();
+      dd($e->getMessage());
 
-      report($e);
-
-      return redirect()
-        ->back()
-        ->with(
-          'error',
-          $e->getMessage()
-        );
     }
   }
+
 
   public function submit(Request $request)
   {
@@ -346,12 +301,9 @@ class TracerController extends Controller
       'status' => 'submitted',
     ]);
 
-    return redirect()
-      ->back()
-      ->with(
-        'success',
-        'Tracer Study berhasil dikirim.'
-      );
+    return view('tracer.tracer_submit', [
+      'responden' => $responden,
+    ]);
   }
 
   public function riwayat()
