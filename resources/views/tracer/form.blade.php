@@ -5,7 +5,7 @@
     @php
       $groupedSections = $sections->groupBy('section_id')->values();
     @endphp
-    <form id="tracerForm" method="POST" action="{{ route('tracer.simpan') }}">
+    <form id="formTracer" method="POST" action="{{ route('tracer.simpan') }}">
       @csrf
       <input type="hidden" name="aksi" id="aksi" value="submit">
 
@@ -37,38 +37,54 @@
 
           </div>
         </div>
-        <div class="card mb-4 border-primary">
-          <div class="card-header">
-            <h5 class="mb-0">
-              Biodata Alumni
-            </h5>
-          </div>
 
+        {{-- Biodata --}}
+        <div class="card shadow-lg border-0 mb-4">
           <div class="card-body">
-            <div class="row">
 
-              <div class="col-md-6">
-                <strong>NIM</strong><br>
-                {{ $dpAlumni->nim ?? '-' }}
+            <div class="row align-items-center">
+
+              <div class="col-auto">
+
+                <div class="avatar avatar-xl">
+                  <span class="avatar-initial rounded-circle bg-label-primary">
+                    {{ strtoupper(substr($dpAlumni->nama_mahasiswa, 0, 1)) }}
+                  </span>
+                </div>
+
               </div>
 
-              <div class="col-md-6">
-                <strong>Nama</strong><br>
-                {{ $dpAlumni->nama_mahasiswa ?? '-' }}
+              <div class="col">
+
+                <h4 class="mb-1 fw-bold">
+                  {{ $dpAlumni->nama_mahasiswa }}
+                </h4>
+
+                <div class="text-muted">
+                  NIM : {{ $dpAlumni->nim }}
+                </div>
+
+                <div class="small text-muted">
+                  {{ $dpAlumni->nama_program_studi }}
+                </div>
+
               </div>
 
-              <div class="col-md-6 mt-3">
-                <strong>Program Studi</strong><br>
-                {{ $dpAlumni->nama_program_studi ?? '-' }}
-              </div>
+              <div class="col-md-auto text-md-end">
 
-              <div class="col-md-6 mt-3">
-                <strong>Tanggal Lulus</strong><br>
+                <span class="badge bg-success">
+                    Alumni UT
+                </span>
 
-                {{ \Carbon\Carbon::parse($dpAlumni->tanggal_sk)->translatedFormat('d F Y') }}
+                <div class="small text-muted mt-2">
+                  Lulus
+                  {{ \Carbon\Carbon::parse($dpAlumni->tanggal_sk)->translatedFormat('d F Y') }}
+                </div>
+
               </div>
 
             </div>
+
           </div>
         </div>
         @foreach($groupedSections as $sectionIndex => $sectionQuestions)
@@ -229,25 +245,16 @@
 
                           <label class="option-card">
 
-                            <input
-                              type="checkbox"
-                              class="form-check-input me-2"
-                              name="jawaban[{{ $q->kode }}][]"
-                              value="{{ $opsi->nilai }}"
-                            >
+                            <input type="checkbox" class="form-check-input me-2" name="jawaban[{{ $q->kode }}][]"
+                                   value="{{ $opsi->nilai }}">
 
                             <span>
-
-                                                @if(str_starts_with($opsi->nilai,'F'))
+                              @if(str_starts_with($opsi->nilai,'F'))
                                 <strong>[{{ $opsi->nilai }}]</strong>
                               @endif
-
                               {{ $opsi->label }}
-
-                                            </span>
-
+                            </span>
                           </label>
-
                         </div>
 
                       @endforeach
@@ -284,8 +291,6 @@
                             </option>
                           @endforeach
                         </select>
-
-
                         @break
 
                       @case('F5A2')
@@ -305,20 +310,12 @@
                           @endforeach
                         </select>
                     @endswitch
-
                   @endif
-
-
                 </div>
-
               </div>
-
             @endforeach
-
           </div>
-
         @endforeach
-
 
         {{-- NAVIGATION --}}
         <div class="sticky-bottom bg-white py-3 border-top">
@@ -360,40 +357,52 @@
   @endif
 @endsection
 
-@push('css')
-  <style>
+{{--@push('css')--}}
+{{--  <style>--}}
 
-    .option-card {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 12px;
-      cursor: pointer;
-      width: 100%;
-      transition: .2s;
-    }
+{{--    .option-card {--}}
+{{--      display: flex;--}}
+{{--      align-items: center;--}}
+{{--      gap: 10px;--}}
+{{--      border: 1px solid #ddd;--}}
+{{--      border-radius: 10px;--}}
+{{--      padding: 12px;--}}
+{{--      cursor: pointer;--}}
+{{--      width: 100%;--}}
+{{--      transition: .2s;--}}
+{{--    }--}}
 
-    .option-card:hover {
-      background: #f8f9fa;
-      border-color: #696cff;
-    }
+{{--    .option-card:hover {--}}
+{{--      background: #f8f9fa;--}}
+{{--      border-color: #696cff;--}}
+{{--    }--}}
 
-  </style>
-@endpush
+{{--  </style>--}}
+{{--@endpush--}}
 
 @push('scripts')
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 @endpush
 @push('scripts')
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
+      renderWizard();
+
+      toggleIndonesiaFields();
+
+      const negara = document.getElementById('negara_id');
+
+      if (negara) {
+        negara.addEventListener(
+          'change',
+          toggleIndonesiaFields
+        );
+      }
+
+    });
+  </script>
+  <script>
     let currentStep = 0;
     /*
     |--------------------------------------------------------------------------
@@ -402,8 +411,6 @@
     */
     const allSections = () =>
       [...document.querySelectorAll('.wizard-section')];
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Rule Section
@@ -420,10 +427,8 @@
       try {
 
         const rules = JSON.parse(rule);
-
         return Object.entries(rules).every(
           ([field, allowed]) => {
-
             const checked =
               document.querySelector(
                 `[name="jawaban[${field}]"]:checked`
@@ -448,8 +453,6 @@
         return true;
       }
     }
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Rule Pertanyaan
@@ -564,8 +567,6 @@
         });
 
     }
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Section Tampil
@@ -587,8 +588,6 @@
         });
 
     }
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Render Wizard
@@ -652,8 +651,6 @@
       stepLabel.innerText =
         `Langkah ${currentStep + 1} dari ${total}`;
     }
-  </script>
-  <script>
 
     function toggleQuestion(card, visible) {
 
@@ -682,9 +679,6 @@
 
       });
     }
-  </script>
-  <script>
-
 
     document
       .getElementById('formTracer')
@@ -703,8 +697,6 @@
           });
 
       });
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Validasi
@@ -789,8 +781,6 @@
 
       return valid;
     }
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Navigation
@@ -818,8 +808,6 @@
         renderWizard();
       }
     }
-  </script>
-  <script>
     /*
     |--------------------------------------------------------------------------
     | Event
@@ -946,19 +934,19 @@
 
     });
   </script>
-<script>
-  document.querySelectorAll('input[type="number"]').forEach(input => {
+  <script>
+    document.querySelectorAll('input[type="number"]').forEach(input => {
 
-    // Disable mouse wheel
-    input.addEventListener('wheel', e => e.preventDefault());
+      // Disable mouse wheel
+      input.addEventListener('wheel', e => e.preventDefault());
 
-    // Disable keyboard up/down
-    input.addEventListener('keydown', e => {
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        e.preventDefault();
-      }
+      // Disable keyboard up/down
+      input.addEventListener('keydown', e => {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+          e.preventDefault();
+        }
+      });
+
     });
-
-  });
-</script>
+  </script>
 @endpush
