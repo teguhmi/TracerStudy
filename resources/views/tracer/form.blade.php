@@ -1,174 +1,208 @@
 @extends('_include._template')
 
 @section('content')
+  @if($dpAlumni)
+    @php
+      $groupedSections = $sections->groupBy('section_id')->values();
+    @endphp
+    <form id="tracerForm" method="POST" action="{{ route('tracer.simpan') }}">
+      @csrf
+      <input type="hidden" name="aksi" id="aksi" value="submit">
 
-  @php
-    $groupedSections = $sections->groupBy('section_id')->values();
-  @endphp
+      <input type="hidden" name="nim" id="nim" value="@if($nimAlumni){{ $nimAlumni }}@endif">
 
-  <form id="tracerForm" method="POST" action="{{ route('tracer.simpan') }}">
-    @csrf
-    <input type="hidden" name="aksi" id="aksi" value="submit">
+      <div class="container-xxl flex-grow-1 container-p-y">
 
-    <div class="container-xxl flex-grow-1 container-p-y">
+        {{-- Progress --}}
+        <div class="card mb-4">
+          <div class="card-body">
 
-      {{-- Progress --}}
-      <div class="card mb-4">
-        <div class="card-body">
-
-          <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between">
                     <span id="stepLabel">
                         Langkah 1 dari {{ $groupedSections->count() }}
                     </span>
 
-            <span id="progressText">
+              <span id="progressText">
                         0%
                     </span>
-          </div>
+            </div>
 
-          <div class="progress mt-2">
-            <div
-              id="progressBar"
-              class="progress-bar"
-              style="width:0"
-            ></div>
-          </div>
+            <div class="progress mt-2">
+              <div
+                id="progressBar"
+                class="progress-bar"
+                style="width:0"
+              ></div>
+            </div>
 
+          </div>
         </div>
-      </div>
+        <div class="card mb-4 border-primary">
+          <div class="card-header">
+            <h5 class="mb-0">
+              Biodata Alumni
+            </h5>
+          </div>
 
-      @foreach($groupedSections as $sectionIndex => $sectionQuestions)
+          <div class="card-body">
+            <div class="row">
 
-        @php
-          $firstQuestion = $sectionQuestions->first();
-        @endphp
+              <div class="col-md-6">
+                <strong>NIM</strong><br>
+                {{ $dpAlumni->nim ?? '-' }}
+              </div>
 
-        <div
-          class="wizard-section"
-          id="section-{{ $sectionIndex }}"
-          data-kode="{{ $firstQuestion->section->kode }}"
-          data-rule='@json($firstQuestion->section->tampil_jika ?? [])'
-        >
+              <div class="col-md-6">
+                <strong>Nama</strong><br>
+                {{ $dpAlumni->nama_mahasiswa ?? '-' }}
+              </div>
 
-          {{-- Header Section --}}
-          <div class="card border-primary mb-4">
-            <div class="card-header bg-label-primary">
+              <div class="col-md-6 mt-3">
+                <strong>Program Studi</strong><br>
+                {{ $dpAlumni->nama_program_studi ?? '-' }}
+              </div>
 
-              <h5 class="mb-0 fw-bold">
-                {{ $firstQuestion->section->nama ?? 'Section' }}
-              </h5>
+              <div class="col-md-6 mt-3">
+                <strong>Tanggal Lulus</strong><br>
+
+                {{ \Carbon\Carbon::parse($dpAlumni->tanggal_sk)->translatedFormat('d F Y') }}
+              </div>
 
             </div>
           </div>
+        </div>
+        @foreach($groupedSections as $sectionIndex => $sectionQuestions)
 
-          {{-- Pertanyaan disini --}}
-          @foreach($sectionQuestions as $q)
+          @php
+            $firstQuestion = $sectionQuestions->first();
+          @endphp
 
-            {{-- HEADER GROUP --}}
-            @if(in_array($q->kode,['F17A','F17B','F2']))
+          <div
+            class="wizard-section"
+            id="section-{{ $sectionIndex }}"
+            data-kode="{{ $firstQuestion->section->kode }}"
+            data-rule='@json($firstQuestion->section->tampil_jika ?? [])'
+          >
 
-              <div class="card border-info mb-4">
-                <div class="card-header bg-label-info">
+            {{-- Header Section --}}
+            <div class="card border-primary mb-4">
+              <div class="card-header bg-label-primary">
 
-                  <h5 class="mb-0 fw-bold">
-                    [{{ $q->kode }}]
-                    {{ $q->pertanyaan }}
-                  </h5>
+                <h5 class="mb-0 fw-bold">
+                  {{ $firstQuestion->section->nama ?? 'Section' }}
+                </h5>
 
-                </div>
               </div>
+            </div>
 
-              @continue
+            {{-- Pertanyaan disini --}}
+            @foreach($sectionQuestions as $q)
 
-            @endif
+              {{-- HEADER GROUP --}}
+              @if(in_array($q->kode,['F17A','F17B','F2']))
 
-            {{--          <div class="card mb-3 shadow-sm">--}}
-            <div
-              class="card mb-3 shadow-sm pertanyaan"
-              id="card-{{ $q->kode }}"
-              data-kode="{{ $q->kode }}"
-              data-tampil-jika='@json($q->tampil_jika ?? [])'
-              @if(in_array($q->kode,['F5A1','F5A2']))
-                style="display:none"
+                <div class="card border-info mb-4">
+                  <div class="card-header bg-label-info">
+
+                    <h5 class="mb-0 fw-bold">
+                      [{{ $q->kode }}]
+                      {{ $q->pertanyaan }}
+                    </h5>
+
+                  </div>
+                </div>
+
+                @continue
+
               @endif
-            >
-              <div class="card-body">
 
-                <div class="mb-3">
+              {{--          <div class="card mb-3 shadow-sm">--}}
+              <div
+                class="card mb-3 shadow-sm pertanyaan"
+                id="card-{{ $q->kode }}"
+                data-kode="{{ $q->kode }}"
+                data-tampil-jika='@json($q->tampil_jika ?? [])'
+                @if(in_array($q->kode,['F5A1','F5A2']))
+                  style="display:none"
+                @endif
+              >
+                <div class="card-body">
+
+                  <div class="mb-3">
 
                             <span class="badge bg-label-primary">
                                 {{ $q->kode }}
                             </span>
 
-                  <h6 class="mt-2 mb-0">
-                    {{ $q->pertanyaan }}
+                    <h6 class="mt-2 mb-0">
+                      {{ $q->pertanyaan }}
 
-                    @if($q->wajib)
-                      <span class="text-danger">*</span>
-                    @endif
-                  </h6>
+                      @if($q->wajib)
+                        <span class="text-danger">*</span>
+                      @endif
+                    </h6>
 
-                </div>
+                  </div>
 
-                {{-- TEXT --}}
-                @if($q->jenis == 'text')
+                  {{-- TEXT --}}
+                  @if($q->jenis == 'text')
 
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="jawaban[{{ $q->kode }}]"
-                    placeholder="{{ $q->placeholder }}"
-                  >
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="jawaban[{{ $q->kode }}]"
+                      placeholder="{{ $q->placeholder }}"
+                    >
 
-                  {{-- TEXTAREA --}}
-                @elseif($q->jenis == 'textarea')
+                    {{-- TEXTAREA --}}
+                  @elseif($q->jenis == 'textarea')
 
-                  <textarea
-                    class="form-control"
-                    rows="3"
-                    name="jawaban[{{ $q->kode }}]"
-                    placeholder="{{ $q->placeholder }}"
-                  ></textarea>
+                    <textarea
+                      class="form-control"
+                      rows="3"
+                      name="jawaban[{{ $q->kode }}]"
+                      placeholder="{{ $q->placeholder }}"
+                    ></textarea>
 
-                  {{-- NUMBER --}}
-                @elseif($q->jenis == 'number')
+                    {{-- NUMBER --}}
+                  @elseif($q->jenis == 'number')
 
-                  <input
-                    type="number"
-                    class="form-control"
-                    name="jawaban[{{ $q->kode }}]"
-                  >
+                    <input
+                      type="number"
+                      class="form-control"
+                      name="jawaban[{{ $q->kode }}]"
+                    >
 
-                  {{-- DATE --}}
-                @elseif($q->jenis == 'date')
+                    {{-- DATE --}}
+                  @elseif($q->jenis == 'date')
 
-                  <input
-                    type="date"
-                    class="form-control"
-                    name="jawaban[{{ $q->kode }}]"
-                  >
+                    <input
+                      type="date"
+                      class="form-control"
+                      name="jawaban[{{ $q->kode }}]"
+                    >
 
-                  {{-- RADIO --}}
-                @elseif($q->jenis == 'radio')
+                    {{-- RADIO --}}
+                  @elseif($q->jenis == 'radio')
 
-                  <div class="row">
+                    <div class="row">
 
-                    @foreach($q->opsi as $opsi)
+                      @foreach($q->opsi as $opsi)
 
-                      <div class="col-lg-6 col-md-6 col-12 mb-2">
+                        <div class="col-lg-6 col-md-6 col-12 mb-2">
 
-                        <label class="option-card">
-                          <input
-                            type="radio"
-                            class="form-check-input me-2 trigger-conditional"
-                            name="jawaban[{{ $q->kode }}]"
-                            value="{{ $opsi->nilai }}"
-                            {{ $q->wajib ? 'required' : '' }}
-                            data-required="{{ $q->wajib ? 1 : 0 }}"
-                          >
+                          <label class="option-card">
+                            <input
+                              type="radio"
+                              class="form-check-input me-2 trigger-conditional"
+                              name="jawaban[{{ $q->kode }}]"
+                              value="{{ $opsi->nilai }}"
+                              {{ $q->wajib ? 'required' : '' }}
+                              data-required="{{ $q->wajib ? 1 : 0 }}"
+                            >
 
 
-                          <span>
+                            <span>
                                                 <strong>
                                                     {{ $opsi->nilai }}
                                                 </strong>
@@ -176,153 +210,154 @@
                                                 {{ $opsi->label }}
                                             </span>
 
-                        </label>
+                          </label>
 
-                      </div>
+                        </div>
 
-                    @endforeach
+                      @endforeach
 
-                  </div>
+                    </div>
 
-                  {{-- CHECKBOX --}}
-                @elseif($q->jenis == 'checkbox')
+                    {{-- CHECKBOX --}}
+                  @elseif($q->jenis == 'checkbox')
 
-                  <div class="row">
+                    <div class="row">
 
-                    @foreach($q->opsi as $opsi)
+                      @foreach($q->opsi as $opsi)
 
-                      <div class="col-lg-6 col-md-6 col-12 mb-2">
+                        <div class="col-lg-6 col-md-6 col-12 mb-2">
 
-                        <label class="option-card">
+                          <label class="option-card">
 
-                          <input
-                            type="checkbox"
-                            class="form-check-input me-2"
-                            name="jawaban[{{ $q->kode }}][]"
-                            value="{{ $opsi->nilai }}"
-                          >
+                            <input
+                              type="checkbox"
+                              class="form-check-input me-2"
+                              name="jawaban[{{ $q->kode }}][]"
+                              value="{{ $opsi->nilai }}"
+                            >
 
-                          <span>
+                            <span>
 
                                                 @if(str_starts_with($opsi->nilai,'F'))
-                              <strong>[{{ $opsi->nilai }}]</strong>
-                            @endif
+                                <strong>[{{ $opsi->nilai }}]</strong>
+                              @endif
 
-                            {{ $opsi->label }}
+                              {{ $opsi->label }}
 
                                             </span>
 
-                        </label>
+                          </label>
 
-                      </div>
+                        </div>
 
-                    @endforeach
+                      @endforeach
 
-                  </div>
+                    </div>
 
-                  {{-- SELECT --}}
-                @elseif($q->jenis == 'select')
+                    {{-- SELECT --}}
+                  @elseif($q->jenis == 'select')
 
-                  @php
-                    $name = "jawaban[$q->kode]";
-                  @endphp
+                    @php
+                      $name = "jawaban[$q->kode]";
+                    @endphp
 
-                  @switch($q->kode)
+                    @switch($q->kode)
 
-                    @case('F510')
-                      <select class="form-select" id="negara_id" name="{{ $name }}">
-                        <option value="">Pilih Negara</option>
-                        @foreach($negaras as $negara)
-                          <option value="{{ $negara->kode }}">
-                            {{ $negara->nama }}
-                          </option>
-                        @endforeach
-                      </select>
-                      @break
+                      @case('F510')
+                        <select class="form-select" id="negara_id" name="{{ $name }}">
+                          <option value="">Pilih Negara</option>
+                          @foreach($negaras as $negara)
+                            <option value="{{ $negara->kode }}">
+                              {{ $negara->nama }}
+                            </option>
+                          @endforeach
+                        </select>
+                        @break
 
-                    @case('F5A1')
-                      <select id="f5a1" name="{{ $name }}" class="form-select">
-                        <option value="">Pilih Provinsi</option>
+                      @case('F5A1')
+                        <select id="f5a1" name="{{ $name }}" class="form-select">
+                          <option value="">Pilih Provinsi</option>
 
-                        @foreach($provinsis as $provinsi)
-                          <option value="{{ $provinsi->kode }}">
-                            {{ $provinsi->nama }}
-                          </option>
-                        @endforeach
-                      </select>
+                          @foreach($provinsis as $provinsi)
+                            <option value="{{ $provinsi->kode }}">
+                              {{ $provinsi->nama }}
+                            </option>
+                          @endforeach
+                        </select>
 
 
-                      @break
+                        @break
 
-                    @case('F5A2')
-                      <select class="form-select" id="f5a2" name="{{ $name }}">
+                      @case('F5A2')
+                        <select class="form-select" id="f5a2" name="{{ $name }}">
 
-                      </select>
-                      @break
+                        </select>
+                        @break
 
-                    @default
-                      <select class="form-select" name="{{ $name }}">
-                        <option value="">Pilih</option>
+                      @default
+                        <select class="form-select" name="{{ $name }}">
+                          <option value="">Pilih</option>
 
-                        @foreach($q->opsi as $opsi)
-                          <option value="{{ $opsi->nilai }}">
-                            {{ $opsi->label }}
-                          </option>
-                        @endforeach
-                      </select>
-                  @endswitch
+                          @foreach($q->opsi as $opsi)
+                            <option value="{{ $opsi->nilai }}">
+                              {{ $opsi->label }}
+                            </option>
+                          @endforeach
+                        </select>
+                    @endswitch
 
-                @endif
+                  @endif
 
+
+                </div>
 
               </div>
 
-            </div>
+            @endforeach
 
-          @endforeach
+          </div>
 
-        </div>
-
-      @endforeach
+        @endforeach
 
 
-      {{-- NAVIGATION --}}
-      <div class="sticky-bottom bg-white py-3 border-top">
+        {{-- NAVIGATION --}}
+        <div class="sticky-bottom bg-white py-3 border-top">
 
-        <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between">
 
-          <button
-            type="button"
-            id="btnPrev"
-            class="btn btn-outline-secondary"
-            onclick="prevSection()"
-          >
-            ← Previous
-          </button>
+            <button
+              type="button"
+              id="btnPrev"
+              class="btn btn-outline-secondary"
+              onclick="prevSection()"
+            >
+              ← Previous
+            </button>
 
-          <button
-            type="button"
-            id="btnNext"
-            class="btn btn-primary"
-            onclick="nextSection()"
-          >
-            Next →
-          </button>
+            <button
+              type="button"
+              id="btnNext"
+              class="btn btn-primary"
+              onclick="nextSection()"
+            >
+              Next →
+            </button>
 
-          <button
-            type="submit"
-            id="btnSubmit"
-            class="btn btn-success d-none"
-          >
-            Simpan Jawaban
-          </button>
+            <button
+              type="submit"
+              id="btnSubmit"
+              class="btn btn-success d-none"
+            >
+              Simpan Jawaban
+            </button>
+
+          </div>
 
         </div>
 
       </div>
-
-    </div>
-  </form>
+    </form>
+  @endif
 @endsection
 
 @push('css')
@@ -911,5 +946,19 @@
 
     });
   </script>
+<script>
+  document.querySelectorAll('input[type="number"]').forEach(input => {
 
+    // Disable mouse wheel
+    input.addEventListener('wheel', e => e.preventDefault());
+
+    // Disable keyboard up/down
+    input.addEventListener('keydown', e => {
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+      }
+    });
+
+  });
+</script>
 @endpush

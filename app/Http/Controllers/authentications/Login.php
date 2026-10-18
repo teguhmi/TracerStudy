@@ -13,15 +13,17 @@ class Login extends Controller
 {
   public function index()
   {
-    // User Laravel sudah login
-    if (Auth::check()) {
-      return redirect()->route('home');
-    }
 
-    // Alumni sudah login
-    if (session('alumni_authenticated')) {
-      return redirect()->route('alumni.tracer-study');
-    }
+
+    // User Laravel sudah login
+//    if (Auth::check()) {
+//      return redirect()->route('home');
+//    }
+//
+//    // Alumni sudah login
+//    if (session('alumni_authenticated')) {
+//      return redirect()->route('home');
+//    }
 
     return view('auth.auth-login');
   }
@@ -91,8 +93,6 @@ class Login extends Controller
       'Y-m-d',
       $request->tanggal_lahir
     )->format('d-m-Y');
-
-
     /*
     |--------------------------------------------------------------------------
     | Cari data alumni
@@ -126,21 +126,18 @@ class Login extends Controller
     | Session Alumni
     |--------------------------------------------------------------------------
     */
-
-    $request->session()->put([
+    session([
       'login_type' => 'alumni',
-
       'alumni_authenticated' => true,
-
       'nim' => $alumni->nim,
-
-      'nama_mahasiswa' =>
-        $alumni->nama_mahasiswa,
+      'nama_mahasiswa' => $alumni->nama_mahasiswa,
+      'tanggal_lulus'=> $alumni->tanggal_sk,
+      'alumni' => $alumni,
     ]);
 
-return redirect()->route('home');
-//    return redirect()
-//      ->intended(route('home'));
+
+    return redirect()
+      ->intended(route('home'));
   }
 
 
@@ -234,7 +231,6 @@ return redirect()->route('home');
       Auth::logout();
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Hapus session
@@ -244,9 +240,7 @@ return redirect()->route('home');
     $request->session()->invalidate();
 
     $request->session()->regenerateToken();
-
-
     return redirect()
-      ->route('auth-login');
+      ->route('home');
   }
 }

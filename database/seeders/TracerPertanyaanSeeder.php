@@ -62,6 +62,9 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Di mana lokasi tempat Anda bekerja?',
         'jenis' => 'select',
         'wajib' => true,
+        'tampil_jika' => [
+          'F8' => ['1', '3']
+        ],
         'urutan' => 3,
       ],
 

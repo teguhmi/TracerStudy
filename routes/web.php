@@ -14,9 +14,9 @@ Route::get('/refreshCaptcha', [HomeController::class, 'refreshCaptcha'])->name('
 //Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
 
 // authentication
-Route::get('/auth/login', [Login::class, 'index'])->name('login');
+Route::get('/auth/login', [Login::class, 'index'])->name('login-alumni');
 Route::post('/auth/login', [Login::class, 'login'])->name('auth-login-process');
-Route::post('/auth/logout', [Login::class, 'logout'])->name('auth-logout');
+Route::get('/auth/logout', [Login::class, 'logout'])->name('auth-logout');
 
 
 //Route::get('/auth/register', [RegisterBasic::class, 'index'])->name('auth-register');
@@ -25,30 +25,30 @@ Route::post('/auth/logout', [Login::class, 'logout'])->name('auth-logout');
 Route::get('/', [HomeController::class, 'index'])
   ->name('home');
 
-Route::middleware(['auth'])->prefix('alumni')->group(function () {
-
-  Route::get('/dashboard', function () {
-    return view('alumni.dashboard');
-  })->name('alumni.dashboard');
-
-  Route::get('/profil', function () {
-    return view('alumni.profil');
-  })->name('alumni.profil');
-
-  Route::get('/tracer-study', function () {
-    return view('alumni.tracer-study');
-  })->name('alumni.tracer-study');
-
-  Route::get('/survey', function () {
-    return view('alumni.survey');
-  })->name('alumni.survey');
-
-  Route::get('/dana-abadi', function () {
-    return view('alumni.dana-abadi');
-  })->name('alumni.dana-abadi');
-
-
-});
+//Route::middleware(['auth'])->prefix('alumni')->group(function () {
+//
+//  Route::get('/dashboard', function () {
+//    return view('alumni.dashboard');
+//  })->name('alumni.dashboard');
+//
+//  Route::get('/profil', function () {
+//    return view('alumni.profil');
+//  })->name('alumni.profil');
+//
+//  Route::get('/tracer-study', function () {
+//    return view('alumni.tracer-study');
+//  })->name('alumni.tracer-study');
+//
+//  Route::get('/survey', function () {
+//    return view('alumni.survey');
+//  })->name('alumni.survey');
+//
+//  Route::get('/dana-abadi', function () {
+//    return view('alumni.dana-abadi');
+//  })->name('alumni.dana-abadi');
+//
+//
+//});
 
 
 

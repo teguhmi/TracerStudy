@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\query\QueryAKSIModel;
 use App\Models\tracer\TracerJawaban;
 use App\Models\tracer\TracerJawabanDetail;
 use App\Models\tracer\TracerKota;
@@ -11,12 +12,18 @@ use App\Models\tracer\TracerPertanyaan;
 use App\Models\tracer\TracerProvinsi;
 use App\Models\tracer\TracerResponden;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class TracerController extends Controller
 {
   public function index()
   {
+    if (!session('alumni_authenticated')) {
+      return redirect()->route('login-alumni');
+    }
+    $dpAlumni = QueryAKSIModel::getYudisiumByNim(session('nim'));
+
     $periode = TracerPeriode::where('aktif', true)->first();
     $negaras = TracerNegara::orderBy('nama')->get();
     $provinsis = TracerProvinsi::orderBy('nama')->get();
@@ -40,39 +47,38 @@ class TracerController extends Controller
       ->where('tracer_pertanyaans.aktif', true)
       ->orderBy('tracer_pertanyaans.urutan')
       ->get();
-
-    return view('tracer.form', compact('periode', 'sections', 'negaras', 'provinsis', 'kotas'));
+    if ($dpAlumni) {
+      $nimAlumni = Crypt::encrypt($dpAlumni->nim);
+    }
+    return view('tracer.form', compact('periode', 'sections', 'negaras', 'provinsis', 'kotas', 'dpAlumni', 'nimAlumni'));
   }
 
 
   public function store(Request $request)
   {
-
+    $nim=decrypt($request->nim);
+    $dpAlumni = QueryAKSIModel::getYudisiumByNim($nim);
     DB::beginTransaction();
-//    dd($request->input('jawaban'));
+
+    if (!$dpAlumni) {
+      return redirect()->route('home');
+    }
     try {
 
-      $nim = '017290654';
-      $nama = 'WIWIT KARYANTI';
-
-      // $nim  = auth()->user()->nim;
-      // $nama = auth()->user()->nama;
-
       $aksi = $request->input('aksi', 'draft');
-
       $responden = TracerResponden::firstOrCreate(
         [
-          'nim' => $nim,
+          'nim' => $dpAlumni->nim,
           'periode_id' => 1,
         ],
         [
-          'nama' => $nama,
-          'tanggal_lulus' => '2003-12-01',
+          'nama' => $dpAlumni->nama_mahasiswa,
+          'tanggal_lulus' => $dpAlumni->tanggal_sk,
           'tanggal_mulai' => now(),
+          'tanggal_submit' => now(),
           'status' => 'draft',
         ]
       );
-
       if (!$responden) {
         throw new \Exception('Data responden tidak ditemukan');
       }
@@ -81,14 +87,12 @@ class TracerController extends Controller
         ->orderBy('urutan')
         ->get();
       $no = 0;
-
       foreach ($pertanyaans as $pertanyaan) {
 
         $nilai = $request->input(
           'jawaban.' . $pertanyaan->kode,
           null
         );
-
         /*
         |--------------------------------------------------------------------------
         | Evaluasi Rule tampil_jika
@@ -192,7 +196,6 @@ class TracerController extends Controller
         if (!$tampil) {
           $nilai = null;
         }
-
         /*
         |--------------------------------------------------------------------------
         | Validasi Wajib
@@ -266,10 +269,10 @@ class TracerController extends Controller
 
       DB::commit();
 
-
-      return view('tracer.tracer_submit', [
-        'responden' => $responden,
-      ]);
+      return view('tracer.tracer_submit');
+//      return view('tracer.tracer_submit', [
+//        'responden' => $responden,
+//      ]);
 
     } catch (\Exception $e) {
       DB::rollBack();

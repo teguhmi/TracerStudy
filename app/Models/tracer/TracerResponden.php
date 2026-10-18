@@ -17,7 +17,7 @@ class TracerResponden extends Model
     'status',
     'tanggal_lulus',
     'tanggal_mulai',
-//    'tanggal_submit',
+    'tanggal_submit',
     'status',
   ];
 
