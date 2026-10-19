@@ -183,11 +183,75 @@
                     {{-- NUMBER --}}
                   @elseif($q->jenis == 'number')
 
-                    <input
-                      type="number"
-                      class="form-control"
-                      name="jawaban[{{ $q->kode }}]"
-                    >
+                    @if($q->kode == 'F505')
+
+                      <div class="row g-3">
+
+                        <div class="col-md-4">
+                          <label class="form-label">
+                            Rentang Pendapatan
+                          </label>
+
+                          <select
+                            id="range_F505"
+                            class="form-select"
+                          >
+                            <option value="">Pilih Rentang</option>
+                            <option data-min="0" data-max="999999">< Rp 1 Juta</option>
+                            <option data-min="1000000" data-max="2999999">Rp 1 - 3 Juta</option>
+                            <option data-min="3000000" data-max="4999999">Rp 3 - 5 Juta</option>
+                            <option data-min="5000000" data-max="9999999">Rp 5 - 10 Juta</option>
+                            <option data-min="10000000" data-max="19999999">Rp 10 - 20 Juta</option>
+                            <option data-min="20000000" data-max="49999999">Rp 20 - 50 Juta</option>
+                            <option data-min="50000000" data-max="999999999">> Rp 50 Juta</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-8">
+                          <label class="form-label">
+                            Pendapatan Aktual (Rp)
+                          </label>
+
+                          <input
+                            type="text"
+                            class="form-control rupiah-display"
+                            data-target="{{ $q->kode }}"
+                            placeholder="Contoh: 7.500.000">
+
+                          <input
+                            type="hidden"
+                            id="value_{{ $q->kode }}"
+                            name="jawaban[{{ $q->kode }}]">
+                          <small
+                            id="preview_F505"
+                            class="text-muted mt-1 d-block"
+                          ></small>
+                          <small
+                            id="warning_F505"
+                            class="text-danger mt-1 d-none">
+                            Rentang pendapatan tidak sesuai dengan pendapatan aktual.
+                          </small>
+                        </div>
+
+                      </div>
+
+                    @else
+
+                      <input
+                        type="number"
+                        class="form-control"
+                        name="jawaban[{{ $q->kode }}]"
+                      >
+
+                    @endif
+
+                    {{--                  @elseif($q->jenis == 'number')--}}
+
+                    {{--                    <input--}}
+                    {{--                      type="number"--}}
+                    {{--                      class="form-control"--}}
+                    {{--                      name="jawaban[{{ $q->kode }}]"--}}
+                    {{--                    >--}}
 
                     {{-- DATE --}}
                   @elseif($q->jenis == 'date')
@@ -838,7 +902,7 @@
         const f5a2Card =
           document.querySelector('[data-kode="F5A2"]');
 
-        if (this.value == 'ID') {
+        if (this.value === 'ID') {
 
           if (f5a1Card)
             f5a1Card.style.display = '';
@@ -922,17 +986,17 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-
-      toggleIndonesiaFields();
-
-      const negara = document.getElementById('negara_id');
-
-      if (negara) {
-        negara.addEventListener('change', toggleIndonesiaFields);
-      }
-
-    });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //
+    //   toggleIndonesiaFields();
+    //
+    //   const negara = document.getElementById('negara_id');
+    //
+    //   if (negara) {
+    //     negara.addEventListener('change', toggleIndonesiaFields);
+    //   }
+    //
+    // });
   </script>
   <script>
     document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -948,5 +1012,81 @@
       });
 
     });
+  </script>
+  <script>
+    function checkIncomeF505() {
+
+      const rangeSelect = document.getElementById('range_F505');
+      const actualInput = document.getElementById('value_F505');
+      const warning = document.getElementById('warning_F505');
+
+      if (!rangeSelect || !actualInput) {
+        return true;
+      }
+
+      const selected = rangeSelect.options[rangeSelect.selectedIndex];
+
+      const min = parseInt(selected.dataset.min || 0);
+      const max = parseInt(selected.dataset.max || 999999999);
+
+      const actual = parseInt(actualInput.value || 0);
+
+      if (actual === 0 || rangeSelect.selectedIndex === 0) {
+        warning?.classList.add('d-none');
+        return true;
+      }
+
+      const valid = actual >= min && actual <= max;
+
+      if (!valid) {
+        warning?.classList.remove('d-none');
+      } else {
+        warning?.classList.add('d-none');
+      }
+
+      return valid;
+    }
+
+    document.querySelectorAll('.rupiah-display').forEach(input => {
+
+      input.addEventListener('input', function() {
+
+        let angka = this.value.replace(/\D/g, '');
+
+        document.getElementById(
+          'value_' + this.dataset.target
+        ).value = angka;
+
+        this.value = angka
+          ? new Intl.NumberFormat('id-ID').format(angka)
+          : '';
+
+        if (this.dataset.target === 'F505') {
+          checkIncomeF505();
+        }
+      });
+
+    });
+
+    document.getElementById('range_F505')
+      ?.addEventListener('change', checkIncomeF505);
+
+    document.querySelector('form')
+      ?.addEventListener('submit', function(e) {
+
+        if (!checkIncomeF505()) {
+
+          e.preventDefault();
+
+          Swal.fire({
+            icon: 'warning',
+            title: 'Pendapatan Tidak Sesuai',
+            text: 'Rentang pendapatan yang dipilih tidak sesuai dengan pendapatan aktual.',
+            confirmButtonText: 'Perbaiki'
+          });
+
+          return false;
+        }
+      });
   </script>
 @endpush

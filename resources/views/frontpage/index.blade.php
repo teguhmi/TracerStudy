@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Alumni Universitas Terbuka</title>
-
+  <link rel="icon" type="image/png" href="{{ asset('images/logo-ut-1.jpg') }}">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -20,7 +20,7 @@
           }
         }
       }
-    }
+    };
   </script>
 
   <link rel="stylesheet"
@@ -28,86 +28,163 @@
 
   <style>
     body {
-      background:#f8fafc;
+      background: #f8fafc;
     }
 
-    .hero-bg{
-      background:
-        linear-gradient(
-          135deg,
-          #002B5C,
-          #005BAC
-        );
+    .hero-bg {
+      background: linear-gradient(
+        135deg,
+        #002B5C,
+        #005BAC
+      );
     }
 
-    .service-card{
-      transition:.3s;
+    .service-card {
+      transition: .3s;
     }
 
-    .service-card:hover{
-      transform:translateY(-8px);
+    .service-card:hover {
+      transform: translateY(-8px);
     }
   </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="fixed top-0 left-0 right-0 bg-white shadow z-50">
-
+<!-- Navbar -->
+<header
+  id="navbar"
+  class="fixed top-4 left-0 right-0 z-50 transition-all duration-300"
+>
   <div class="max-w-7xl mx-auto px-4">
 
-    <div class="h-20 flex items-center justify-between">
+    <nav
+      id="navbarContainer"
+      class="bg-white/90 backdrop-blur-xl rounded-2xl shadow-lg border border-slate-200 transition-all duration-300"
+    >
+      <div class="flex items-center justify-between px-5 lg:px-8 h-20">
 
-      <a href="#"
-         class="flex items-center gap-3">
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
 
-        <img src="{{asset('images/logo-ut.png')}}"
-             alt="UT"
-             class="h-12">
+          <img
+            src="{{ asset('images/logo-ut.png') }}"
+            class="w-12 h-12 object-contain"
+            alt="UT"
+          >
 
-        <div>
-          <h1 class="font-bold text-ut-navy">
-            Portal Alumni UT
-          </h1>
+          <div>
+            <h1 class="font-bold text-xl text-slate-800">
+              Portal Alumni UT
+            </h1>
 
-          <small class="text-slate-500">
-            Universitas Terbuka
-          </small>
+            <p class="text-sm text-slate-500">
+              Universitas Terbuka
+            </p>
+          </div>
         </div>
 
-      </a>
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex items-center gap-10">
 
-      <div class="hidden lg:flex items-center gap-8">
+          <a href="#layanan"
+             class="font-medium text-slate-700 hover:text-blue-700 transition">
+            Layanan
+          </a>
 
-        <a href="#layanan">Layanan</a>
-        <a href="#tracer">Tracer Study</a>
-        <a href="#karier">Karier</a>
-        <a href="#berita">Berita</a>
+          <a href="#tracer"
+             class="font-medium text-slate-700 hover:text-blue-700 transition">
+            Tracer Study
+          </a>
+
+          <a href="#karier"
+             class="font-medium text-slate-700 hover:text-blue-700 transition">
+            Karier
+          </a>
+
+          <a href="#berita"
+             class="font-medium text-slate-700 hover:text-blue-700 transition">
+            Berita
+          </a>
+
+        </div>
+
+        <!-- Right Menu -->
+        <div class="flex items-center gap-3">
+
+          <a
+            href=""
+            class="hidden lg:inline-flex items-center px-6 py-3 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-500 transition"
+          >
+            Login
+          </a>
+
+          <!-- Hamburger -->
+          <button
+            id="mobileBtn"
+            class="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl hover:bg-slate-100"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-7 h-7"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+        </div>
 
       </div>
 
-      @if(session('alumni_authenticated'))
+      <!-- Mobile Menu -->
+      <div
+        id="mobileMenu"
+        class="hidden lg:hidden border-t border-slate-100"
+      >
+        <div class="flex flex-col p-5 space-y-4">
 
-          <a href="{{ route('auth-logout') }}"
-             class="bg-ut-yellow px-5 py-3 rounded-xl font-semibold">
-            Logout
+          <a href="#layanan"
+             class="font-medium text-slate-700">
+            Layanan
           </a>
 
-      @else
+          <a href="#tracer"
+             class="font-medium text-slate-700">
+            Tracer Study
+          </a>
 
-        <a href="{{ route('login-alumni') }}"
-           class="bg-ut-yellow px-5 py-3 rounded-xl font-semibold">
-          Login Alumni
-        </a>
+          <a href="#karier"
+             class="font-medium text-slate-700">
+            Karier
+          </a>
 
-      @endif
+          <a href="#berita"
+             class="font-medium text-slate-700">
+            Berita
+          </a>
 
-    </div>
+          <a
+            href=""
+            class="bg-amber-400 text-center py-3 rounded-xl font-semibold"
+          >
+            Login Alumni
+          </a>
+
+        </div>
+      </div>
+
+    </nav>
 
   </div>
-
-</nav>
+</header>
 
 <!-- HERO -->
 @if($hero)
@@ -188,7 +265,7 @@
 
         <a href="{{ $layanan->url }}"
            @if($layanan->is_external)
-             target="_blank"
+             target="_blank" rel="noopener noreferrer"
            @endif
            class="{{$layanan->class}}">
 
@@ -226,66 +303,65 @@
 </section>
 
 
-
 <!-- TRACER -->
 <section id="tracer" class="py-24">
 
-{{--  <div class="max-w-7xl mx-auto px-4">--}}
+  {{--  <div class="max-w-7xl mx-auto px-4">--}}
 
-{{--    <section id="tracer" class="py-20">--}}
-      <div class="max-w-7xl mx-auto px-4">
+  {{--    <section id="tracer" class="py-20">--}}
+  <div class="max-w-7xl mx-auto px-4">
 
-        <div class="bg-gradient-to-r from-ut-navy to-ut-blue rounded-3xl overflow-hidden shadow-2xl">
+    <div class="bg-gradient-to-r from-ut-navy to-ut-blue rounded-3xl overflow-hidden shadow-2xl">
 
-          <div class="grid lg:grid-cols-2 items-center">
+      <div class="grid lg:grid-cols-2 items-center">
 
-            <!-- Content -->
-            <div class="p-8 lg:p-12 text-white">
+        <!-- Content -->
+        <div class="p-8 lg:p-12 text-white">
 
                     <span class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 text-sm font-semibold">
                         📊 Tracer Study Alumni
                     </span>
 
-              <h2 class="mt-5 text-3xl lg:text-5xl font-extrabold leading-tight">
-                Suara Alumni,
-                Masa Depan UT
-              </h2>
+          <h2 class="mt-5 text-3xl lg:text-5xl font-extrabold leading-tight">
+            Suara Alumni,
+            Masa Depan UT
+          </h2>
 
-              <p class="mt-5 text-blue-100 leading-relaxed text-lg">
-                Partisipasi Alumni membantu Universitas Terbuka
-                meningkatkan kualitas layanan, kurikulum,
-                dan relevansi lulusan dengan dunia kerja.
-              </p>
+          <p class="mt-5 text-blue-100 leading-relaxed text-lg">
+            Partisipasi Alumni membantu Universitas Terbuka
+            meningkatkan kualitas layanan, kurikulum,
+            dan relevansi lulusan dengan dunia kerja.
+          </p>
 
-              <div class="mt-8 flex flex-wrap gap-4">
+          <div class="mt-8 flex flex-wrap gap-4">
 
-                <a href="{{route('tracer.index')}}"
-                   target="_blank"
-                   class="px-8 py-4 bg-ut-yellow text-ut-navy rounded-xl font-bold hover:scale-105 transition">
-                  Isi Tracer Study
-                </a>
+            <a href="{{route('tracer.index')}}"
+               target="_blank" rel="noopener noreferrer"
+               class="px-8 py-4 bg-ut-yellow text-ut-navy rounded-xl font-bold hover:scale-105 transition">
+              Isi Tracer Study
+            </a>
 
-                <div class="flex items-center text-sm text-blue-100">
-                  🎓 Untuk seluruh Alumni UT
-                </div>
-
-              </div>
-
-            </div>
-
-            <!-- Image -->
-            <div class="h-full">
-              <img src="{{ asset('images/tracer1.png') }}"
-                   alt="Tracer Study Alumni UT"
-                   class="w-full h-full object-cover">
+            <div class="flex items-center text-sm text-blue-100">
+              🎓 Untuk seluruh Alumni UT
             </div>
 
           </div>
 
         </div>
 
+        <!-- Image -->
+        <div class="h-full">
+          <img src="{{ asset('images/tracer1.png') }}"
+               alt="Tracer Study Alumni UT"
+               class="w-full h-full object-cover">
+        </div>
+
       </div>
-    </section>
+
+    </div>
+
+  </div>
+</section>
 
 <!-- BERITA -->
 <section id="berita" class="py-20 bg-white">
@@ -412,7 +488,7 @@
 
           <li>
             <a href="https://myut-alumni.ut.ac.id"
-               target="_blank"
+               target="_blank" rel="noopener noreferrer"
                class="hover:text-yellow-300 transition">
               Profil Alumni
             </a>
@@ -420,7 +496,7 @@
 
           <li>
             <a href="https://pusatkarier.ut.ac.id"
-               target="_blank"
+               target="_blank" rel="noopener noreferrer"
                class="hover:text-yellow-300 transition">
               Pusat Karier
             </a>
@@ -428,7 +504,7 @@
 
           <li>
             <a href="https://aksi.ut.ac.id"
-               target="_blank"
+               target="_blank" rel="noopener noreferrer"
                class="hover:text-yellow-300 transition">
               Surat Keterangan & Legalisir
             </a>
@@ -446,7 +522,7 @@
         <div class="space-y-4">
 
           <a href="https://wa.me/{{$setting->whatsapp}}"
-             target="_blank"
+             target="_blank" rel="noopener noreferrer"
              class="flex items-center gap-3 p-4 rounded-xl bg-green-500 hover:bg-green-600 transition">
 
             <i class="fab fa-whatsapp text-2xl"></i>
@@ -488,19 +564,19 @@
         <div class="flex flex-wrap gap-3">
 
           <a href="{{$setting->instagram}}"
-             target="_blank"
+             target="_blank" rel="noopener noreferrer"
              class="w-12 h-12 rounded-xl bg-pink-600 flex items-center justify-center hover:scale-110 transition">
             <i class="fab fa-instagram"></i>
           </a>
 
           <a href="{{$setting->facebook}}"
-             target="_blank"
+             target="_blank" rel="noopener noreferrer"
              class="w-12 h-12 rounded-xl bg-sky-700 flex items-center justify-center hover:scale-110 transition">
             <i class="fab fa-linkedin-in"></i>
           </a>
 
           <a href="{{$setting->youtube}}"
-             target="_blank"
+             target="_blank" rel="noopener noreferrer"
              class="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center hover:scale-110 transition">
             <i class="fab fa-youtube"></i>
           </a>
