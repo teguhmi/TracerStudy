@@ -579,7 +579,8 @@ wawancara? (Perusahaan/instansi/institusi)',
         'jenis' => 'text',
         'wajib' => true,
         'tampil_jika' => [
-          'F1613' => ['1']
+          'F16' => ['F1613']
+
         ],
         'urutan' => 12,
       ],

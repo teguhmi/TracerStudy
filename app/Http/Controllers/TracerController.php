@@ -47,6 +47,8 @@ class TracerController extends Controller
       ->where('tracer_pertanyaans.aktif', true)
       ->orderBy('tracer_pertanyaans.urutan')
       ->get();
+
+
     if ($dpAlumni) {
       $nimAlumni = Crypt::encrypt($dpAlumni->nim);
     }

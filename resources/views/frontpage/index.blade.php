@@ -110,62 +110,62 @@
 </nav>
 
 <!-- HERO -->
-<section class="hero-bg pt-36 pb-24 text-white">
+@if($hero)
 
-  <div class="max-w-7xl mx-auto px-4">
+  <section class="hero-bg pt-36 pb-24 text-white">
+    <div class="max-w-7xl mx-auto px-4">
 
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
 
-      <div>
+        <div>
 
-                <span class="bg-white/10 px-4 py-2 rounded-full text-sm">
-                    UNIVERSITAS TERBUKA
-                </span>
+          @if($hero->badge)
+            <span class="bg-white/10 px-4 py-2 rounded-full text-sm">
+                        {{ $hero->badge }}
+                    </span>
+          @endif
 
-        <h1 class="text-5xl lg:text-6xl font-extrabold mt-6">
-          Terhubung Kembali
-          Dengan Almamater
-        </h1>
+          <h1 class="text-5xl lg:text-6xl font-extrabold mt-6">
+            {!! nl2br(e($hero->title)) !!}
+          </h1>
 
-        <p class="mt-6 text-lg text-blue-100">
-          Portal Alumni Universitas Terbuka untuk
-          tracer study, pembaruan data alumni,
-          pengembangan karier, dan jejaring alumni.
-        </p>
+          <p class="mt-4 text-2xl font-semibold text-ut-yellow italic">
+            {{ $hero->subtitle }}
+          </p>
 
-        <div class="mt-8 flex gap-4 flex-wrap">
+          <p class="mt-6 text-lg text-blue-100">
+            {{ $hero->description }}
+          </p>
 
-          <a href="{{route('tracer.index')}}"
-             class="bg-ut-yellow text-ut-navy px-8 py-4 rounded-xl font-bold">
-            Isi Tracer Study
-          </a>
+          @if($hero->button_url)
+            <div class="mt-8">
+              <a href="{{ $hero->button_url }}"
+                 class="bg-ut-yellow text-ut-navy px-8 py-4 rounded-xl font-bold">
+                {{ $hero->button_text }}
+              </a>
+            </div>
+          @endif
 
-{{--          <a href="{{route('tracer.index')}}"--}}
-{{--             class="border border-white px-8 py-4 rounded-xl">--}}
-{{--            Isi Tracer Study--}}
-{{--          </a>--}}
+        </div>
+
+        <div>
+
+          <img src="{{ asset($hero->image) }}"
+               alt="{{ $hero->title }}"
+               class="rounded-3xl shadow-2xl">
 
         </div>
 
       </div>
 
-      <div>
-
-        <img src="{{asset('images/frontpage-banner.png')}}"
-             alt="Alumni UT"
-             class="rounded-3xl shadow-2xl">
-
-      </div>
-
     </div>
+  </section>
 
-  </div>
-
-</section>
+@endif
 
 <!-- LAYANAN -->
 <section id="layanan" class="py-20 bg-gradient-to-b from-white to-slate-50">
-  <div class="max-w-7xl mx-auto px-4">
+  <div class="max-w-7xl mx-auto px-2">
 
     <div class="text-center mb-14">
             <span
@@ -182,141 +182,46 @@
         dalam satu portal yang terintegrasi.
       </p>
     </div>
-
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-      <!-- Profil Alumni -->
-      <a href="https://myut-alumni.ut.ac.id"
-         target="_blank"
-         class="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
+      @foreach($layanans as $layanan)
 
-        <div
-          class="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-5">
-          <i class="fas fa-user text-3xl text-ut-blue"></i>
-        </div>
+        <a href="{{ $layanan->url }}"
+           @if($layanan->is_external)
+             target="_blank"
+           @endif
+           class="{{$layanan->class}}">
 
-        <h3 class="font-bold text-xl mb-2">
-          Profil Alumni
-        </h3>
+          <div class="w-16 h-16 rounded-2xl bg-{{ $layanan->warna }}-100 flex items-center justify-center mb-5">
+            <i class="fas {{ $layanan->icon }} text-3xl text-{{ $layanan->warna }}-600"></i>
+          </div>
 
-        <p class="text-slate-500 text-sm">
-          Kelola profil, data diri, riwayat pendidikan, dan informasi alumni.
-        </p>
+          <h3 class="font-bold text-xl mb-2">
+            {{ $layanan->nama }}
+          </h3>
 
-        <div class="mt-4 text-ut-blue font-semibold">
-          Kunjungi →
-        </div>
-      </a>
+          @if($layanan->slug === 'dana-abadi-alumni')
+            <p class="{{$layanan->text}}">
+              {{ $layanan->deskripsi }}
+            </p>
+            <div class="mt-4 font-semibold">
+              Lihat Program →
+            </div>
+          @else
+            <p class="text-slate-500 text-sm">
+              {{ $layanan->deskripsi }}
+            </p>
+            <div class="mt-4 font-semibold text-{{ $layanan->warna }}-600">
+              Kunjungi →
+            </div>
+          @endif
 
-      <!-- Tracer Study -->
-      <a href="{{ route('tracer.index') }}"
-         class="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
+        </a>
 
-        <div
-          class="w-16 h-16 rounded-2xl bg-yellow-100 flex items-center justify-center mb-5">
-          <i class="fas fa-chart-line text-3xl text-ut-yellow"></i>
-        </div>
-
-        <h3 class="font-bold text-xl mb-2">
-          Tracer Study
-        </h3>
-
-        <p class="text-slate-500 text-sm">
-          Berpartisipasi dalam tracer study untuk meningkatkan kualitas lulusan UT.
-        </p>
-
-        <div class="mt-4 text-ut-yellow font-semibold">
-          Isi Sekarang →
-        </div>
-      </a>
-
-      <!-- Pusat Karier -->
-      <a href="https://pusatkarier.ut.ac.id"
-         target="_blank"
-         class="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
-
-        <div
-          class="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center mb-5">
-          <i class="fas fa-briefcase text-3xl text-green-600"></i>
-        </div>
-
-        <h3 class="font-bold text-xl mb-2">
-          Pusat Karier
-        </h3>
-
-        <p class="text-slate-500 text-sm">
-          Temukan informasi lowongan kerja, magang, dan pengembangan karier.
-        </p>
-
-        <div class="mt-4 text-green-600 font-semibold">
-          Jelajahi →
-        </div>
-      </a>
-
-      <!-- Komunitas -->
-      <div
-        class="bg-white rounded-3xl p-8 shadow-lg border border-slate-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-
-        <div
-          class="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center mb-5">
-          <i class="fas fa-users text-3xl text-purple-600"></i>
-        </div>
-
-        <h3 class="font-bold text-xl mb-2">
-          Komunitas Alumni
-        </h3>
-
-        <p class="text-slate-500 text-sm">
-          Terhubung dengan alumni UT dari seluruh Indonesia dan dunia.
-        </p>
-      </div>
-
-      <!-- Legalisir -->
-      <a href="https://aksi.ut.ac.id"
-         target="_blank"
-         class="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
-
-        <div
-          class="w-16 h-16 rounded-2xl bg-orange-100 flex items-center justify-center mb-5">
-          <i class="fas fa-certificate text-3xl text-orange-600"></i>
-        </div>
-
-        <h3 class="font-bold text-xl mb-2">
-          Surat Keterangan & Legalisir
-        </h3>
-
-        <p class="text-slate-500 text-sm">
-          Pengajuan surat keterangan, legalisir ijazah, dan layanan akademik.
-        </p>
-
-        <div class="mt-4 text-orange-600 font-semibold">
-          Ajukan →
-        </div>
-      </a>
-
-      <!-- Dana Abadi -->
-      <a href="https://www.instagram.com/reel/DZrGfJRJqTC/?xtok=ZGxiYncwM3o0YW9r"
-         class="group bg-gradient-to-br from-red-500 to-pink-500 text-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-
-        <div
-          class="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-5">
-          <i class="fas fa-heart text-3xl"></i>
-        </div>
-
-        <h3 class="font-bold text-xl mb-2">
-          Dana Abadi Alumni
-        </h3>
-
-        <p class="text-white/90 text-sm">
-          Bersama alumni membangun masa depan Universitas Terbuka melalui Dana Abadi.
-        </p>
-
-        <div class="mt-4 font-semibold">
-          Lihat Program →
-        </div>
-      </a>
+      @endforeach
 
     </div>
+
   </div>
 </section>
 
@@ -540,7 +445,7 @@
 
         <div class="space-y-4">
 
-          <a href="https://wa.me/6285110556158"
+          <a href="https://wa.me/{{$setting->whatsapp}}"
              target="_blank"
              class="flex items-center gap-3 p-4 rounded-xl bg-green-500 hover:bg-green-600 transition">
 
@@ -551,7 +456,7 @@
                 WhatsApp
               </div>
               <div class="font-bold">
-                0851-1055-6158
+                {{$setting->whatsapp}}
               </div>
             </div>
 
@@ -559,12 +464,12 @@
 
           <div class="flex items-center gap-3">
             <i class="fas fa-envelope text-yellow-300"></i>
-            <span>alumni@ut.ac.id</span>
+            <span>{{$setting->email}}</span>
           </div>
 
           <div class="flex items-center gap-3">
             <i class="fas fa-phone"></i>
-            <span>HALO UT 1500024</span>
+            <span>HALO UT {{$setting->telepon}}</span>
           </div>
 
         </div>
@@ -582,21 +487,19 @@
 
         <div class="flex flex-wrap gap-3">
 
-          <a href="https://www.instagram.com/ut.alumnikarier"
+          <a href="{{$setting->instagram}}"
              target="_blank"
              class="w-12 h-12 rounded-xl bg-pink-600 flex items-center justify-center hover:scale-110 transition">
             <i class="fab fa-instagram"></i>
           </a>
 
-          <a href="https://www.facebook.com/UnivTerbuka"
-             target="_blank"
-             class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center hover:scale-erbuka"
+          <a href="{{$setting->facebook}}"
              target="_blank"
              class="w-12 h-12 rounded-xl bg-sky-700 flex items-center justify-center hover:scale-110 transition">
             <i class="fab fa-linkedin-in"></i>
           </a>
 
-          <a href="https://www.youtube.com/@universitasterbukatv"
+          <a href="{{$setting->youtube}}"
              target="_blank"
              class="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center hover:scale-110 transition">
             <i class="fab fa-youtube"></i>

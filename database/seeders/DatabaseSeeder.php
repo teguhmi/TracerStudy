@@ -33,8 +33,11 @@ class DatabaseSeeder extends Seeder
         TracerPertanyaanSeeder::class,
         TracerOpsiSeeder::class,
         TracerPertanyaanUpdateSeeder::class,
-
         TracerSectionRuleSeeder::class,
+        PortalLayananSeeder::class,
+        PortalSettingSeeder::class,
+        PortalHeroSeeder::class,
+
       ]);
 
     }
