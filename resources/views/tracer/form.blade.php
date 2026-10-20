@@ -198,11 +198,11 @@
                           >
                             <option value="">Pilih Rentang</option>
                             <option data-min="0" data-max="999999">< Rp 1 Juta</option>
-                            <option data-min="1000000" data-max="2999999">Rp 1 - 3 Juta</option>
-                            <option data-min="3000000" data-max="4999999">Rp 3 - 5 Juta</option>
-                            <option data-min="5000000" data-max="9999999">Rp 5 - 10 Juta</option>
-                            <option data-min="10000000" data-max="19999999">Rp 10 - 20 Juta</option>
-                            <option data-min="20000000" data-max="49999999">Rp 20 - 50 Juta</option>
+                            <option data-min="1000000" data-max="2999999">Rp 1 - <3 Juta</option>
+                            <option data-min="3000000" data-max="4999999">Rp 3 - <5 Juta</option>
+                            <option data-min="5000000" data-max="9999999">Rp 5 - <10 Juta</option>
+                            <option data-min="10000000" data-max="19999999">Rp 10 - <20 Juta</option>
+                            <option data-min="20000000" data-max="49999999">Rp 20 - >50 Juta</option>
                             <option data-min="50000000" data-max="999999999">> Rp 50 Juta</option>
                           </select>
                         </div>

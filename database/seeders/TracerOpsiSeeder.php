@@ -144,6 +144,11 @@ class TracerOpsiSeeder extends Seeder
       'F1769','F1770',
       'F1771','F1772',
       'F1773','F1774',
+      'F1775',
+      'F1777',
+      'F1779',
+      'F1781',
+
     ];
 
     $opsi = [
