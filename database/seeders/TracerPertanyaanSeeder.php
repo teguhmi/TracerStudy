@@ -338,7 +338,7 @@ class TracerPertanyaanSeeder extends Seeder
       [
         'section_id' => 7,
         'kode' => 'F1773',
-        'pertanyaan' => 'Pengembangan',
+        'pertanyaan' => 'Pengembangan Diri',
         'jenis' => 'radio',
         'wajib' => true,
         'urutan' => 22,
@@ -373,6 +373,8 @@ class TracerPertanyaanSeeder extends Seeder
         'wajib' => true,
         'urutan' => 22,
       ],
+
+
 
 // =====================
 // F17B
@@ -444,12 +446,41 @@ class TracerPertanyaanSeeder extends Seeder
       [
         'section_id' => 7,
         'kode' => 'F1774',
-        'pertanyaan' => 'Pengembangan',
+        'pertanyaan' => 'Pengembangan Diri',
         'jenis' => 'radio',
         'wajib' => true,
         'urutan' => 30,
       ],
 
+      [
+        'section_id' => 7,
+        'kode' => 'F1776',
+        'pertanyaan' => 'Berpikir kritis',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 23,
+      ],[
+        'section_id' => 7,
+        'kode' => 'F1778',
+        'pertanyaan' => 'Kreativitas',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 24,
+      ],[
+        'section_id' => 7,
+        'kode' => 'F1780',
+        'pertanyaan' => 'Kewirausahaan',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 22,
+      ],[
+        'section_id' => 7,
+        'kode' => 'F1782',
+        'pertanyaan' => 'Adaptasi',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 22,
+      ],
 
       // =====================
       // PEMBELAJARAN
@@ -733,52 +764,57 @@ wawancara? (Perusahaan/instansi/institusi)',
 
       // KOMPETENSI SAAT LULUS
       'F17A'  => 20,
-      'F1761' => 21, // Etika
-      'F1763' => 22, // Keahlian bidang ilmu
-      'F1765' => 23, // Bahasa Inggris
-      'F1767' => 24, // TI
-      'F1769' => 25, // Komunikasi
-      'F1771' => 26, // Kerja sama tim
-      'F1773' => 27, // Pengembangan
-      'F1775' => 28, // Berpikir kritis
-      'F1777' => 29, // Kreativitas
-      'F1779' => 30, // Kewirausahaan
-      'F1781' => 31, // Adaptasi
+      'F1761' => 21,
+      'F1763' => 22,
+      'F1765' => 23,
+      'F1767' => 24,
+      'F1769' => 25,
+      'F1771' => 26,
+      'F1773' => 27,
+      'F1775' => 28,
+      'F1777' => 29,
+      'F1779' => 30,
+      'F1781' => 31,
 
       // KOMPETENSI SAAT INI
       'F17B'  => 32,
-      'F1762' => 33, // Etika
-      'F1764' => 34, // Keahlian bidang ilmu
-      'F1766' => 35, // Bahasa Inggris
-      'F1768' => 36, // TI
-      'F1770' => 37, // Komunikasi
-      'F1772' => 38, // Kerja sama tim
-      'F1774' => 39, // Pengembangan
+      'F1762' => 33,
+      'F1764' => 34,
+      'F1766' => 35,
+      'F1768' => 36,
+      'F1770' => 37,
+      'F1772' => 38,
+      'F1774' => 39,
+      'F1776' => 40,
+      'F1778' => 41,
+      'F1780' => 42,
+      'F1782' => 43,
 
       // PEMBELAJARAN
-      'F2'    => 40,
-      'F21'   => 41,
-      'F22'   => 42,
-      'F23'   => 43,
-      'F24'   => 44,
-      'F25'   => 45,
-      'F26'   => 46,
-      'F27'   => 47,
+      'F2'    => 44,
+      'F21'   => 45,
+      'F22'   => 46,
+      'F23'   => 47,
+      'F24'   => 48,
+      'F25'   => 49,
+      'F26'   => 50,
+      'F27'   => 51,
 
       // PENCARI KERJA
-      'F301'  => 48,
-      'F302'  => 49,
-      'F303'  => 50,
-      'F4'    => 51,
-      'F416'  => 52,
-      'F6'    => 53,
-      'F7'    => 54,
-      'F7A'   => 55,
-      'F1001' => 56,
-      'F1002' => 57,
-      'F16'   => 58,
-      'F1614' => 59,
+      'F301'  => 52,
+      'F302'  => 53,
+      'F303'  => 54,
+      'F4'    => 55,
+      'F416'  => 56,
+      'F6'    => 57,
+      'F7'    => 58,
+      'F7A'   => 59,
+      'F1001' => 60,
+      'F1002' => 61,
+      'F16'   => 62,
+      'F1614' => 63,
     ];
+
 
     foreach ($urutan as $kode => $urutan) {
       TracerPertanyaan::where('kode', $kode)
