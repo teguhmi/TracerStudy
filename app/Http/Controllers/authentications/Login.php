@@ -64,18 +64,19 @@ class Login extends Controller
 
       'tanggal_lahir' => [
         'required',
-        'date',
+        'date_format:d/m/Y',
       ],
-    ], [
-      'nim.required' =>
-        'NIM wajib diisi.',
+    ],
+      [
+        'nim.required' =>
+          'NIM wajib diisi.',
 
-      'tanggal_lahir.required' =>
-        'Tanggal lahir wajib diisi.',
+        'tanggal_lahir.required' =>
+          'Tanggal lahir wajib diisi.',
 
-      'tanggal_lahir.date_format' =>
-        'Format tanggal lahir harus DD/MM/YYYY.',
-    ]);
+        'tanggal_lahir.date_format' =>
+          'Format tanggal lahir harus DD/MM/YYYY.',
+      ]);
 
 
     /*
@@ -89,10 +90,12 @@ class Login extends Controller
     |
     */
 
-    $tanggalLahir = Carbon::createFromFormat(
-      'Y-m-d',
-      $request->tanggal_lahir
-    )->format('d-m-Y');
+//    $tanggalLahir = Carbon::createFromFormat(
+//      'Y-m-d',
+//      $request->tanggal_lahir
+//    )->format('d-m-Y');
+
+    $tanggalLahir = $request->tanggal_lahir;
     /*
     |--------------------------------------------------------------------------
     | Cari data alumni
@@ -108,7 +111,7 @@ class Login extends Controller
 
     if (!$alumni) {
       return back()
-        ->withInput($request->only('login_type','alumni'))->withErrors(['login' =>'NIM atau tanggal lahir tidak sesuai.']);
+        ->withInput($request->only('login_type', 'alumni'))->withErrors(['login' => 'NIM atau tanggal lahir tidak sesuai.']);
     }
 
 
@@ -131,7 +134,7 @@ class Login extends Controller
       'alumni_authenticated' => true,
       'nim' => $alumni->nim,
       'nama_mahasiswa' => $alumni->nama_mahasiswa,
-      'tanggal_lulus'=> $alumni->tanggal_sk,
+      'tanggal_lulus' => $alumni->tanggal_sk,
       'alumni' => $alumni,
     ]);
 

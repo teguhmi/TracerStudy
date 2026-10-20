@@ -144,12 +144,17 @@
                                     <i class="ri-calendar-line"></i>
                                 </span>
 
+
+
                 <input
-                  type="date"
+                  type="text"
                   id="tanggal_lahir"
                   name="tanggal_lahir"
                   value="{{ old('tanggal_lahir') }}"
-                  class="form-control">
+                  class="form-control"
+                  placeholder="dd/mm/yyyy"
+                  pattern="^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$"
+                >
 
               </div>
 
