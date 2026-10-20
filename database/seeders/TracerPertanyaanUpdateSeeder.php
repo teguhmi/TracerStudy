@@ -15,6 +15,12 @@ class TracerPertanyaanUpdateSeeder extends Seeder
       // STATUS PEKERJAAN
       // ============================
 
+      'F18' => [
+        'tampil_jika' => [
+          'F8' => ['4']
+        ]
+      ],
+
       'F502' => [
         'tampil_jika' => [
           'F8' => ['1','3']

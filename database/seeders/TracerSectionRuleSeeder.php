@@ -11,24 +11,28 @@ class TracerSectionRuleSeeder extends Seeder
   {
     $rules = [
 
-      // selalu tampil
       'BIODATA' => null,
       'STATUS' => null,
-      'KOMPETENSI' => null,
-      'PEMBELAJARAN' => null,
-      'SARAN' => null,
 
-      // tampil jika bekerja atau wirausaha
       'PEKERJAAN' => [
         'F8' => ['1', '3']
       ],
 
-      // tampil jika wirausaha
       'WIRAUSAHA' => [
-        'F8' => ['1', '3']
+        'F8' => ['3']
       ],
 
+      'STUDILANJUT' => [
+        'F8' => ['4']
+      ],
 
+      'PENCARIKERJA' => [
+        'F8' => ['1', '2', '3', '5']
+      ],
+
+      'KOMPETENSI' => null,
+      'PEMBELAJARAN' => null,
+      'SARAN' => null,
     ];
 
     foreach ($rules as $kode => $rule) {
