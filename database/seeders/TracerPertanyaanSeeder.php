@@ -350,14 +350,14 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Berpikir kritis',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 23,
       ],[
         'section_id' => 7,
         'kode' => 'F1777',
         'pertanyaan' => 'Kreativitas',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 24,
       ],[
         'section_id' => 7,
         'kode' => 'F1779',
@@ -703,6 +703,8 @@ wawancara? (Perusahaan/instansi/institusi)',
     }
 
     $urutan = [
+
+      // STATUS
       'F8'    => 1,
 
       // STUDI LANJUT
@@ -729,29 +731,29 @@ wawancara? (Perusahaan/instansi/institusi)',
       'F1201' => 18,
       'F1202' => 19,
 
-      // KOMPETENSI (Saat Lulus)
+      // KOMPETENSI SAAT LULUS
       'F17A'  => 20,
-      'F1761' => 21,
-      'F1763' => 22,
-      'F1765' => 23,
-      'F1767' => 24,
-      'F1769' => 25,
-      'F1771' => 26,
-      'F1773' => 27,
-      'F1775' => 28,
-      'F1777' => 29,
-      'F1779' => 30,
-      'F1781' => 31,
+      'F1761' => 21, // Etika
+      'F1763' => 22, // Keahlian bidang ilmu
+      'F1765' => 23, // Bahasa Inggris
+      'F1767' => 24, // TI
+      'F1769' => 25, // Komunikasi
+      'F1771' => 26, // Kerja sama tim
+      'F1773' => 27, // Pengembangan
+      'F1775' => 28, // Berpikir kritis
+      'F1777' => 29, // Kreativitas
+      'F1779' => 30, // Kewirausahaan
+      'F1781' => 31, // Adaptasi
 
-      // KOMPETENSI (Saat Ini)
+      // KOMPETENSI SAAT INI
       'F17B'  => 32,
-      'F1762' => 33,
-      'F1764' => 34,
-      'F1766' => 35,
-      'F1768' => 36,
-      'F1770' => 37,
-      'F1772' => 38,
-      'F1774' => 39,
+      'F1762' => 33, // Etika
+      'F1764' => 34, // Keahlian bidang ilmu
+      'F1766' => 35, // Bahasa Inggris
+      'F1768' => 36, // TI
+      'F1770' => 37, // Komunikasi
+      'F1772' => 38, // Kerja sama tim
+      'F1774' => 39, // Pengembangan
 
       // PEMBELAJARAN
       'F2'    => 40,
@@ -775,22 +777,7 @@ wawancara? (Perusahaan/instansi/institusi)',
       'F1001' => 56,
       'F1002' => 57,
       'F16'   => 58,
-
-      // OPSI CHECKBOX
-      'F1601' => 59,
-      'F1602' => 60,
-      'F1603' => 61,
-      'F1604' => 62,
-      'F1605' => 63,
-      'F1606' => 64,
-      'F1607' => 65,
-      'F1608' => 66,
-      'F1609' => 67,
-      'F1610' => 68,
-      'F1611' => 69,
-      'F1612' => 70,
-      'F1613' => 71,
-      'F1614' => 72,
+      'F1614' => 59,
     ];
 
     foreach ($urutan as $kode => $urutan) {
