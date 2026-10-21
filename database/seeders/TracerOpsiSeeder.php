@@ -11,7 +11,6 @@ class TracerOpsiSeeder extends Seeder
   public function run(): void
   {
     $this->seedF8();
-
     $this->seedF1101();
     $this->seedF5D();
     $this->seedF5C();
@@ -60,9 +59,9 @@ class TracerOpsiSeeder extends Seeder
   private function seedF8(): void
   {
     $this->saveOptions('F8', [
-      ['nilai' => '1', 'label' => 'Bekerja (full time / part time)'],
-      ['nilai' => '2', 'label' => 'Belum memungkinkan bekerja'],
-      ['nilai' => '3', 'label' => 'Wiraswasta'],
+      ['nilai' => '1', 'label' => 'Bekerja (penuh waktu/paruh waktu)'],
+      ['nilai' => '2', 'label' => 'Belum memungkinkan bekerja (sakit, mengurus keluarga, dan/atau alasan lainnya)'],
+      ['nilai' => '3', 'label' => 'Wiraswasta/wirausaha/pekerja lepas'],
       ['nilai' => '4', 'label' => 'Melanjutkan Pendidikan'],
       ['nilai' => '5', 'label' => 'Tidak kerja tetapi sedang mencari kerja'],
     ]);
@@ -71,12 +70,11 @@ class TracerOpsiSeeder extends Seeder
   private function seedF1101(): void
   {
     $this->saveOptions('F1101', [
-      ['nilai' => '1', 'label' => 'Instansi pemerintah'],
-      ['nilai' => '6', 'label' => 'BUMN/BUMD'],
+      ['nilai' => '1', 'label' => 'Instansi/lembaga pemerintah'],
+      ['nilai' => '6', 'label' => 'Badan Usaha Milik Negara (BUMN)/Badan Usaha Milik Daerah (BUMD)'],
       ['nilai' => '7', 'label' => 'Institusi/Organisasi Multilateral'],
       ['nilai' => '2', 'label' => 'Organisasi non-profit/Lembaga Swadaya Masyarakat'],
-      ['nilai' => '3', 'label' => 'Perusahaan swasta'],
-      ['nilai' => '4', 'label' => 'Wiraswasta/perusahaan sendiri'],
+      ['nilai' => '3', 'label' => 'Perusahaan swasta (perusahaan nasional, multinasional, rintisan/startup, UMKM, dan lain-lain)'],
       ['nilai' => '5', 'label' => 'Lainnya'],
     ]);
   }
@@ -116,11 +114,11 @@ class TracerOpsiSeeder extends Seeder
   private function seedF14(): void
   {
     $this->saveOptions('F14', [
-      ['nilai' => '1', 'label' => 'Sangat Erat'],
-      ['nilai' => '2', 'label' => 'Erat'],
-      ['nilai' => '3', 'label' => 'Cukup Erat'],
-      ['nilai' => '4', 'label' => 'Kurang Erat'],
-      ['nilai' => '5', 'label' => 'Tidak Sama Sekali'],
+      ['nilai' => '1', 'label' => 'Sangat Relevan'],
+      ['nilai' => '2', 'label' => 'Relevan'],
+      ['nilai' => '3', 'label' => 'Cukup Relevan'],
+      ['nilai' => '4', 'label' => 'Kurang Relevan'],
+      ['nilai' => '5', 'label' => 'Tidak Relevan'],
     ]);
   }
 
@@ -186,19 +184,21 @@ class TracerOpsiSeeder extends Seeder
   private function seedPembelajaran(): void
   {
     $kodePertanyaans = [
-      'F21',
-      'F22',
-      'F23',
-      'F24',
-      'F25',
-      'F26',
-      'F27',
+      'F21','F22',
+      'F23','F24',
+      'F25','F26',
+      'F27','F28',
+      'F29','F30',
+      'F31','F32',
+      'F33','F34',
+      'F35','F36',
+      'F37'
     ];
 
     $opsi = [
-      ['5', 'Tidak Sama Sekali'],
-      ['4', 'Kurang Besar'],
-      ['3', 'Cukup Besar'],
+      ['5', 'Tidak Ada'],
+      ['4', 'Kurang'],
+      ['3', 'Cukup'],
       ['2', 'Besar'],
       ['1', 'Sangat Besar'],
     ];
@@ -233,15 +233,15 @@ class TracerOpsiSeeder extends Seeder
     $this->saveOptions('F301', [
       [
         'nilai' => '1',
-        'label' => 'Kira-kira berapa bulan Anda mencari pekerjaan sebelum lulus'
+        'label' => 'Perkiraan bulan sebelum lulus'
       ],
       [
         'nilai' => '2',
-        'label' => 'Kira-kira berapa bulan Anda mencari pekerjaan sesudah lulus'
+        'label' => 'Perkiraan bulan sesudah lulus'
       ],
       [
         'nilai' => '3',
-        'label' => 'Saya tidak mencari kerja'
+        'label' => 'Saya tidak mencari pekerjaan (misalnya ditawari/ikatan dinas)'
       ],
     ]);
   }

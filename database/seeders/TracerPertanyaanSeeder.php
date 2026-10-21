@@ -100,7 +100,8 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 3,
         'kode' => 'F502',
         'parent_kode' => 'F8',
-        'pertanyaan' => 'Dalam berapa bulan Anda mendapatkan pekerjaan pertama?',
+        'pertanyaan' => 'Dalam berapa bulan Anda mendapatkan pekerjaan pertama? (Kelulusan dihitung berdasarkan bulan yudisium dan masa tunggu kerja dihitung 0, jika
+bekerja sebelum lulus)',
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
@@ -113,7 +114,8 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 3,
         'kode' => 'F505',
         'parent_kode' => 'F8',
-        'pertanyaan' => 'Berapa rata-rata pendapatan Anda per bulan (take home pay)?',
+        'pertanyaan' => 'Berapa rata-rata pendapatan Anda per bulan (take home pay)? (take home pay adalah jumlah total penghasilan yang diterima ditambah
+tunjangan/bonus) ',
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
@@ -126,14 +128,25 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 3,
         'kode' => 'F510',
         'pertanyaan' => 'Di mana lokasi tempat Anda bekerja?',
-        'jenis' => 'select',
-        'wajib' => true,
+        'jenis' => 'label',
+        'wajib' => false,
         'tampil_jika' => [
-          'F8' => ['1', '3']
+          'F8' => ['1','3'],
         ],
         'urutan' => 9,
       ],
 
+      [
+        'section_id' => 3,
+        'kode' => 'F5A0',
+        'pertanyaan' => 'Negara',
+        'jenis' => 'select',
+        'wajib' => true,
+        'tampil_jika' => [
+          'F8' => ['1','3'],
+        ],
+        'urutan' => 9,
+      ],
       [
         'section_id' => 3,
         'kode' => 'F5A1',
@@ -142,7 +155,7 @@ class TracerPertanyaanSeeder extends Seeder
         'wajib' => true,
         'tampil_jika' => [
           'F8' => ['1','3'],
-          'F510' => ['ID']
+          'F5A0' => ['ID']
         ],
         'urutan' => 10,
       ],
@@ -156,7 +169,7 @@ class TracerPertanyaanSeeder extends Seeder
         'wajib' => true,
         'tampil_jika' => [
           'F8' => ['1','3'],
-          'F510' => ['ID']
+          'F5A0' => ['ID']
         ],
         'urutan' => 11,
       ],
@@ -204,7 +217,7 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 3,
         'kode' => 'F5D',
         'parent_kode' => 'F8',
-        'pertanyaan' => 'Apa tingkat tempat kerja Anda?',
+        'pertanyaan' => 'Apa ruang lingkup tempat Anda bekerja?',
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
@@ -217,7 +230,7 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 3,
         'kode' => 'F14',
         'parent_kode' => 'F8',
-        'pertanyaan' => 'Seberapa erat hubungan bidang studi dengan pekerjaan Anda?',
+        'pertanyaan' => 'Seberapa relevan bidang studi dengan pekerjaan Anda saat ini?',
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
@@ -230,7 +243,7 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 3,
         'kode' => 'F15',
         'parent_kode' => 'F8',
-        'pertanyaan' => 'Tingkat pendidikan apa yang paling tepat untuk pekerjaan anda saat ini?',
+        'pertanyaan' => ' Tingkat kesesuaian jenjang pendidikan untuk pekerjaan Anda saat ini?',
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
@@ -489,7 +502,9 @@ class TracerPertanyaanSeeder extends Seeder
       [
         'section_id' => 8,
         'kode' => 'F2',
-        'pertanyaan' => 'Menurut anda seberapa besar penekanan pada metode pembelajaran dibawah ini dilaksanakan di program studi anda?',
+        'pertanyaan' => 'Menurut Anda seberapa besar penekanan pada bentuk/metode pembelajaran di
+bawah ini dilaksanakan di program studi tempat Anda kuliah? (Jika tidak ada maka pilih
+Tidak Ada)',
         'jenis' => 'text',
         'wajib' => false,
         'urutan' => 44,
@@ -509,7 +524,7 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 8,
         'kode' => 'F22',
         'parent_kode' => 'F2',
-        'pertanyaan' => 'Demonstrasi',
+        'pertanyaan' => 'Mendemonstrasikan',
         'jenis' => 'radio',
         'wajib' => true,
         'urutan' => 46,
@@ -519,7 +534,7 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 8,
         'kode' => 'F23',
         'parent_kode' => 'F2',
-        'pertanyaan' => 'Partisipasi dalam proyek riset',
+        'pertanyaan' => ' Penelitian/partisipasi dalam proyek riset',
         'jenis' => 'radio',
         'wajib' => true,
         'urutan' => 47,
@@ -529,7 +544,7 @@ class TracerPertanyaanSeeder extends Seeder
         'section_id' => 8,
         'kode' => 'F24',
         'parent_kode' => 'F2',
-        'pertanyaan' => 'Magang',
+        'pertanyaan' => ' Magang/praktik kerja ',
         'jenis' => 'radio',
         'wajib' => true,
         'urutan' => 48,
@@ -565,6 +580,89 @@ class TracerPertanyaanSeeder extends Seeder
         'urutan' => 51,
       ],
 
+      [
+        'section_id' => 8,
+        'kode' => 'F28',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Responsi/tutorial',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],
+
+      [
+        'section_id' => 8,
+        'kode' => 'F29',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Seminar',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F30',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Studio',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F31',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Perancangan',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F32',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Pengembangan (misal produk/karya seni)',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F33',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Tugas akhir',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F34',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Pelatihan bela negara',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F35',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Pertukaran pelajar',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F36',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Wirausaha',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],[
+        'section_id' => 8,
+        'kode' => 'F37',
+        'parent_kode' => 'F2',
+        'pertanyaan' => 'Pengabdian kepada masyarakat',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'urutan' => 51,
+      ],
       // =====================
       // PENCARI KERJA
       // =====================
@@ -576,7 +674,7 @@ class TracerPertanyaanSeeder extends Seeder
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5']
+          'F8' => ['1', '3', '5']
         ],
         'urutan' => 52,
       ],
@@ -589,6 +687,7 @@ class TracerPertanyaanSeeder extends Seeder
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
+          'F8' => ['1', '3', '5'],
           'F301' => ['1']
         ],
         'urutan' => 53,
@@ -602,6 +701,7 @@ class TracerPertanyaanSeeder extends Seeder
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
+          'F8' => ['1', '3', '5'],
           'F301' => ['2']
         ],
         'urutan' => 54,
@@ -614,7 +714,7 @@ class TracerPertanyaanSeeder extends Seeder
         'jenis' => 'checkbox',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5']
+          'F8' => ['1', '3', '5'],
         ],
         'urutan' => 55,
       ],
@@ -641,7 +741,7 @@ mail) sebelum anda memeroleh pekerjaan pertama? (Perusahaan/instansi/institusi)'
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5']
+         'F8' => ['1', '3', '5'],
         ],
         'urutan' => 57,
       ],
@@ -654,7 +754,7 @@ mail) sebelum anda memeroleh pekerjaan pertama? (Perusahaan/instansi/institusi)'
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5']
+         'F8' => ['1', '3', '5'],
         ],
         'urutan' => 58,
       ],
@@ -667,7 +767,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5']
+         'F8' => ['1', '3', '5'],
         ],
         'urutan' => 59,
       ],
@@ -678,6 +778,9 @@ wawancara? (Perusahaan/instansi/institusi)',
         'pertanyaan' => 'Apakah anda aktif mencari pekerjaan dalam 4 minggu terakhir? Pilihlah satu jawaban',
         'jenis' => 'radio',
         'wajib' => true,
+        'tampil_jika' => [
+          'F8' => ['1', '3', '5'],
+        ],
         'urutan' => 60,
       ],
 
@@ -700,6 +803,9 @@ wawancara? (Perusahaan/instansi/institusi)',
         'pertanyaan' => ' Jika menurut anda pekerjaan anda saat ini tidak sesuai dengan : pendidikan anda, mengapa anda mengambilnya? Jawaban bisa lebih dari satu',
         'jenis' => 'checkbox',
         'wajib' => true,
+        'tampil_jika' => [
+          'F8' => ['1', '3', '5'],
+        ],
         'urutan' => 62,
       ],
 
@@ -749,70 +855,81 @@ wawancara? (Perusahaan/instansi/institusi)',
       'F502'  => 7,
       'F505'  => 8,
       'F510'  => 9,
-      'F5A1'  => 10,
-      'F5A2'  => 11,
-      'F1101' => 12,
-      'F1102' => 13,
-      'F5B'   => 14,
-      'F5D'   => 15,
-      'F14'   => 16,
-      'F15'   => 17,
-
-      // PEMBIAYAAN
-      'F1201' => 18,
-      'F1202' => 19,
-
-      // KOMPETENSI SAAT LULUS
-      'F17A'  => 20,
-      'F1761' => 21,
-      'F1763' => 22,
-      'F1765' => 23,
-      'F1767' => 24,
-      'F1769' => 25,
-      'F1771' => 26,
-      'F1773' => 27,
-      'F1775' => 28,
-      'F1777' => 29,
-      'F1779' => 30,
-      'F1781' => 31,
-
-      // KOMPETENSI SAAT INI
-      'F17B'  => 32,
-      'F1762' => 33,
-      'F1764' => 34,
-      'F1766' => 35,
-      'F1768' => 36,
-      'F1770' => 37,
-      'F1772' => 38,
-      'F1774' => 39,
-      'F1776' => 40,
-      'F1778' => 41,
-      'F1780' => 42,
-      'F1782' => 43,
-
-      // PEMBELAJARAN
-      'F2'    => 44,
-      'F21'   => 45,
-      'F22'   => 46,
-      'F23'   => 47,
-      'F24'   => 48,
-      'F25'   => 49,
-      'F26'   => 50,
-      'F27'   => 51,
+      'F5A0'  => 10,
+      'F5A1'  => 11,
+      'F5A2'  => 12,
+      'F1101' => 13,
+      'F1102' => 14,
+      'F5B'   => 15,
+      'F5D'   => 16,
+      'F14'   => 17,
+      'F15'   => 18,
 
       // PENCARI KERJA
-      'F301'  => 52,
-      'F302'  => 53,
-      'F303'  => 54,
-      'F4'    => 55,
-      'F416'  => 56,
-      'F6'    => 57,
-      'F7'    => 58,
-      'F7A'   => 59,
-      'F1001' => 60,
-      'F1002' => 61,
-      'F16'   => 62,
-      'F1614' => 63,
+      'F301'  => 19,
+      'F302'  => 20,
+      'F303'  => 21,
+      'F4'    => 22,
+      'F416'  => 23,
+      'F6'    => 24,
+      'F7'    => 25,
+      'F7A'   => 26,
+      'F1001' => 27,
+      'F1002' => 28,
+      'F16'   => 29,
+      'F1614' => 30,
+
+      // PEMBIAYAAN
+      'F1201' => 31,
+      'F1202' => 32,
+
+      // KOMPETENSI SAAT LULUS
+      'F17A'  => 33,
+      'F1761' => 34,
+      'F1763' => 35,
+      'F1765' => 36,
+      'F1767' => 37,
+      'F1769' => 38,
+      'F1771' => 39,
+      'F1773' => 40,
+      'F1775' => 41,
+      'F1777' => 42,
+      'F1779' => 43,
+      'F1781' => 44,
+
+      // KOMPETENSI SAAT INI
+      'F17B'  => 45,
+      'F1762' => 46,
+      'F1764' => 47,
+      'F1766' => 48,
+      'F1768' => 49,
+      'F1770' => 50,
+      'F1772' => 51,
+      'F1774' => 52,
+      'F1776' => 53,
+      'F1778' => 54,
+      'F1780' => 55,
+      'F1782' => 56,
+
+      // PEMBELAJARAN
+      'F2'    => 57,
+      'F21'   => 58,
+      'F22'   => 59,
+      'F23'   => 60,
+      'F24'   => 61,
+      'F25'   => 62,
+      'F26'   => 63,
+      'F27'   => 64,
+      'F28'   => 65,
+      'F29'   => 66,
+      'F30'   => 67,
+      'F31'   => 68,
+      'F32'   => 69,
+      'F33'   => 70,
+      'F34'   => 71,
+      'F35'   => 72,
+      'F36'   => 73,
+      'F37'   => 74,
     ];
 
 

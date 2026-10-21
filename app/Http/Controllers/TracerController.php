@@ -388,12 +388,7 @@ class TracerController extends Controller
 
       DB::rollBack();
 
-      \Log::error('Tracer Submit Error', [
-        'nim' => $nim,
-        'message' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine(),
-      ]);
+   dd($e);
 
       return back()
         ->withInput()

@@ -373,7 +373,7 @@
 
                     @switch($q->kode)
 
-                      @case('F510')
+                      @case('F5A0')
                         <select class="form-select" id="negara_id" name="{{ $name }}">
                           <option value="">Pilih Negara</option>
                           @foreach($negaras as $negara)
