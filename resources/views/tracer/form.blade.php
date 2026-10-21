@@ -387,13 +387,12 @@
                       @case('F5A1')
                         <select id="f5a1" name="{{ $name }}" class="form-select">
                           <option value="">Pilih Provinsi</option>
-                          @if($provinsi->kode != '999999')
+                          @if($provinsis->kode != '999999')
                             <option value="{{ $provinsi->kode }}">
                               {{ $provinsi->nama }}
                             </option>
                           @endif
-                        </select>
-                        @break
+
 
                       @case('F5A2')
                         <select class="form-select" id="f5a2" name="{{ $name }}">
