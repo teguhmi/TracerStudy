@@ -1,5 +1,37 @@
 @extends('_include._template')
+@section('head')
+  <style>
+    .sticky-bottom{
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
 
+    #btnNext,
+    #btnSubmit{
+      min-width: 140px;
+    }
+
+    @media(max-width:768px){
+
+      .sticky-bottom .d-flex{
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .sticky-bottom .d-flex:last-child{
+        width:100%;
+      }
+
+      #btnPrev,
+      #btnNext,
+      #btnSubmit{
+        width:100%;
+      }
+    }
+  </style>
+@endsection
 @section('content')
   @if($dpAlumni)
     @php
@@ -9,7 +41,7 @@
       @csrf
       <input type="hidden" name="aksi" id="aksi" value="submit">
 
-      <input type="hidden" name="nim" id="nim" value="@if($nimAlumni){{ $nimAlumni }}@endif">
+      {{--      <input type="hidden" name="nim" id="nim" value="@if($nimAlumni){{ $nimAlumni }}@endif">--}}
 
       <div class="container-xxl flex-grow-1 container-p-y">
 
@@ -97,7 +129,8 @@
             class="wizard-section"
             id="section-{{ $sectionIndex }}"
             data-kode="{{ $firstQuestion->section->kode }}"
-            data-rule='@json($firstQuestion->section->tampil_jika ?? [])'
+            {{--            data-rule='@json($firstQuestion->section->tampil_jika ?? [])'--}}
+            data-rule="{{ json_encode($firstQuestion->section->tampil_jika ?? []) }}"
           >
 
             {{-- Header Section --}}
@@ -137,7 +170,9 @@
                 class="card mb-3 shadow-sm pertanyaan"
                 id="card-{{ $q->kode }}"
                 data-kode="{{ $q->kode }}"
-                data-tampil-jika='@json($q->tampil_jika ?? [])'
+                {{--                data-tampil-jika='@json($q->tampil_jika ?? [])'--}}
+                data-tampil-jika="{{ json_encode($q->tampil_jika ?? []) }}"
+
                 @if(in_array($q->kode,['F5A1','F5A2']))
                   style="display:none"
                 @endif
@@ -168,6 +203,7 @@
                       class="form-control"
                       name="jawaban[{{ $q->kode }}]"
                       placeholder="{{ $q->placeholder }}"
+                      maxlength="255"
                     >
 
                     {{-- TEXTAREA --}}
@@ -178,6 +214,7 @@
                       rows="3"
                       name="jawaban[{{ $q->kode }}]"
                       placeholder="{{ $q->placeholder }}"
+                      maxlength="255"
                     ></textarea>
 
                     {{-- NUMBER --}}
@@ -194,6 +231,7 @@
 
                           <select
                             id="range_F505"
+                            name="jawaban[F505_range]"
                             class="form-select"
                           >
                             <option value="">Pilih Rentang</option>
@@ -216,12 +254,13 @@
                             type="text"
                             class="form-control rupiah-display"
                             data-target="{{ $q->kode }}"
-                            placeholder="Contoh: 7.500.000">
+                            placeholder="Contoh: 7.500.000" maxlength="10">
 
                           <input
                             type="hidden"
                             id="value_{{ $q->kode }}"
-                            name="jawaban[{{ $q->kode }}]">
+                            name="jawaban[{{ $q->kode }}]"
+                            maxlength="10">
                           <small
                             id="preview_F505"
                             class="text-muted mt-1 d-block"
@@ -382,35 +421,48 @@
         @endforeach
 
         {{-- NAVIGATION --}}
-        <div class="sticky-bottom bg-white py-3 border-top">
+        <div class="sticky-bottom bg-white border-top shadow-sm p-3">
 
-          <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center justify-content-between">
 
-            <button
-              type="button"
-              id="btnPrev"
-              class="btn btn-outline-secondary"
-              onclick="prevSection()"
-            >
-              ← Previous
-            </button>
+            <!-- Info Section -->
+            <div class="small text-muted">
+            <span id="stepInfo">
+{{--                Bagian <span id="currentStep">1</span> dari--}}
+{{--                <span id="totalStep">{{ count($sections) }}</span>--}}
+            </span>
+            </div>
 
-            <button
-              type="button"
-              id="btnNext"
-              class="btn btn-primary"
-              onclick="nextSection()"
-            >
-              Next →
-            </button>
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
 
-            <button
-              type="submit"
-              id="btnSubmit"
-              class="btn btn-success d-none"
-            >
-              Simpan Jawaban
-            </button>
+              <button
+                type="button"
+                id="btnPrev"
+                class="btn btn-light border px-4"
+                onclick="prevSection()">
+                <i class="bi bi-arrow-left"></i>
+                Sebelumnya
+              </button>
+
+              <button
+                type="button"
+                id="btnNext"
+                class="btn btn-primary px-4"
+                onclick="nextSection()">
+                Selanjutnya
+                <i class="bi bi-arrow-right"></i>
+              </button>
+
+              <button
+                type="submit"
+                id="btnSubmit"
+                class="btn btn-success px-4 d-none">
+                <i class="bi bi-check-circle"></i>
+                Kirim Jawaban
+              </button>
+
+            </div>
 
           </div>
 
@@ -475,6 +527,7 @@
     */
     const allSections = () =>
       [...document.querySelectorAll('.wizard-section')];
+
     /*
     |--------------------------------------------------------------------------
     | Rule Section
@@ -517,6 +570,7 @@
         return true;
       }
     }
+
     /*
     |--------------------------------------------------------------------------
     | Rule Pertanyaan
@@ -631,6 +685,7 @@
         });
 
     }
+
     /*
     |--------------------------------------------------------------------------
     | Section Tampil
@@ -652,6 +707,7 @@
         });
 
     }
+
     /*
     |--------------------------------------------------------------------------
     | Render Wizard
@@ -761,6 +817,7 @@
           });
 
       });
+
     /*
     |--------------------------------------------------------------------------
     | Validasi
@@ -845,6 +902,7 @@
 
       return valid;
     }
+
     /*
     |--------------------------------------------------------------------------
     | Navigation
@@ -872,6 +930,7 @@
         renderWizard();
       }
     }
+
     /*
     |--------------------------------------------------------------------------
     | Event
@@ -948,16 +1007,22 @@
 
         const kotas = await response.json();
 
-        kotaSelect.innerHTML =
-          '<option value="">Pilih Kabupaten/Kota</option>';
+        kotaSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
         kotas.forEach(kota => {
-          kotaSelect.innerHTML += `
-                <option value="${kota.kode}">
-                    ${kota.nama}
-                </option>
-            `;
-
+          const option = new Option(kota.nama, kota.kode);
+          kotaSelect.add(option);
         });
+
+        // kotaSelect.innerHTML =
+        //   '<option value="">Pilih Kabupaten/Kota</option>';
+        // kotas.forEach(kota => {
+        //   kotaSelect.innerHTML += `
+        //         <option value="${kota.kode}">
+        //             ${kota.nama}
+        //         </option>
+        //     `;
+        //
+        // });
 
       } catch (error) {
         console.error(error);

@@ -38,7 +38,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['4']
         ],
-        'urutan' => 1,
+        'urutan' => 2,
       ],
       [
         'section_id' => 5,
@@ -50,7 +50,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['4']
         ],
-        'urutan' => 2,
+        'urutan' => 3,
       ],
 
       [
@@ -63,7 +63,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['4']
         ],
-        'urutan' => 3,
+        'urutan' => 4,
       ],
 
       [
@@ -76,7 +76,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['4']
         ],
-        'urutan' => 4,
+        'urutan' => 5,
       ],
 
       [
@@ -89,7 +89,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['4']
         ],
-        'urutan' => 5,
+        'urutan' => 6,
       ],
 
       // =====================
@@ -106,7 +106,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1']
         ],
-        'urutan' => 1,
+        'urutan' => 7,
       ],
 
       [
@@ -119,7 +119,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '3']
         ],
-        'urutan' => 2,
+        'urutan' => 8,
       ],
 
       [
@@ -131,7 +131,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '3']
         ],
-        'urutan' => 3,
+        'urutan' => 9,
       ],
 
       [
@@ -144,7 +144,7 @@ class TracerPertanyaanSeeder extends Seeder
           'F8' => ['1','3'],
           'F510' => ['ID']
         ],
-        'urutan' => 4,
+        'urutan' => 10,
       ],
 
       [
@@ -158,7 +158,7 @@ class TracerPertanyaanSeeder extends Seeder
           'F8' => ['1','3'],
           'F510' => ['ID']
         ],
-        'urutan' => 5,
+        'urutan' => 11,
       ],
 
       [
@@ -171,7 +171,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1']
         ],
-        'urutan' => 5,
+        'urutan' => 12,
       ],
 
       [
@@ -184,7 +184,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F1101' => ['5']
         ],
-        'urutan' => 6,
+        'urutan' => 13,
       ],
 
       [
@@ -197,7 +197,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1']
         ],
-        'urutan' => 7,
+        'urutan' => 14,
       ],
 
       [
@@ -210,7 +210,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '3']
         ],
-        'urutan' => 8,
+        'urutan' => 15,
       ],
 
       [
@@ -223,7 +223,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '3']
         ],
-        'urutan' => 9,
+        'urutan' => 16,
       ],
 
       [
@@ -236,7 +236,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '3']
         ],
-        'urutan' => 10,
+        'urutan' => 17,
       ],
 
       // =====================
@@ -252,7 +252,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '2', '3', '5']
         ],
-        'urutan' => 20,
+        'urutan' => 18,
       ],
       [
         'section_id' => 1,
@@ -265,7 +265,7 @@ class TracerPertanyaanSeeder extends Seeder
           'F8' => ['1', '2', '3', '5'],
           'F1201' => ['7']
         ],
-        'urutan' => 21,
+        'urutan' => 19,
       ],
 
       // =====================
@@ -278,7 +278,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Pada saat lulus, pada tingkat mana kompetensi di bawah ini Anda kuasai?',
         'jenis' => 'text',
         'wajib' => false,
-        'urutan' => 15,
+        'urutan' => 20,
       ],
 
       [
@@ -287,7 +287,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Etika',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 16,
+        'urutan' => 21,
       ],
 
       [
@@ -296,7 +296,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Keahlian berdasarkan bidang ilmu',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 17,
+        'urutan' => 22,
       ],
 
       [
@@ -305,7 +305,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Bahasa Inggris',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 18,
+        'urutan' => 23,
       ],
 
       [
@@ -314,7 +314,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Penggunaan Teknologi Informasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 19,
+        'urutan' => 24,
       ],
 
       [
@@ -323,7 +323,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Komunikasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 20,
+        'urutan' => 25,
       ],
 
       [
@@ -332,7 +332,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Kerja sama tim',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 21,
+        'urutan' => 26,
       ],
 
       [
@@ -341,7 +341,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Pengembangan Diri',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 27,
       ],
 
       [
@@ -350,28 +350,28 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Berpikir kritis',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 23,
+        'urutan' => 28,
       ],[
         'section_id' => 7,
         'kode' => 'F1777',
         'pertanyaan' => 'Kreativitas',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 24,
+        'urutan' => 29,
       ],[
         'section_id' => 7,
         'kode' => 'F1779',
         'pertanyaan' => 'Kewirausahaan',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 30,
       ],[
         'section_id' => 7,
         'kode' => 'F1781',
         'pertanyaan' => 'Adaptasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 31,
       ],
 
 
@@ -386,7 +386,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Pada saat ini, pada tingkat mana kompetensi di bawah ini diperlukan dalam pekerjaan?',
         'jenis' => 'text',
         'wajib' => false,
-        'urutan' => 23,
+        'urutan' => 32,
       ],
 
       [
@@ -395,7 +395,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Etika',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 24,
+        'urutan' => 33,
       ],
 
       [
@@ -404,7 +404,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Keahlian berdasarkan bidang ilmu',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 25,
+        'urutan' => 34,
       ],
 
       [
@@ -413,7 +413,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Bahasa Inggris',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 26,
+        'urutan' => 35,
       ],
 
       [
@@ -422,7 +422,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Penggunaan Teknologi Informasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 27,
+        'urutan' => 36,
       ],
 
       [
@@ -431,7 +431,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Komunikasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 28,
+        'urutan' => 37,
       ],
 
       [
@@ -440,7 +440,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Kerja sama tim',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 29,
+        'urutan' => 38,
       ],
 
       [
@@ -449,7 +449,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Pengembangan Diri',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 30,
+        'urutan' => 39,
       ],
 
       [
@@ -458,28 +458,28 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Berpikir kritis',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 23,
+        'urutan' => 40,
       ],[
         'section_id' => 7,
         'kode' => 'F1778',
         'pertanyaan' => 'Kreativitas',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 24,
+        'urutan' => 41,
       ],[
         'section_id' => 7,
         'kode' => 'F1780',
         'pertanyaan' => 'Kewirausahaan',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 42,
       ],[
         'section_id' => 7,
         'kode' => 'F1782',
         'pertanyaan' => 'Adaptasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 22,
+        'urutan' => 43,
       ],
 
       // =====================
@@ -492,7 +492,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Menurut anda seberapa besar penekanan pada metode pembelajaran dibawah ini dilaksanakan di program studi anda?',
         'jenis' => 'text',
         'wajib' => false,
-        'urutan' => 31,
+        'urutan' => 44,
       ],
 
       [
@@ -502,7 +502,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Perkuliahan',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 32,
+        'urutan' => 45,
       ],
 
       [
@@ -512,7 +512,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Demonstrasi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 33,
+        'urutan' => 46,
       ],
 
       [
@@ -522,7 +522,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Partisipasi dalam proyek riset',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 34,
+        'urutan' => 47,
       ],
 
       [
@@ -532,7 +532,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Magang',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 35,
+        'urutan' => 48,
       ],
 
       [
@@ -542,7 +542,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Praktikum',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 36,
+        'urutan' => 49,
       ],
 
       [
@@ -552,7 +552,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Kerja Lapangan',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 37,
+        'urutan' => 50,
       ],
 
       [
@@ -562,7 +562,7 @@ class TracerPertanyaanSeeder extends Seeder
         'pertanyaan' => 'Diskusi',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 38,
+        'urutan' => 51,
       ],
 
       // =====================
@@ -578,7 +578,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '2', '3', '5']
         ],
-        'urutan' => 1,
+        'urutan' => 52,
       ],
 
       [
@@ -591,7 +591,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F301' => ['1']
         ],
-        'urutan' => 2,
+        'urutan' => 53,
       ],
 
       [
@@ -604,7 +604,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F301' => ['2']
         ],
-        'urutan' => 3,
+        'urutan' => 54,
       ],
 
       [
@@ -616,7 +616,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F8' => ['1', '2', '3', '5']
         ],
-        'urutan' => 4,
+        'urutan' => 55,
       ],
 
       [
@@ -629,7 +629,7 @@ class TracerPertanyaanSeeder extends Seeder
         'tampil_jika' => [
           'F4' => ['F415']
         ],
-        'urutan' => 5,
+        'urutan' => 56,
       ],
 
 
@@ -643,7 +643,7 @@ mail) sebelum anda memeroleh pekerjaan pertama? (Perusahaan/instansi/institusi)'
         'tampil_jika' => [
           'F8' => ['1', '2', '3', '5']
         ],
-        'urutan' => 6,
+        'urutan' => 57,
       ],
 
       [
@@ -656,7 +656,7 @@ mail) sebelum anda memeroleh pekerjaan pertama? (Perusahaan/instansi/institusi)'
         'tampil_jika' => [
           'F8' => ['1', '2', '3', '5']
         ],
-        'urutan' => 7,
+        'urutan' => 58,
       ],
 
       [
@@ -669,7 +669,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'tampil_jika' => [
           'F8' => ['1', '2', '3', '5']
         ],
-        'urutan' => 8,
+        'urutan' => 59,
       ],
 
       [
@@ -678,7 +678,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'pertanyaan' => 'Apakah anda aktif mencari pekerjaan dalam 4 minggu terakhir? Pilihlah satu jawaban',
         'jenis' => 'radio',
         'wajib' => true,
-        'urutan' => 9,
+        'urutan' => 60,
       ],
 
       [
@@ -691,7 +691,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'tampil_jika' => [
           'F1001' => ['5']
         ],
-        'urutan' => 10,
+        'urutan' => 61,
       ],
 
       [
@@ -700,7 +700,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'pertanyaan' => ' Jika menurut anda pekerjaan anda saat ini tidak sesuai dengan : pendidikan anda, mengapa anda mengambilnya? Jawaban bisa lebih dari satu',
         'jenis' => 'checkbox',
         'wajib' => true,
-        'urutan' => 11,
+        'urutan' => 62,
       ],
 
       [
@@ -714,7 +714,7 @@ wawancara? (Perusahaan/instansi/institusi)',
           'F16' => ['F1613']
 
         ],
-        'urutan' => 12,
+        'urutan' => 63,
       ],
 
     ];

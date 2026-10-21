@@ -16,7 +16,7 @@ Route::get('/refreshCaptcha', [HomeController::class, 'refreshCaptcha'])->name('
 // authentication
 Route::get('/auth/login', [Login::class, 'index'])->name('login-alumni');
 Route::post('/auth/login', [Login::class, 'login'])->name('auth-login-process');
-Route::get('/auth/logout', [Login::class, 'logout'])->name('auth-logout');
+Route::POST('/auth/logout', [Login::class, 'logout'])->name('auth-logout');
 
 
 //Route::get('/auth/register', [RegisterBasic::class, 'index'])->name('auth-register');

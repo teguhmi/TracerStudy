@@ -112,13 +112,22 @@
         <!-- Right Menu -->
         <div class="flex items-center gap-3">
 
-          <a
-            href=""
-            class="hidden lg:inline-flex items-center px-6 py-3 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-500 transition"
-          >
-            Login
-          </a>
-
+          @if(session('alumni_authenticated'))
+            <form action="{{ route('auth-logout') }}" method="POST" class="hidden lg:inline">
+              @csrf
+              <button
+                type="submit"
+                class="inline-flex items-center px-6 py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition">
+                Logout
+              </button>
+            </form>
+          @else
+            <a
+              href="{{ route('login-alumni') }}"
+              class="hidden lg:inline-flex items-center px-6 py-3 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-500 transition">
+              Login
+            </a>
+          @endif
           <!-- Hamburger -->
           <button
             id="mobileBtn"

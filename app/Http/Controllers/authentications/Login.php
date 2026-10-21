@@ -140,7 +140,7 @@ class Login extends Controller
 
 
     return redirect()
-      ->intended(route('home'));
+      ->intended(route('tracer.index'));
   }
 
 
