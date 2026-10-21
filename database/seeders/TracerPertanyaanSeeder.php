@@ -263,7 +263,7 @@ tunjangan/bonus) ',
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5']
+          'F8' => ['1', '2', '3', '4', '5']
         ],
         'urutan' => 18,
       ],
@@ -275,7 +275,7 @@ tunjangan/bonus) ',
         'jenis' => 'text',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '2', '3', '5'],
+          'F8' => ['1', '2', '3', '4', '5'],
           'F1201' => ['7']
         ],
         'urutan' => 19,
@@ -296,6 +296,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1761',
         'pertanyaan' => 'Etika',
         'jenis' => 'radio',
@@ -305,6 +306,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1763',
         'pertanyaan' => 'Keahlian berdasarkan bidang ilmu',
         'jenis' => 'radio',
@@ -314,6 +316,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1765',
         'pertanyaan' => 'Bahasa Inggris',
         'jenis' => 'radio',
@@ -323,6 +326,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1767',
         'pertanyaan' => 'Penggunaan Teknologi Informasi',
         'jenis' => 'radio',
@@ -332,6 +336,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1769',
         'pertanyaan' => 'Komunikasi',
         'jenis' => 'radio',
@@ -341,6 +346,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1771',
         'pertanyaan' => 'Kerja sama tim',
         'jenis' => 'radio',
@@ -350,6 +356,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1773',
         'pertanyaan' => 'Pengembangan Diri',
         'jenis' => 'radio',
@@ -359,6 +366,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1775',
         'pertanyaan' => 'Berpikir kritis',
         'jenis' => 'radio',
@@ -366,6 +374,7 @@ tunjangan/bonus) ',
         'urutan' => 28,
       ],[
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1777',
         'pertanyaan' => 'Kreativitas',
         'jenis' => 'radio',
@@ -373,6 +382,7 @@ tunjangan/bonus) ',
         'urutan' => 29,
       ],[
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1779',
         'pertanyaan' => 'Kewirausahaan',
         'jenis' => 'radio',
@@ -380,6 +390,7 @@ tunjangan/bonus) ',
         'urutan' => 30,
       ],[
         'section_id' => 7,
+        'parent_kode' => 'F17A',
         'kode' => 'F1781',
         'pertanyaan' => 'Adaptasi',
         'jenis' => 'radio',
@@ -404,6 +415,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1762',
         'pertanyaan' => 'Etika',
         'jenis' => 'radio',
@@ -413,6 +425,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1764',
         'pertanyaan' => 'Keahlian berdasarkan bidang ilmu',
         'jenis' => 'radio',
@@ -422,6 +435,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1766',
         'pertanyaan' => 'Bahasa Inggris',
         'jenis' => 'radio',
@@ -431,6 +445,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1768',
         'pertanyaan' => 'Penggunaan Teknologi Informasi',
         'jenis' => 'radio',
@@ -440,6 +455,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1770',
         'pertanyaan' => 'Komunikasi',
         'jenis' => 'radio',
@@ -449,6 +465,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1772',
         'pertanyaan' => 'Kerja sama tim',
         'jenis' => 'radio',
@@ -458,6 +475,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1774',
         'pertanyaan' => 'Pengembangan Diri',
         'jenis' => 'radio',
@@ -467,6 +485,7 @@ tunjangan/bonus) ',
 
       [
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1776',
         'pertanyaan' => 'Berpikir kritis',
         'jenis' => 'radio',
@@ -474,6 +493,7 @@ tunjangan/bonus) ',
         'urutan' => 40,
       ],[
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1778',
         'pertanyaan' => 'Kreativitas',
         'jenis' => 'radio',
@@ -481,6 +501,7 @@ tunjangan/bonus) ',
         'urutan' => 41,
       ],[
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1780',
         'pertanyaan' => 'Kewirausahaan',
         'jenis' => 'radio',
@@ -488,6 +509,7 @@ tunjangan/bonus) ',
         'urutan' => 42,
       ],[
         'section_id' => 7,
+        'parent_kode' => 'F17B',
         'kode' => 'F1782',
         'pertanyaan' => 'Adaptasi',
         'jenis' => 'radio',

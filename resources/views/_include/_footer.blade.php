@@ -8,29 +8,29 @@
                     document.write(new Date().getFullYear());
                 </script>
                 , made with ❤️ by
-                <a href="https://pixinvent.com" target="_blank" class="footer-link fw-medium">Pixinvent</a>
+                <a href="https://pixinvent.com" target="_blank" class="footer-link fw-medium">Unit Pemberdayaan Alumni Sentra Karier dan Penempatan Kerja</a>
             </div>
-            <div class="d-none d-lg-inline-block">
-                <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank"
-                >License</a
-                >
+{{--            <div class="d-none d-lg-inline-block">--}}
+{{--                <a href="https://themeforest.net/licenses/standard" class="footer-link me-4" target="_blank"--}}
+{{--                >License</a--}}
+{{--                >--}}
 
-                <a href="https://themeforest.net/user/pixinvent/portfolio" target="_blank"
-                   class="footer-link me-4"
-                >More Themes</a
-                >
-                <a
-                    href="https://demos.pixinvent.com/materialize-html-admin-template/documentation/"
-                    target="_blank"
-                    class="footer-link me-4"
-                >Documentation</a
-                >
+{{--                <a href="https://themeforest.net/user/pixinvent/portfolio" target="_blank"--}}
+{{--                   class="footer-link me-4"--}}
+{{--                >More Themes</a--}}
+{{--                >--}}
+{{--                <a--}}
+{{--                    href="https://demos.pixinvent.com/materialize-html-admin-template/documentation/"--}}
+{{--                    target="_blank"--}}
+{{--                    class="footer-link me-4"--}}
+{{--                >Documentation</a--}}
+{{--                >--}}
 
-                <a href="https://pixinvent.ticksy.com/" target="_blank"
-                   class="footer-link d-none d-sm-inline-block"
-                >Support</a
-                >
-            </div>
+{{--                <a href="https://pixinvent.ticksy.com/" target="_blank"--}}
+{{--                   class="footer-link d-none d-sm-inline-block"--}}
+{{--                >Support</a--}}
+{{--                >--}}
+{{--            </div>--}}
         </div>
     </div>
 </footer>

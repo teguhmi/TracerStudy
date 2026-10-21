@@ -102,9 +102,9 @@ class TracerOpsiSeeder extends Seeder
   {
     $this->saveOptions('F1201', [
       ['nilai' => '1', 'label' => 'Biaya Sendiri/Keluarga'],
-      ['nilai' => '2', 'label' => 'Beasiswa ADIK'],
+      ['nilai' => '2', 'label' => 'Beasiswa Afirmasi Pendidikan Tinggi (ADIK)'],
       ['nilai' => '3', 'label' => 'Beasiswa BIDIKMISI'],
-      ['nilai' => '4', 'label' => 'Beasiswa PPA'],
+      ['nilai' => '4', 'label' => 'Beasiswa Peningkatan Prestasi Akademik (PPA)'],
       ['nilai' => '5', 'label' => 'Beasiswa AFIRMASI'],
       ['nilai' => '6', 'label' => 'Beasiswa Perusahaan/Swasta'],
       ['nilai' => '7', 'label' => 'Lainnya'],
