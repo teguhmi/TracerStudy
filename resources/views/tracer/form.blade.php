@@ -1,4 +1,4 @@
-@extends('_include._template')
+@extends('_include._template_horizontal')
 @section('head')
   <style>
     .sticky-bottom{

@@ -22,8 +22,6 @@
             <!-- Content wrapper -->
             <div class="content-wrapper">
                 @yield('content')
-
-
             </div>
             <!-- / Content wrapper -->
             @include('_include._footer')

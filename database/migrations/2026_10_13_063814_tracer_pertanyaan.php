@@ -31,7 +31,9 @@ return new class extends Migration
         'checkbox',
         'select',
         'matrix',
-        'label'
+        'label',
+        'email'
+
       ]);
 
       $table->boolean('wajib')->default(true);

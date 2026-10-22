@@ -18,7 +18,15 @@ class TracerResponden extends Model
     'tanggal_lulus',
     'tanggal_mulai',
     'tanggal_submit',
-    'status',
+
+    // Biodata
+    'npwp',
+    'email',
+    'no_hp',
+    'alamat',
+    'negara_id',
+    'provinsi_id',
+    'kabupaten_id',
   ];
 
   protected $casts = [

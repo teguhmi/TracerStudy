@@ -91,6 +91,18 @@ class TracerController extends Controller
     if (!in_array($aksi, ['draft', 'submit'])) {
       $aksi = 'draft';
     }
+    $lastResponden = TracerResponden::where('nim', $nim)
+      ->orderByDesc('id')
+      ->first();
+
+    $valueBio01 = $lastResponden?->npwp;
+    $valueBio02 = $lastResponden?->email;
+    $valueBio03 = $lastResponden?->no_hp;
+    $valueBio04 = $lastResponden?->alamat;
+    $valueBio05 = $lastResponden?->negara_id;
+    $valueBio06 = $lastResponden?->provinsi_id;
+    $valueBio07 = $lastResponden?->kota_id;
+
 
     DB::beginTransaction();
 
@@ -119,7 +131,7 @@ class TracerController extends Controller
       | Responden
       |--------------------------------------------------------------------------
       */
-      $responden = TracerResponden::firstOrCreate(
+      $responden = TracerResponden::updateOrCreate(
         [
           'nim' => $dpAlumni->nim,
           'periode_id' => $periodeId,
@@ -127,6 +139,13 @@ class TracerController extends Controller
         [
           'nama' => $dpAlumni->nama_mahasiswa,
           'tanggal_lulus' => $dpAlumni->tanggal_sk,
+          'npwp' => $request->jawaban['BIO01'] ?? null,
+          'email' => $request->jawaban['BIO02'] ?? null,
+          'no_hp' => $request->jawaban['BIO03'] ?? null,
+          'alamat' => $request->jawaban['BIO04'] ?? null,
+          'negara_id' => $request->jawaban['BIO05'] ?? null,
+          'provinsi_id' => $request->jawaban['BIO06'] ?? null,
+          'kabupaten_id' => $request->jawaban['BIO07'] ?? null,
           'tanggal_mulai' => now(),
           'tanggal_submit' => now(),
           'status' => 'draft',
@@ -262,7 +281,7 @@ class TracerController extends Controller
 
           $nilai = collect($nilai)
             ->map(function ($v) {
-              return trim(strip_tags((string) $v));
+              return trim(strip_tags((string)$v));
             })
             ->filter()
             ->values()
@@ -272,7 +291,7 @@ class TracerController extends Controller
 
           $nilai = is_null($nilai)
             ? null
-            : trim(strip_tags((string) $nilai));
+            : trim(strip_tags((string)$nilai));
 
           if (
             !is_null($nilai)
@@ -388,7 +407,7 @@ class TracerController extends Controller
 
       DB::rollBack();
 
-   dd($e);
+      dd($e);
 
       return back()
         ->withInput()
