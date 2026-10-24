@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class Login extends Controller
 {
@@ -59,13 +61,14 @@ class Login extends Controller
       'nim' => [
         'required',
         'string',
-        'max:20',
+        'max:9',
       ],
 
       'tanggal_lahir' => [
         'required',
         'date_format:d/m/Y',
       ],
+      'captcha' => ['required', 'captcha'],
     ],
       [
         'nim.required' =>
@@ -76,8 +79,10 @@ class Login extends Controller
 
         'tanggal_lahir.date_format' =>
           'Format tanggal lahir harus DD/MM/YYYY.',
-      ]);
 
+        'captcha.required' => 'Kode captcha wajib diisi.',
+        'captcha.captcha'  => 'Kode captcha yang Anda masukkan tidak sesuai.',
+      ]);
 
     /*
     |--------------------------------------------------------------------------
@@ -101,6 +106,13 @@ class Login extends Controller
     | Cari data alumni
     |--------------------------------------------------------------------------
     */
+    $key = 'login-alumni:' . Str::lower($request->nim) . '|' . $request->ip();
+    $keyNim = 'login-alumni-nim:' . Str::lower($request->nim);
+
+    if (RateLimiter::tooManyAttempts($key, 5) || RateLimiter::tooManyAttempts($keyNim,
+        20)) {
+      return back()->withErrors(['login' => 'Terlalu banyak percobaan. Coba lagi nanti.']);
+    }
 
     $alumni = QueryAKSIModel::getDpByNimTanggalLahir($request->nim, $tanggalLahir);
     /*
@@ -108,12 +120,17 @@ class Login extends Controller
     | Login gagal
     |--------------------------------------------------------------------------
     */
+    if (!$alumni) {
+      RateLimiter::hit($key, 900);
+      RateLimiter::hit($keyNim, 3600);
+      return back()->withErrors(['login' => 'NIM atau tanggal lahir tidak sesuai.']);
+    }
+    RateLimiter::clear($key);
 
     if (!$alumni) {
       return back()
         ->withInput($request->only('login_type', 'alumni'))->withErrors(['login' => 'NIM atau tanggal lahir tidak sesuai.']);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -122,7 +139,6 @@ class Login extends Controller
     */
 
     $request->session()->regenerate();
-
 
     /*
     |--------------------------------------------------------------------------

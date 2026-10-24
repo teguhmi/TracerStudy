@@ -85,8 +85,7 @@
         </div>
 
 
-        <form method="POST" action="{{route('auth-login-process')}}">
-
+        <form method="POST" action="{{ route('auth-login-process') }}">
           @csrf
 
           <input
@@ -95,81 +94,129 @@
             id="login_type"
             value="{{ old('login_type', 'alumni') }}">
 
-
           {{-- ===========================
                LOGIN ALUMNI
-          ============================ --}}
+          =========================== --}}
           <div id="form-alumni">
 
-            <div class="mb-4">
+            {{-- NIM + TANGGAL LAHIR --}}
+            <div class="row mb-6">
 
-              <label
-                for="nim"
-                class="form-label fw-medium">
-                NIM
-              </label>
+              <div class="col-md-6">
+                <label
+                  for="nim"
+                  class="form-label fw-medium">
+                  NIM
+                </label>
 
-              <div class="input-group input-group-merge">
+                <div class="input-group input-group-merge">
+                    <span class="input-group-text">
+                        <i class="ri-id-card-line"></i>
+                    </span>
 
-                                <span class="input-group-text">
-                                    <i class="ri-id-card-line"></i>
-                                </span>
+                  <input
+                    type="text"
+                    id="nim"
+                    name="nim"
+                    value="{{ old('nim') }}"
+                    maxlength="9"
+                    inputmode="numeric"
+                    class="form-control"
+                    placeholder="NIM">
+                </div>
+              </div>
 
-                <input
-                  type="text"
-                  id="nim"
-                  name="nim"
-                  value="{{ old('nim') }}"
-                  maxlength="9"
-                  inputmode="numeric"
-                  class="form-control"
-                  placeholder="Masukkan NIM Anda">
+              <div class="col-md-6">
+                <label
+                  for="tanggal_lahir"
+                  class="form-label fw-medium">
+                  Tanggal Lahir
+                </label>
 
+                <div class="input-group input-group-merge">
+                    <span class="input-group-text">
+                        <i class="ri-calendar-line"></i>
+                    </span>
+
+                  <input
+                    type="text"
+                    id="tanggal_lahir"
+                    name="tanggal_lahir"
+                    value="{{ old('tanggal_lahir') }}"
+                    class="form-control"
+                    placeholder="dd/mm/yyyy"
+                    pattern="^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$">
+                </div>
               </div>
 
             </div>
 
-
-            <div class="mb-4">
-
-              <label
-                for="tanggal_lahir"
-                class="form-label fw-medium">
-                Tanggal Lahir
-              </label>
-
-              <div class="input-group input-group-merge">
-
-                                <span class="input-group-text">
-                                    <i class="ri-calendar-line"></i>
-                                </span>
-
-
-
-                <input
-                  type="text"
-                  id="tanggal_lahir"
-                  name="tanggal_lahir"
-                  value="{{ old('tanggal_lahir') }}"
-                  class="form-control"
-                  placeholder="dd/mm/yyyy"
-                  pattern="^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$"
-                >
-
-              </div>
-
-              <div class="form-text mt-2">
-                Gunakan tanggal lahir yang terdaftar.
-              </div>
-
+            <div class="form-text mb-4">
+              Gunakan tanggal lahir yang terdaftar.
             </div>
 
-          </div>
+            {{-- CAPTCHA --}}
+            <div class="mb-4">
+
+              <label class="form-label fw-medium">
+                Verifikasi Keamanan
+              </label>
+
+              <div class="row g-2 mb-2">
+
+                <div class="col-9">
+
+                  <div class="captcha-container mb-2">
+
+                    <div id="captcha-img">
+                      {!! captcha_img('flat') !!}
+                    </div>
+
+                    <button
+                      type="button"
+                      id="reload-captcha"
+                      class="btn btn-sm btn-primary captcha-reload">
+                      <i class="ri-refresh-line"></i>
+                    </button>
+
+                  </div>
+
+
+                </div>
+
+{{--                <div class="col-3">--}}
+
+{{--                  <button--}}
+{{--                    type="button"--}}
+{{--                    id="reload-captcha"--}}
+{{--                    class="btn btn-primary w-100 h-100">--}}
+
+{{--                    <i class="ri-refresh-line"></i>--}}
+
+{{--                  </button>--}}
+
+                </div>
+
+              </div>
+
+              <input
+                type="text"
+                name="captcha"
+                class="form-control @error('captcha') is-invalid @enderror"
+                placeholder="Masukkan kode captcha">
+
+              @error('captcha')
+              <div class="invalid-feedback">
+                {{ $message }}
+              </div>
+              @enderror
+
+            </div>
 
 
           {{-- ===========================
                LOGIN STAFF
-          ============================ --}}
+          =========================== --}}
           <div
             id="form-staff"
             class="d-none">
@@ -184,9 +231,9 @@
 
               <div class="input-group input-group-merge">
 
-                                <span class="input-group-text">
-                                    <i class="ri-mail-line"></i>
-                                </span>
+                <span class="input-group-text">
+                    <i class="ri-mail-line"></i>
+                </span>
 
                 <input
                   type="email"
@@ -201,68 +248,57 @@
 
             </div>
 
-
             <div class="mb-2">
 
               <label
                 for="password"
                 class="form-label fw-medium">
-                Password
-              </label>
+                Password     <div class="input-group input-group-merge form-password-toggle">
 
-              <div class="input-group input-group-merge form-password-toggle">
+                <span class="input-group-text">
+                    <i class="ri-lock-line"></i>
+                </span>
 
-                                <span class="input-group-text">
-                                    <i class="ri-lock-line"></i>
-                                </span>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    autocomplete="current-password"
+                    placeholder="Masukkan password">
 
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  class="form-control"
-                  autocomplete="current-password"
-                  placeholder="Masukkan password">
+                  <span class="input-group-text cursor-pointer">
+                    <i class="ri-eye-off-line"></i>
+                </span>
 
-                <span class="input-group-text cursor-pointer">
-                                    <i class="ri-eye-off-line"></i>
-                                </span>
-
-              </div>
+                </div>
 
             </div>
 
-
-            {{-- LUPA PASSWORD --}}
             <div class="text-end mt-2 mb-4">
-
-              <a>
+              #
               Lupa Password?
               </a>
-
             </div>
 
           </div>
 
-
           {{-- SUBMIT --}}
-          <div class="d-grid mt-5">
+          <div class="d-grid mt-4">
 
             <button
               type="submit"
               class="btn btn-primary btn-lg">
 
-                            <span id="submit-text">
-                                Masuk sebagai Alumni
-                            </span>
+            <span id="submit-text">
+                Masuk sebagai Alumni
+            </span>
 
               <i class="ri-arrow-right-line ms-1"></i>
 
             </button>
 
           </div>
-
-
 
         </form>
 
@@ -276,7 +312,17 @@
 
 
 @include('_include._script')
+<script>
+  document.getElementById('reload-captcha').addEventListener('click', function() {
 
+    fetch('{{ route("reload.captcha") }}')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('captcha-img').innerHTML = data.captcha;
+      });
+
+  });
+</script>
 
 <script>
   function switchLogin(type) {

@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\authentications\Login;
 use App\Http\Controllers\authentications\RegisterBasic;
 
-Route::get('/refreshCaptcha', [HomeController::class, 'refreshCaptcha'])->name('refresh.captcha');
-
+Route::get('/reload-captcha', function () {
+  return response()->json([
+    'captcha' => captcha_img('flat')
+  ]);
+})->name('reload.captcha');
 
 // locale
 //Route::get('/lang/{locale}', [LanguageController::class, 'swap']);

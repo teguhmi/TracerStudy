@@ -407,8 +407,6 @@ class TracerController extends Controller
 
       DB::rollBack();
 
-      dd($e);
-
       return back()
         ->withInput()
         ->with(
