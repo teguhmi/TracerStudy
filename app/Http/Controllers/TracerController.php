@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\query\QueryAKSIModel;
 use App\Models\tracer\TracerJawaban;
-use App\Models\tracer\TracerJawabanDetail;
 use App\Models\tracer\TracerKota;
 use App\Models\tracer\TracerNegara;
 use App\Models\tracer\TracerPeriode;
 use App\Models\tracer\TracerPertanyaan;
 use App\Models\tracer\TracerProvinsi;
 use App\Models\tracer\TracerResponden;
-use Illuminate\Contracts\Encryption\DecryptException;
+use Exception;
+//use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
+//use Illuminate\Validation\Rule;
 class TracerController extends Controller
 {
   public function index()
@@ -24,13 +25,7 @@ class TracerController extends Controller
       return redirect()->route('login-alumni');
     }
 
-    try {
-      $nimAlumni = Crypt::encrypt(session('nim'));
-    } catch (DecryptException $e) {
-      // Mencegah error 500 jika payload diubah/di-tamper pengguna
-      return redirect()->back()->with('error', 'Payload NIM tidak valid atau telah diubah.');
-    }
-
+    $nimAlumni = Crypt::encrypt(session('nim'));
     $dpAlumni = QueryAKSIModel::getYudisiumByNim(session('nim'));
 
     $periode = TracerPeriode::where('aktif', true)->first();
@@ -38,6 +33,28 @@ class TracerController extends Controller
     $provinsis = TracerProvinsi::orderBy('nama')->get();
     $kotas = TracerKota::orderBy('nama')->get();
 
+    $jawabanLama = [];
+
+    $lastResponden = TracerResponden::where([
+      'nim'        => session('nim'),
+      'periode_id' => $periode?->id,
+    ])->first();
+    $valueBio05 = $lastResponden?->negara_id;
+    $valueBio06 = $lastResponden?->provinsi_id;
+    $valueBio07 = $lastResponden?->kabupaten_id;
+
+    if ($lastResponden) {
+
+      $jawabanLama = TracerJawaban::where(
+        'responden_id',
+        $lastResponden->id
+      )
+        ->pluck(
+          'jawaban',
+          'kode_pertanyaan'
+        )
+        ->toArray();
+    }
     $sections = TracerPertanyaan::query()
       ->select('tracer_pertanyaans.*')
       ->join(
@@ -58,10 +75,15 @@ class TracerController extends Controller
       ->get();
 
 
-    if ($dpAlumni) {
-      $nimAlumni = Crypt::encrypt(session('nim'));
-    }
-    return view('tracer.form', compact('periode', 'sections', 'negaras', 'provinsis', 'kotas', 'dpAlumni', 'nimAlumni'));
+//    if ($dpAlumni) {
+//      $nimAlumni = Crypt::encrypt(session('nim'));
+//    }
+    return view('tracer.form', compact(
+      'periode', 'sections', 'negaras',
+      'provinsis', 'kotas', 'dpAlumni', 'nimAlumni','jawabanLama',
+    'valueBio05',
+        'valueBio06',
+        'valueBio07'));
   }
 
 
@@ -69,7 +91,6 @@ class TracerController extends Controller
   {
     // Ambil NIM dari session
     $nim = session('nim');
-
     if (!$nim) {
       return redirect()
         ->route('login')
@@ -91,17 +112,6 @@ class TracerController extends Controller
     if (!in_array($aksi, ['draft', 'submit'])) {
       $aksi = 'draft';
     }
-    $lastResponden = TracerResponden::where('nim', $nim)
-      ->orderByDesc('id')
-      ->first();
-
-    $valueBio01 = $lastResponden?->npwp;
-    $valueBio02 = $lastResponden?->email;
-    $valueBio03 = $lastResponden?->no_hp;
-    $valueBio04 = $lastResponden?->alamat;
-    $valueBio05 = $lastResponden?->negara_id;
-    $valueBio06 = $lastResponden?->provinsi_id;
-    $valueBio07 = $lastResponden?->kota_id;
 
 
     DB::beginTransaction();
@@ -113,10 +123,11 @@ class TracerController extends Controller
       | Periode Aktif
       |--------------------------------------------------------------------------
       */
-      $periodeId = 1;
+
+//      $periodeId = $periode->id;
 
       // Jika sudah punya tabel periode aktif gunakan:
-      /*
+
       $periode = TracerPeriode::where('aktif', 1)->first();
 
       if (!$periode) {
@@ -124,36 +135,109 @@ class TracerController extends Controller
       }
 
       $periodeId = $periode->id;
-      */
 
+      $lastResponden = TracerResponden::where([
+        'nim'        => $nim,
+        'periode_id' => $periodeId,
+      ])->first();
+
+//      if (
+//        $aksi === 'submit' &&
+//        $lastResponden &&
+//        $lastResponden->status === 'submitted'
+//      ) {
+//        return back()->with(
+//          'error',
+//          'Tracer Study sudah pernah dikirim.'
+//        );
+//      }
+
+      $valueBio01 = $lastResponden?->npwp;
+      $valueBio02 = $lastResponden?->email;
+      $valueBio03 = $lastResponden?->no_hp;
+      $valueBio04 = $lastResponden?->alamat_lengkap;
+      $valueBio05 = $lastResponden?->negara_id;
+      $valueBio06 = $lastResponden?->provinsi_id;
+      $valueBio07 = $lastResponden?->kabupaten_id;
       /*
       |--------------------------------------------------------------------------
       | Responden
       |--------------------------------------------------------------------------
       */
+      $negaraId = $request->input('jawaban.BIO05');
+      $provinsiId = $request->input('jawaban.BIO06');
+      $kabupatenId = $request->input('jawaban.BIO07');
+
+      if ($negaraId) {
+
+        $negaraValid = TracerNegara::where(
+          'id',
+          $negaraId
+        )->exists();
+
+        if (!$negaraValid) {
+          throw new Exception(
+            'Negara tidak valid.'
+          );
+        }
+      }
+      if ($provinsiId) {
+
+        $kodeNegara = TracerNegara::where(
+          'id',
+          $negaraId
+        )->value('kode');
+
+        if (!$kodeNegara) {
+          throw new Exception(
+            'Provinsi tidak sesuai dengan negara.'
+          );
+        }
+      }
+
+      if ($kabupatenId) {
+        TracerKota::where(
+          'id',
+          $kabupatenId
+        )
+          ->where(
+            'provinsi_id',
+            $provinsiId
+          )
+          ->exists();
+
+        if (!$kabupatenId) {
+          throw new Exception(
+            'Kabupaten/Kota tidak sesuai dengan provinsi.'
+          );
+        }
+      }
+
+
+
       $responden = TracerResponden::updateOrCreate(
         [
-          'nim' => $dpAlumni->nim,
+          'nim'        => $dpAlumni->nim,
           'periode_id' => $periodeId,
         ],
         [
-          'nama' => $dpAlumni->nama_mahasiswa,
-          'tanggal_lulus' => $dpAlumni->tanggal_sk,
-          'npwp' => $request->jawaban['BIO01'] ?? null,
-          'email' => $request->jawaban['BIO02'] ?? null,
-          'no_hp' => $request->jawaban['BIO03'] ?? null,
-          'alamat' => $request->jawaban['BIO04'] ?? null,
-          'negara_id' => $request->jawaban['BIO05'] ?? null,
-          'provinsi_id' => $request->jawaban['BIO06'] ?? null,
-          'kabupaten_id' => $request->jawaban['BIO07'] ?? null,
-          'tanggal_mulai' => now(),
-          'tanggal_submit' => now(),
-          'status' => 'draft',
+          'nama'           => $dpAlumni->nama_mahasiswa,
+          'tanggal_lulus'  => $dpAlumni->tanggal_sk,
+
+          'npwp'           => $request->input('jawaban.BIO01', $valueBio01),
+          'email'          => $request->input('jawaban.BIO02', $valueBio02),
+          'no_hp'          => $request->input('jawaban.BIO03', $valueBio03),
+          'alamat_lengkap' => $request->input('jawaban.BIO04', $valueBio04),
+          'negara_id'      => $request->input('jawaban.BIO05', $valueBio05),
+          'provinsi_id'    => $request->input('jawaban.BIO06', $valueBio06),
+          'kabupaten_id'   => $request->input('jawaban.BIO07', $valueBio07),
+          'tanggal_mulai' => $lastResponden?->tanggal_mulai ?? now(),
+          'status'         => 'draft',
         ]
       );
 
       if (!$responden) {
-        throw new \Exception('Data responden tidak ditemukan.');
+        throw new Exception('Data responden tidak ditemukan.');
       }
 
       /*
@@ -167,11 +251,38 @@ class TracerController extends Controller
 
       foreach ($pertanyaans as $pertanyaan) {
 
+// Ambil jawaban dulu
         $nilai = $request->input(
           'jawaban.' . $pertanyaan->kode,
           null
         );
 
+        // Validasi pilihan radio/select
+        if (
+          !is_array($nilai) &&
+          !empty($nilai) &&
+          in_array(
+            $pertanyaan->jenis,
+            ['radio', 'select']
+          ) &&
+          !in_array(
+            $pertanyaan->kode,
+            ['BIO05', 'BIO06', 'BIO07','F5A0','F5A1','F5A2']
+          )
+
+        ) {
+
+          $opsiValid = $pertanyaan
+            ->opsi()
+            ->where('nilai', $nilai)
+            ->exists();
+
+          if (!$opsiValid) {
+            throw new Exception(
+              '[' . $pertanyaan->kode . '] pilihan tidak valid'
+            );
+          }
+        }
         /*
         |--------------------------------------------------------------------------
         | Rule tampil_jika
@@ -274,7 +385,7 @@ class TracerController extends Controller
         if (is_array($nilai)) {
 
           if (count($nilai) > 50) {
-            throw new \Exception(
+            throw new Exception(
               '[' . $pertanyaan->kode . '] data tidak valid'
             );
           }
@@ -287,6 +398,26 @@ class TracerController extends Controller
             ->values()
             ->toArray();
 
+          if ($pertanyaan->jenis === 'checkbox') {
+
+            $opsiValid = $pertanyaan
+              ->opsi()
+              ->pluck('nilai')
+              ->map(fn ($x) => (string)$x)
+              ->toArray();
+
+            foreach ($nilai as $item) {
+
+              if (!in_array((string)$item, $opsiValid)) {
+
+                throw new Exception(
+                  '[' . $pertanyaan->kode . '] pilihan tidak valid'
+                );
+              }
+            }
+          }
+
+
         } else {
 
           $nilai = is_null($nilai)
@@ -297,7 +428,7 @@ class TracerController extends Controller
             !is_null($nilai)
             && strlen($nilai) > 5000
           ) {
-            throw new \Exception(
+            throw new Exception(
               '[' . $pertanyaan->kode . '] data terlalu panjang'
             );
           }
@@ -321,7 +452,7 @@ class TracerController extends Controller
 
           if ($kosong) {
 
-            throw new \Exception(
+            throw new Exception(
               '[' . $pertanyaan->kode . '] '
               . $pertanyaan->pertanyaan
               . ' wajib diisi'
@@ -342,8 +473,12 @@ class TracerController extends Controller
             (string)$nilai
           );
 
-          if (!is_numeric($angka)) {
-            throw new \Exception(
+          if (
+            $angka === '' ||
+            !ctype_digit($angka) ||
+            strlen($angka) > 12
+          ) {
+            throw new Exception(
               '[F505] Pendapatan tidak valid'
             );
           }
@@ -381,7 +516,7 @@ class TracerController extends Controller
       if ($aksi === 'submit') {
 
         $responden->update([
-          'status' => 'submitted',
+          'status'         => 'submitted',
           'tanggal_submit' => now(),
         ]);
 
@@ -389,6 +524,7 @@ class TracerController extends Controller
 
       } else {
 
+        // hanya draft
         $responden->update([
           'status' => 'draft',
         ]);
@@ -396,76 +532,86 @@ class TracerController extends Controller
         $message = 'Draft berhasil disimpan';
       }
 
+
       DB::commit();
 
       return view('tracer.tracer_submit', [
         'responden' => $responden,
         'message' => $message,
       ]);
-
-    } catch (\Throwable $e) {
+    }
+    catch (\Throwable $e) {
 
       DB::rollBack();
 
-      return back()
-        ->withInput()
-        ->with(
-          'error',
-          config('app.debug')
-            ? $e->getMessage()
-            : 'Terjadi kesalahan saat menyimpan data.'
-        );
+      dd([
+        'message' => $e->getMessage(),
+        'line' => $e->getLine(),
+        'file' => $e->getFile(),
+      ]);
     }
+
+//      Log::error('Tracer Error', [
+//        'nim' => $nim,
+//        'message' => $e->getMessage(),
+//        'file' => $e->getFile(),
+//        'line' => $e->getLine(),
+//      ]);
+//
+//      return back()
+//        ->withInput()
+//        ->with(
+//          'error',
+//          'Terjadi kesalahan saat menyimpan data.'
+//        );
+//    }
+
   }
 
 
-  public function submit(Request $request)
-  {
-    $periode = TracerPeriode::where(
-      'aktif',
-      true
-    )->firstOrFail();
+//  public function submit(Request $request)
+//  {
+//    $nim = session('nim');
+//    $periode = TracerPeriode::where(
+//      'aktif',
+//      true
+//    )->firstOrFail();
+//
+//    $responden = TracerResponden::where('periode_id', $periode->id)->where('nim', $nim)->firstOrFail();
+//
+//    $responden->update([
+//      'tanggal_submit' => now(),
+//      'status' => 'submitted',
+//    ]);
+//
+//    return view('tracer.tracer_submit', [
+//      'responden' => $responden,
+//    ]);
+//  }
 
-    $responden = TracerResponden::where(
-      'periode_id',
-      $periode->id
-    )
-      ->where(
-        'nim',
-        auth()->user()->nim ?? $request->nim
-      )
-      ->firstOrFail();
-
-    $responden->update([
-      'tanggal_submit' => now(),
-      'status' => 'submitted',
-    ]);
-
-    return view('tracer.tracer_submit', [
-      'responden' => $responden,
-    ]);
-  }
-
-  public function riwayat()
-  {
-    $responden = TracerResponden::with([
-      'jawabans.details'
-    ])
-      ->where(
-        'nim',
-        auth()->user()->nim
-      )
-      ->latest()
-      ->first();
-
-    return view(
-      'tracer.riwayat',
-      compact('responden')
-    );
-  }
+//  public function riwayat()
+//  {
+//
+//    $responden = TracerResponden::with([
+//      'jawabans.details'
+//    ])
+//      ->where('nim', session('nim'))->latest()->first();
+//
+//    return view(
+//      'tracer.riwayat',
+//      compact('responden')
+//    );
+//  }
 
   public function getKotas($provinsiId)
   {
+    if (!session('alumni_authenticated')) {
+      abort(401);
+    }
+
+    if (!is_numeric($provinsiId)) {
+      abort(400);
+    }
     return response()->json(
       TracerKota::select(
         'kode',

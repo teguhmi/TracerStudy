@@ -18,17 +18,17 @@ return new class extends Migration
       $table->string('provinsi_id', 20)
         ->nullable();
 
-      $table->string('kode_kabko', 20)
+      $table->string('kode', 20)
         ->unique();
 
-      $table->string('nama_kabko');
+      $table->string('nama');
 
       $table->timestamps();
 
       $table->index('negara_id');
       $table->index('provinsi_id');
-      $table->index('kode_kabko');
-      $table->index('nama_kabko');
+      $table->index('kode');
+      $table->index('nama');
     });
   }
 

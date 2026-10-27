@@ -23,7 +23,7 @@ class TracerResponden extends Model
     'npwp',
     'email',
     'no_hp',
-    'alamat',
+    'alamat_lengkap',
     'negara_id',
     'provinsi_id',
     'kabupaten_id',

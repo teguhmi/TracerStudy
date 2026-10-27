@@ -42,14 +42,14 @@ class TracerPertanyaanUpdateSeeder extends Seeder
       'F5A1' => [
         'tampil_jika' => [
           'F8' => ['1','3'],
-          'F510' => ['ID']
+          'F5A0' => ['ID']
         ]
       ],
 
       'F5A2' => [
         'tampil_jika' => [
           'F8' => ['1','3'],
-          'F510' => ['ID']
+          'F5A0' => ['ID']
         ]
       ],
 

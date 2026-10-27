@@ -68,7 +68,7 @@ class TracerPertanyaanSeeder extends Seeder
         'wajib' => true,
         'urutan' => 6,
         'tampil_jika' => [
-          'BIO05' => ['ID']
+          'BIO05' => ['103']
         ],
       ],
 
@@ -80,7 +80,7 @@ class TracerPertanyaanSeeder extends Seeder
         'wajib' => true,
         'urutan' => 7,
         'tampil_jika' => [
-          'BIO05' => ['ID']
+          'BIO05' => ['103']
         ],
       ],
 

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TracerController;
+use App\Http\Middleware\AlumniAuthenticated;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\authentications\Login;
 use App\Http\Controllers\authentications\RegisterBasic;
@@ -11,6 +13,34 @@ Route::get('/reload-captcha', function () {
     'captcha' => captcha_img('flat')
   ]);
 })->name('reload.captcha');
+
+
+Route::middleware(AlumniAuthenticated::class)->group(function () {
+  Route::get('/tracer', [TracerController::class, 'index'])->name('tracer.index');
+  Route::post('/tracer', [TracerController::class, 'store'])->name('tracer.simpan');
+//  Route::post('/tracer/submit', [TracerController::class, 'submit'])->name('tracer.submit');
+  Route::get('/tracer/riwayat', [TracerController::class, 'riwayat'])->name('tracer.riwayat');
+
+});
+Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');
+
+Route::get('/ajax/negaras', [AjaxController::class, 'getNegaras']);
+Route::get('/ajax/provinsis/{negara}', [AjaxController::class, 'getProvinsis']);
+Route::get('/ajax/kabupaten-kotas/{provinsi}', [AjaxController::class, 'getKabupatenKotas']);
+
+//Route::get('/tracer',[TracerController::class, 'index'])->name('tracer.index');
+//Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');
+//Route::post('/tracer',[TracerController::class, 'store'])->name('tracer.simpan');
+
+//Route::post(
+//  '/tracer/submit',
+//  [TracerController::class, 'submit']
+//)->name('tracer.submit');
+
+//Route::get(
+//  '/tracer/riwayat',
+//  [TracerController::class, 'riwayat']
+//)->name('tracer.riwayat');
 
 // locale
 //Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
@@ -55,16 +85,4 @@ Route::get('/', [HomeController::class, 'index'])
 
 
 
-Route::get('/tracer',[TracerController::class, 'index'])->name('tracer.index');
-Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');
-Route::post('/tracer',[TracerController::class, 'store'])->name('tracer.simpan');
 
-Route::post(
-  '/tracer/submit',
-  [TracerController::class, 'submit']
-)->name('tracer.submit');
-
-Route::get(
-  '/tracer/riwayat',
-  [TracerController::class, 'riwayat']
-)->name('tracer.riwayat');
