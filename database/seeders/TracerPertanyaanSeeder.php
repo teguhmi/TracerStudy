@@ -177,7 +177,7 @@ bekerja sebelum lulus)',
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1']
+          'F8' => ['1','3']
         ],
         'urutan' => 7,
       ],
@@ -280,11 +280,23 @@ tunjangan/bonus) ',
         'jenis' => 'text',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1']
+          'F8' => ['1','3']
         ],
         'urutan' => 14,
       ],
 
+      [
+        'section_id' => 3,
+        'kode' => 'F5C',
+        'parent_kode' => 'F8',
+        'pertanyaan' => ' Jika Anda sedang berwiraswasta/berwirausaha, apa posisi/jabatan Anda saat ini?',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'tampil_jika' => [
+          'F8' => ['3']
+        ],
+        'urutan' => 14,
+      ],
       [
         'section_id' => 3,
         'kode' => 'F5D',
@@ -294,6 +306,19 @@ tunjangan/bonus) ',
         'wajib' => true,
         'tampil_jika' => [
           'F8' => ['1', '3']
+        ],
+        'urutan' => 15,
+      ],
+
+      [
+        'section_id' => 3,
+        'kode' => 'F5E',
+        'parent_kode' => 'F8',
+        'pertanyaan' => 'Apakah wiraswasta/wirausaha Anda sudah berizin/terdaftar?',
+        'jenis' => 'radio',
+        'wajib' => true,
+        'tampil_jika' => [
+          'F8' => ['3']
         ],
         'urutan' => 15,
       ],
@@ -579,6 +604,9 @@ bawah ini dilaksanakan di program studi tempat Anda kuliah? (Jika tidak ada maka
 Tidak Ada)',
         'jenis' => 'text',
         'wajib' => false,
+        'tampil_jika' => [
+          'F8' => ['1', '3']
+        ],
         'urutan' => 44,
       ],
 
@@ -746,6 +774,7 @@ Tidak Ada)',
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
+
           'F8' => ['1', '3', '5']
         ],
         'urutan' => 52,
@@ -786,7 +815,7 @@ Tidak Ada)',
         'jenis' => 'checkbox',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '3', '5'],
+          'F8' => ['1','5']
         ],
         'urutan' => 55,
       ],
@@ -813,7 +842,7 @@ mail) sebelum anda memeroleh pekerjaan pertama? (Perusahaan/instansi/institusi)'
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-         'F8' => ['1', '3', '5'],
+         'F8' => ['1', '5'],
         ],
         'urutan' => 57,
       ],
@@ -826,7 +855,7 @@ mail) sebelum anda memeroleh pekerjaan pertama? (Perusahaan/instansi/institusi)'
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-         'F8' => ['1', '3', '5'],
+         'F8' => ['1',  '5'],
         ],
         'urutan' => 58,
       ],
@@ -839,7 +868,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'jenis' => 'number',
         'wajib' => true,
         'tampil_jika' => [
-         'F8' => ['1', '3', '5'],
+         'F8' => ['1', '5'],
         ],
         'urutan' => 59,
       ],
@@ -851,7 +880,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'jenis' => 'radio',
         'wajib' => true,
         'tampil_jika' => [
-          'F8' => ['1', '3', '5'],
+          'F8' => ['1', '5'],
         ],
         'urutan' => 60,
       ],
@@ -864,6 +893,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'jenis' => 'text',
         'wajib' => true,
         'tampil_jika' => [
+          'F8' => ['1', '5'],
           'F1001' => ['5']
         ],
         'urutan' => 61,
@@ -889,6 +919,7 @@ wawancara? (Perusahaan/instansi/institusi)',
         'jenis' => 'text',
         'wajib' => true,
         'tampil_jika' => [
+          'F8' => ['1', '3', '5'],
           'F16' => ['F1613']
 
         ],
@@ -912,10 +943,6 @@ wawancara? (Perusahaan/instansi/institusi)',
     }
 
     $urutan = [
-
-      // =====================
-      // BIODATA
-      // =====================
       'BIO01' => 1,
       'BIO02' => 2,
       'BIO03' => 3,
@@ -924,111 +951,132 @@ wawancara? (Perusahaan/instansi/institusi)',
       'BIO06' => 6,
       'BIO07' => 7,
 
-      // =====================
-      // STATUS
-      // =====================
-      'F8'    => 8,
+      'F8' => 8,
 
-      // =====================
-      // STUDI LANJUT
-      // =====================
-      'F18'   => 9,
-      'F18A'  => 10,
-      'F18B'  => 11,
-      'F18C'  => 12,
-      'F18D'  => 13,
+      // Studi Lanjut
+      'F18'  => 9,
+      'F18A' => 10,
+      'F18B' => 11,
+      'F18C' => 12,
+      'F18D' => 13,
 
-      // =====================
-      // PEKERJAAN
-      // =====================
-      'F502'  => 14,
-      'F505'  => 15,
-      'F510'  => 16,
-      'F5A0'  => 17,
-      'F5A1'  => 18,
-      'F5A2'  => 19,
+      // Pekerjaan
+      'F502' => 14,
+      'F505' => 15,
+
+      'F510' => 16,
+      'F5A0' => 17,
+      'F5A1' => 18,
+      'F5A2' => 19,
+
       'F1101' => 20,
       'F1102' => 21,
-      'F5B'   => 22,
-      'F5D'   => 23,
-      'F14'   => 24,
-      'F15'   => 25,
 
-      // =====================
-      // PENCARI KERJA
-      // =====================
-      'F301'  => 26,
-      'F302'  => 27,
-      'F303'  => 28,
-      'F4'    => 29,
-      'F416'  => 30,
-      'F6'    => 31,
-      'F7'    => 32,
-      'F7A'   => 33,
-      'F1001' => 34,
-      'F1002' => 35,
-      'F16'   => 36,
-      'F1614' => 37,
+      'F5C' => 22,
+      'F5B' => 23,
+      'F5E' => 24,
+      'F5D' => 25,
 
-      // =====================
-      // PEMBIAYAAN KULIAH
-      // =====================
-      'F1201' => 38,
-      'F1202' => 39,
+      'F14' => 26,
+      'F15' => 27,
 
-      // =====================
-      // KOMPETENSI SAAT LULUS
-      // =====================
-      'F17A'  => 40,
-      'F1761' => 41,
-      'F1763' => 42,
-      'F1765' => 43,
-      'F1767' => 44,
-      'F1769' => 45,
-      'F1771' => 46,
-      'F1773' => 47,
-      'F1775' => 48,
-      'F1777' => 49,
-      'F1779' => 50,
-      'F1781' => 51,
+      // Pencarian Kerja
+      'F301' => 28,
+      'F302' => 29,
+      'F303' => 30,
 
-      // =====================
-      // KOMPETENSI SAAT INI
-      // =====================
-      'F17B'  => 52,
-      'F1762' => 53,
-      'F1764' => 54,
-      'F1766' => 55,
-      'F1768' => 56,
-      'F1770' => 57,
-      'F1772' => 58,
-      'F1774' => 59,
-      'F1776' => 60,
-      'F1778' => 61,
-      'F1780' => 62,
-      'F1782' => 63,
+      'F4'   => 31,
+      'F401' => 32,
+      'F402' => 33,
+      'F403' => 34,
+      'F404' => 35,
+      'F405' => 36,
+      'F406' => 37,
+      'F407' => 38,
+      'F408' => 39,
+      'F409' => 40,
+      'F410' => 41,
+      'F411' => 42,
+      'F412' => 43,
+      'F413' => 44,
+      'F414' => 45,
+      'F415' => 46,
+      'F416' => 47,
 
-      // =====================
-      // PEMBELAJARAN
-      // =====================
-      'F2'    => 64,
-      'F21'   => 65,
-      'F22'   => 66,
-      'F23'   => 67,
-      'F24'   => 68,
-      'F25'   => 69,
-      'F26'   => 70,
-      'F27'   => 71,
-      'F28'   => 72,
-      'F29'   => 73,
-      'F30'   => 74,
-      'F31'   => 75,
-      'F32'   => 76,
-      'F33'   => 77,
-      'F34'   => 78,
-      'F35'   => 79,
-      'F36'   => 80,
-      'F37'   => 81,
+      'F6' => 48,
+      'F7' => 49,
+      'F7A' => 50,
+
+      'F1001' => 51,
+      'F1002' => 52,
+
+      'F16'   => 53,
+      'F1601' => 54,
+      'F1602' => 55,
+      'F1603' => 56,
+      'F1604' => 57,
+      'F1605' => 58,
+      'F1606' => 59,
+      'F1607' => 60,
+      'F1608' => 61,
+      'F1609' => 62,
+      'F1610' => 63,
+      'F1611' => 64,
+      'F1612' => 65,
+      'F1613' => 66,
+      'F1614' => 67,
+
+      // Pembiayaan Kuliah
+      'F1201' => 68,
+      'F1202' => 69,
+
+      // Kompetensi Saat Lulus
+      'F17A'  => 70,
+      'F1761' => 71,
+      'F1763' => 72,
+      'F1765' => 73,
+      'F1767' => 74,
+      'F1769' => 75,
+      'F1771' => 76,
+      'F1773' => 77,
+      'F1775' => 78,
+      'F1777' => 79,
+      'F1779' => 80,
+      'F1781' => 81,
+
+      // Kompetensi Saat Ini
+      'F17B'  => 82,
+      'F1762' => 83,
+      'F1764' => 84,
+      'F1766' => 85,
+      'F1768' => 86,
+      'F1770' => 87,
+      'F1772' => 88,
+      'F1774' => 89,
+      'F1776' => 90,
+      'F1778' => 91,
+      'F1780' => 92,
+      'F1782' => 93,
+
+      // Pembelajaran
+      'F2'  => 94,
+      'F21' => 95,
+      'F22' => 96,
+      'F23' => 97,
+      'F24' => 98,
+      'F25' => 99,
+      'F26' => 100,
+      'F27' => 101,
+      'F28' => 102,
+      'F29' => 103,
+      'F30' => 104,
+      'F31' => 105,
+      'F32' => 106,
+      'F33' => 107,
+      'F34' => 108,
+      'F35' => 109,
+      'F36' => 110,
+      'F37' => 111,
     ];
 
     foreach ($urutan as $kode => $urutan) {

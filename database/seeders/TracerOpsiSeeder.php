@@ -14,6 +14,7 @@ class TracerOpsiSeeder extends Seeder
     $this->seedF1101();
     $this->seedF5D();
     $this->seedF5C();
+    $this->seedF5E();
 
     $this->seedF1201();
 
@@ -79,6 +80,18 @@ class TracerOpsiSeeder extends Seeder
     ]);
   }
 
+
+
+  private function seedF5C(): void
+  {
+    $this->saveOptions('F5C', [
+      ['nilai' => '1', 'label' => 'Founder'],
+      ['nilai' => '2', 'label' => 'Co-Founder'],
+//      ['nilai' => '3', 'label' => 'Staff'],
+      ['nilai' => '4', 'label' => 'Freelance/Kerja Lepas'],
+    ]);
+  }
+
   private function seedF5D(): void
   {
     $this->saveOptions('F5D', [
@@ -88,25 +101,23 @@ class TracerOpsiSeeder extends Seeder
     ]);
   }
 
-  private function seedF5C(): void
+  private function seedF5E(): void
   {
-    $this->saveOptions('F5C', [
-      ['nilai' => '1', 'label' => 'Founder'],
-      ['nilai' => '2', 'label' => 'Co-Founder'],
-      ['nilai' => '3', 'label' => 'Staff'],
-      ['nilai' => '4', 'label' => 'Freelance/Kerja Lepas'],
+    $this->saveOptions('F5E', [
+      ['nilai' => '0', 'label' => 'Belum'],
+      ['nilai' => '1', 'label' => 'Sudah'],
     ]);
   }
-
   private function seedF1201(): void
   {
     $this->saveOptions('F1201', [
       ['nilai' => '1', 'label' => 'Biaya Sendiri/Keluarga'],
       ['nilai' => '2', 'label' => 'Beasiswa Afirmasi Pendidikan Tinggi (ADIK)'],
-      ['nilai' => '3', 'label' => 'Beasiswa BIDIKMISI'],
+      ['nilai' => '3', 'label' => 'Beasiswa KIP-Kuliah (KIP-K)'],
       ['nilai' => '4', 'label' => 'Beasiswa Peningkatan Prestasi Akademik (PPA)'],
       ['nilai' => '5', 'label' => 'Beasiswa AFIRMASI'],
       ['nilai' => '6', 'label' => 'Beasiswa Perusahaan/Swasta'],
+      ['nilai' => '8', 'label' => 'Beasiswa pemerintah daerah'],
       ['nilai' => '7', 'label' => 'Lainnya'],
     ]);
   }
@@ -293,7 +304,7 @@ class TracerOpsiSeeder extends Seeder
       ['F409', 'Menghubungi kantor kemahasiswaan/hubungan alumni'],
       ['F410', 'Membangun jejaring (network) sejak masih kuliah'],
       ['F411', 'Melalui relasi (misalnya dosen, orang tua, saudara, teman, dll.)'],
-      ['F412', 'Membangun bisnis sendiri'],
+//      ['F412', 'Membangun bisnis sendiri'],
       ['F413', 'Melalui penempatan kerja atau magang'],
       ['F414', 'Bekerja di tempat yang sama dengan tempat kerja semasa kuliah'],
       ['F415', 'Lainnya'],

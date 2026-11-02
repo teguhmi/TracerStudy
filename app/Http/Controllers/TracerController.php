@@ -493,16 +493,13 @@ class TracerController extends Controller
         */
         TracerJawaban::updateOrCreate(
           [
-            'responden_id' => $responden->id,
-            'pertanyaan_id' => $pertanyaan->id,
+            'responden_id'    => $responden->id,
+            'kode_pertanyaan' => $pertanyaan->kode,
           ],
           [
-            'kode_pertanyaan' => $pertanyaan->kode,
-            'jawaban' => is_array($nilai)
-              ? json_encode(
-                $nilai,
-                JSON_UNESCAPED_UNICODE
-              )
+            'pertanyaan_id' => $pertanyaan->id,
+            'jawaban'       => is_array($nilai)
+              ? json_encode($nilai, JSON_UNESCAPED_UNICODE)
               : $nilai,
           ]
         );

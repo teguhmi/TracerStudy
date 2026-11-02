@@ -6,7 +6,7 @@ use App\Http\Controllers\TracerController;
 use App\Http\Middleware\AlumniAuthenticated;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\authentications\Login;
-use App\Http\Controllers\authentications\RegisterBasic;
+//use App\Http\Controllers\authentications\RegisterBasic;
 
 Route::get('/reload-captcha', function () {
   return response()->json([
@@ -19,7 +19,7 @@ Route::middleware(AlumniAuthenticated::class)->group(function () {
   Route::get('/tracer', [TracerController::class, 'index'])->name('tracer.index');
   Route::post('/tracer', [TracerController::class, 'store'])->name('tracer.simpan');
 //  Route::post('/tracer/submit', [TracerController::class, 'submit'])->name('tracer.submit');
-  Route::get('/tracer/riwayat', [TracerController::class, 'riwayat'])->name('tracer.riwayat');
+//  Route::get('/tracer/riwayat', [TracerController::class, 'riwayat'])->name('tracer.riwayat');
 
 });
 Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');

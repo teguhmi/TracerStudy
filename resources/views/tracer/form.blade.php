@@ -403,8 +403,8 @@
 @endsection
 
 @push('scripts')
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+{{--  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>--}}
+{{--  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>--}}
 
   <script>
     let currentStep = 0;
@@ -683,72 +683,114 @@
       }
     });
 
-    /* AJAX Cascading BIO05 - BIO07 */
-    $(document).ready(function() {
-      $.get('/ajax/negaras', function(data) {
+    $(document).ready(function () {
+
+      // Cache selector yang sering digunakan
+      const $bio05 = $('#bio05');
+      const $bio06 = $('#bio06');
+      const $bio07 = $('#bio07');
+
+      // Load data negara saat halaman dibuka
+      $.get('/ajax/negaras', function (data) {
+
         let html = '<option value="">Pilih Negara</option>';
-        $.each(data, function(i, item) {
+
+        $.each(data, function (i, item) {
           html += `<option value="${item.id}">${item.nama_negara}</option>`;
         });
-        $('#bio05').html(html);
 
-        let selectedNegara = $('#bio05').data('selected');
+        $bio05.html(html);
+
+        // Restore negara yang sebelumnya tersimpan
+        let selectedNegara = $bio05.data('selected');
+
         if (selectedNegara) {
-          $('#bio05').val(String(selectedNegara));
+          $bio05.val(String(selectedNegara));
+
           setTimeout(() => {
-            $('#bio05').trigger('change');
+            $bio05.trigger('change');
             renderWizard();
           }, 100);
         }
       });
 
-      $(document).on('change', '#bio05', function() {
+      // Saat negara berubah, load provinsi
+      $(document).on('change', '#bio05', function () {
+
         let negaraId = $(this).val();
-        $('#bio06').html('<option value="">Pilih Provinsi</option>');
-        $('#bio07').html('<option value="">Pilih Kabupaten/Kota</option>');
+
+        // Reset dropdown turunan
+        $bio06.html('<option value="">Pilih Provinsi</option>');
+        $bio07.html('<option value="">Pilih Kabupaten/Kota</option>');
+
         if (!negaraId) return;
 
-        $.get('/ajax/provinsis/' + negaraId, function(data) {
+        $.get('/ajax/provinsis/' + negaraId, function (data) {
+
           let html = '<option value="">Pilih Provinsi</option>';
-          $.each(data, function(i, item) {
+
+          $.each(data, function (i, item) {
             html += `<option value="${item.id}">${item.nama_provinsi}</option>`;
           });
-          $('#bio06').html(html);
 
-          let selectedProvinsi = $('#bio06').data('selected');
+          $bio06.html(html);
+
+          // Restore provinsi yang sebelumnya tersimpan
+          let selectedProvinsi = $bio06.data('selected');
+
           if (selectedProvinsi) {
-            $('#bio06').val(String(selectedProvinsi));
-            setTimeout(() => $('#bio06').trigger('change'), 100);
+            $bio06.val(String(selectedProvinsi));
+
+            setTimeout(() => {
+              $bio06.trigger('change');
+            }, 100);
           }
         });
       });
 
-      $(document).on('change', '#bio06', function() {
+      // Saat provinsi berubah, load kabupaten/kota
+      $(document).on('change', '#bio06', function () {
+
         let provinsiId = $(this).val();
-        $('#bio07').html('<option value="">Pilih Kabupaten/Kota</option>');
+
+        // Reset dropdown kota
+        $bio07.html('<option value="">Pilih Kabupaten/Kota</option>');
+
         if (!provinsiId) return;
 
-        $.get('/ajax/kabupaten-kotas/' + provinsiId, function(data) {
+        $.get('/ajax/kabupaten-kotas/' + provinsiId, function (data) {
+
           let html = '<option value="">Pilih Kabupaten/Kota</option>';
-          $.each(data, function(i, item) {
+
+          $.each(data, function (i, item) {
             html += `<option value="${item.id}">${item.nama_kabupaten_kota}</option>`;
           });
-          $('#bio07').html(html);
 
-          let selectedKota = $('#bio07').data('selected');
-          if (selectedKota) $('#bio07').val(String(selectedKota));
+          $bio07.html(html);
+
+          // Restore kota yang sebelumnya tersimpan
+          let selectedKota = $bio07.data('selected');
+
+          if (selectedKota) {
+            $bio07.val(String(selectedKota));
+          }
         });
       });
 
+      // Otomatis memilih range F505 berdasarkan nilai numerik
       let nilai = parseInt($('#value_F505').val() || 0);
-      $('#range_F505 option').each(function() {
+
+      $('#range_F505 option').each(function () {
+
         let min = parseInt($(this).data('min'));
         let max = parseInt($(this).data('max'));
+
         if (nilai >= min && nilai <= max) {
           $(this).prop('selected', true);
           return false;
         }
       });
+
     });
   </script>
 @endpush

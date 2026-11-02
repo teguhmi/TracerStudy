@@ -19,6 +19,9 @@ return new class extends Migration
 
       $table->string('label');
 
+      // Kondisi tampil opsi
+      $table->string('tampil_jika')->nullable();
+
       $table->integer('urutan')
         ->default(0);
 
@@ -30,6 +33,7 @@ return new class extends Migration
       $table->index('pertanyaan_id');
       $table->index('urutan');
       $table->index('aktif');
+      $table->index('tampil_jika');
     });
   }
 

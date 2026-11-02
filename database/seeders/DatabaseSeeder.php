@@ -19,23 +19,23 @@ class DatabaseSeeder extends Seeder
 
 //      User::factory(10)->create();
 
-      User::updateOrCreate(
-        [
-          'email' => 'teguhmi@gmail.com'
-        ],
-        [
-          'name' => 'Test User',
-          'password' => bcrypt('password'),
-          'email_verified_at' => now(),
-        ]
-      );
+//      User::updateOrCreate(
+//        [
+//          'email' => 'teguhmi@gmail.com'
+//        ],
+//        [
+//          'name' => 'Test User',
+//          'password' => bcrypt('password'),
+//          'email_verified_at' => now(),
+//        ]
+//      );
 
 
       $this->call([
         TracerSectionSeeder::class,
         TracerPertanyaanSeeder::class,
         TracerOpsiSeeder::class,
-        TracerPertanyaanUpdateSeeder::class,
+//        TracerPertanyaanUpdateSeeder::class,
         TracerSectionRuleSeeder::class,
         PortalLayananSeeder::class,
         PortalSettingSeeder::class,
