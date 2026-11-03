@@ -46,17 +46,17 @@ class TracerOpsiSeeder extends Seeder
       TracerOpsi::updateOrCreate(
         [
           'pertanyaan_id' => $pertanyaan->id,
-          'nilai' => $option['nilai'],
+          'nilai'         => $option['nilai'],
         ],
         [
-          'label' => $option['label'],
-          'urutan' => $urut + 1,
-          'aktif' => true,
+          'label'        => $option['label'],
+          'tampil_jika'  => $option['tampil_jika'] ?? null,
+          'urutan'       => $urut + 1,
+          'aktif'        => true,
         ]
       );
     }
   }
-
   private function seedF8(): void
   {
     $this->saveOptions('F8', [
@@ -308,6 +308,7 @@ class TracerOpsiSeeder extends Seeder
       ['F413', 'Melalui penempatan kerja atau magang'],
       ['F414', 'Bekerja di tempat yang sama dengan tempat kerja semasa kuliah'],
       ['F415', 'Lainnya'],
+
     ];
 
     foreach ($opsiF4 as $index => $opsi) {
@@ -330,24 +331,81 @@ class TracerOpsiSeeder extends Seeder
   private function seedF16(): void
   {
     $this->saveOptions('F16', [
-      ['nilai' => 'F1601', 'label' => 'Pekerjaan saya sekarang sudah sesuai dengan pendidikan saya'],
-      ['nilai' => 'F1602', 'label' => 'Saya belum mendapatkan pekerjaan yang lebih sesuai'],
-      ['nilai' => 'F1603', 'label' => 'Di pekerjaan ini saya memperoleh prospek karir yang baik'],
-      ['nilai' => 'F1604', 'label' => 'Saya lebih suka bekerja di area yang tidak berhubungan dengan pendidikan saya'],
-      ['nilai' => 'F1605', 'label' => 'Saya dipromosikan ke posisi yang kurang berhubungan dengan pendidikan saya'],
-      ['nilai' => 'F1606', 'label' => 'Saya memperoleh pendapatan yang lebih tinggi'],
-      ['nilai' => 'F1607', 'label' => 'Pekerjaan saya lebih aman atau terjamin'],
-      ['nilai' => 'F1608', 'label' => 'Pekerjaan saya lebih menarik'],
-      ['nilai' => 'F1609', 'label' => 'Pekerjaan lebih fleksibel untuk pekerjaan tambahan'],
-      ['nilai' => 'F1610', 'label' => 'Lokasi pekerjaan lebih dekat ke rumah'],
-      ['nilai' => 'F1611', 'label' => 'Lebih menjamin kebutuhan keluarga'],
-      ['nilai' => 'F1612', 'label' => 'Harus menerima pekerjaan yang tidak sesuai pendidikan di awal karir'],
-      ['nilai' => 'F1613', 'label' => 'Lainnya'],
+
+      [
+        'nilai' => 'F1601',
+        'label' => 'Pekerjaan saya sekarang sudah sesuai dengan pendidikan saya',
+      ],
+
+      [
+        'nilai' => 'F1602',
+        'label' => 'Saya belum mendapatkan pekerjaan yang lebih sesuai',
+      ],
+
+      [
+        'nilai' => 'F1603',
+        'label' => 'Di pekerjaan ini saya memperoleh prospek karir yang baik',
+      ],
+
+      [
+        'nilai' => 'F1604',
+        'label' => 'Saya lebih suka bekerja di area yang tidak berhubungan dengan pendidikan saya',
+      ],
+
+      [
+        'nilai' => 'F1605',
+        'label' => 'Saya dipromosikan ke posisi yang kurang berhubungan dengan pendidikan saya',
+        'tampil_jika' => '{"F8":["1"]}',
+      ],
+
+      [
+        'nilai' => 'F1606',
+        'label' => 'Saya memperoleh pendapatan yang lebih tinggi',
+      ],
+
+      [
+        'nilai' => 'F1607',
+        'label' => 'Pekerjaan saya lebih aman atau terjamin',
+      ],
+
+      [
+        'nilai' => 'F1608',
+        'label' => 'Pekerjaan saya lebih menarik',
+      ],
+
+      [
+        'nilai' => 'F1609',
+        'label' => 'Pekerjaan lebih fleksibel untuk pekerjaan tambahan',
+      ],
+
+      [
+        'nilai' => 'F1610',
+        'label' => 'Lokasi pekerjaan lebih dekat ke rumah',
+      ],
+
+      [
+        'nilai' => 'F1611',
+        'label' => 'Lebih menjamin kebutuhan keluarga',
+        'tampil_jika' => '{"F8":["3"]}',
+      ],
+
+      [
+        'nilai' => 'F1612',
+        'label' => 'Harus menerima pekerjaan yang tidak sesuai pendidikan di awal karir',
+      ],
+
+      [
+        'nilai' => 'F1613',
+        'label' => 'Lainnya',
+      ],
+
     ]);
   }
 
   private function seedF18A(): void
   {
+
+
     $this->saveOptions('F18A', [
       ['nilai' => '1', 'label' => 'Biaya Sendiri'],
       ['nilai' => '2', 'label' => 'Beasiswa'],

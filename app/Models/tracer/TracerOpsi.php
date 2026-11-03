@@ -11,8 +11,9 @@ class TracerOpsi extends Model
     'pertanyaan_id',
     'nilai',
     'label',
+    'tampil_jika',
     'urutan',
-    'aktif'
+    'aktif',
   ];
 
   protected $casts = [

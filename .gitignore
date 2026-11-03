@@ -92,8 +92,9 @@ pnpm-debug.log
 # File upload alumni / foto ijazah jangan dimasukkan ke Git
 # Sesuaikan jika memang file upload berada di lokasi ini.
 
-/storage/app/public/alumni/
-
+#/storage/app/public/alumni/
+/storage/app/public/*
+!/storage/app/public/.gitignore
 
 # ------------------------------------------------------------
 # LARAVEL BOOTSTRAP CACHE

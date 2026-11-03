@@ -1,4 +1,5 @@
 import './bootstrap';
+// import  './tracer_form.js';
 /*
   Add custom scripts here
 */
@@ -7,10 +8,22 @@ import.meta.glob([
   // '../assets/json/**',
   '../assets/vendor/fonts/**'
 ]);
+
 import $ from 'jquery';
 
 window.$ = $;
 window.jQuery = $;
 
+// import 'datatables.net';
+// import 'datatables.net-bs5';
+
 import Swal from 'sweetalert2';
 window.Swal = Swal;
+
+
+import initTracerForm from './tracer_form.js';
+
+// Jalankan form tracer saat halaman memuat form tracer
+if (document.querySelector('#formTracer')) {
+  initTracerForm();
+}

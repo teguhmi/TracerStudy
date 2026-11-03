@@ -222,7 +222,9 @@
                   @elseif($q->jenis == 'checkbox')
                     <div class="row">
                       @foreach($q->opsi as $opsi)
-                        <div class="col-lg-6 col-md-6 col-12 mb-2">
+                        <div
+                          class="col-lg-6 col-md-6 col-12 mb-2 opsi-wrapper"
+                          data-opsi-tampil-jika='@json($opsi->tampil_jika ?? [])'                        >
                           <label class="option-card">
                             <input
                               type="checkbox"
@@ -231,21 +233,24 @@
                               value="{{ $opsi->nilai }}"
                               data-required="{{ $q->wajib ? 1 : 0 }}"
                               @checked(
-                                in_array(
-                                  $opsi->nilai,
-                                  old(
-                                    'jawaban.'.$q->kode,
-                                    is_array($jawabanLama[$q->kode] ?? null)
-                                      ? $jawabanLama[$q->kode]
-                                      : (isset($jawabanLama[$q->kode]) ? json_decode($jawabanLama[$q->kode], true) ?? [] : [])
+                                  in_array(
+                                      $opsi->nilai,
+                                      old(
+                                          'jawaban.'.$q->kode,
+                                          is_array($jawabanLama[$q->kode] ?? null)
+                                              ? $jawabanLama[$q->kode]
+                                              : (isset($jawabanLama[$q->kode]) ? json_decode($jawabanLama[$q->kode], true) ?? [] : [])
+                                      )
                                   )
-                                )
                               )
                             >
                             <span>
-                              @if(str_starts_with($opsi->nilai, 'F')) <strong>[{{ $opsi->nilai }}]</strong> @endif
+                    @if(str_starts_with($opsi->nilai, 'F'))
+                                <strong>[{{ $opsi->nilai }}]</strong>
+                              @endif
+
                               {{ $opsi->label }}
-                            </span>
+                </span>
                           </label>
                         </div>
                       @endforeach
@@ -370,20 +375,10 @@
           <div class="d-flex align-items-center justify-content-between">
             <div class="small text-muted"><span id="stepInfo"></span></div>
             <div class="d-flex gap-2">
-              <button
-                type="button"
-                id="btnPrev"
-                class="btn btn-light border px-4"
-                onclick="prevSection()"
-              >
+              <button type="button" id="btnPrev" class="btn btn-light border px-4">
                 <i class="bi bi-arrow-left"></i> Sebelumnya
               </button>
-              <button
-                type="button"
-                id="btnNext"
-                class="btn btn-primary px-4"
-                onclick="nextSection()"
-              >
+              <button type="button" id="btnNext" class="btn btn-primary px-4">
                 Selanjutnya <i class="bi bi-arrow-right"></i>
               </button>
               <button
@@ -403,394 +398,9 @@
 @endsection
 
 @push('scripts')
-{{--  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>--}}
-{{--  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>--}}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <script>
-    let currentStep = 0;
-    const allSections = () => [...document.querySelectorAll('.wizard-section')];
+  {{-- Inisialisasi dynamic URL Blade untuk script eksternal --}}
 
-    function evaluateRules() {
-      document.querySelectorAll('.pertanyaan').forEach(card => {
-        const rule = card.dataset.tampilJika;
-        if (!rule || rule === '{}' || rule === '[]') {
-          toggleQuestion(card, true);
-          return;
-        }
-
-        try {
-          const rules = JSON.parse(rule);
-          const visible = Object.entries(rules).every(([field, allowed]) => {
-            let value = null;
-            const radio = document.querySelector(`[name="jawaban[${field}]"]:checked`);
-            if (radio) value = radio.value;
-
-            const checkboxes = document.querySelectorAll(`[name="jawaban[${field}][]"]:checked`);
-            if (!value && checkboxes.length > 0) {
-              const values = [...checkboxes].map(x => String(x.value));
-              return allowed.some(item => values.includes(String(item)));
-            }
-
-            if (!value) {
-              const fieldEl = document.querySelector(`[name="jawaban[${field}]"]`);
-              if (fieldEl) value = fieldEl.value;
-            }
-
-            if (allowed.length === 1 && allowed[0] === '*') {
-              return value !== null && value !== '';
-            }
-
-            return allowed.map(String).includes(String(value));
-          });
-
-          toggleQuestion(card, visible);
-        } catch (e) {
-          console.error('Rule Error:', card.dataset.kode, e);
-        }
-      });
-    }
-
-    function getVisibleSections() {
-      return allSections().filter(section => {
-        return [...section.querySelectorAll('.pertanyaan')].some(card => card.style.display !== 'none');
-      });
-    }
-
-    function renderWizard() {
-      evaluateRules();
-
-      const visibleSections = getVisibleSections();
-      if (!visibleSections.length) return;
-
-      if (currentStep >= visibleSections.length) {
-        currentStep = visibleSections.length - 1;
-      }
-
-      allSections().forEach(section => (section.style.display = 'none'));
-      visibleSections[currentStep].style.display = 'block';
-
-      const total = visibleSections.length;
-      document.getElementById('btnPrev').style.display = currentStep === 0 ? 'none' : '';
-      document.getElementById('btnNext').classList.toggle('d-none', currentStep >= total - 1);
-      document.getElementById('btnSubmit').classList.toggle('d-none', currentStep < total - 1);
-
-      const percent = Math.round(((currentStep + 1) / total) * 100);
-      document.getElementById('progressBar').style.width = percent + '%';
-      document.getElementById('progressText').innerText = percent + '%';
-      document.getElementById('stepLabel').innerText = `Langkah ${currentStep + 1} dari ${total}`;
-    }
-
-    function toggleQuestion(card, visible) {
-      const inputs = card.querySelectorAll('input, select, textarea');
-      card.style.display = visible ? '' : 'none';
-
-      inputs.forEach(el => {
-        if (visible) {
-          if (el.dataset.required === '1' && el.type !== 'checkbox') {
-            el.required = true;
-          }
-        } else {
-          el.required = false;
-          if (el.type === 'radio' || el.type === 'checkbox') {
-            el.checked = false;
-          }
-        }
-      });
-    }
-
-    function validateCurrentSection() {
-      const section = getVisibleSections()[currentStep];
-      if (!section) return true;
-
-      let valid = true;
-      let firstError = null;
-
-      section.querySelectorAll('.pertanyaan').forEach(card => {
-        if (card.style.display === 'none') return;
-
-        // Validasi input ber-atribut required (Text, Select, Radio, Date, Number)
-        card.querySelectorAll('[required]').forEach(field => {
-          if (field.type === 'radio') {
-            const checked = section.querySelector(`[name="${CSS.escape(field.name)}"]:checked`);
-            if (!checked) {
-              valid = false;
-              firstError ??= card;
-            }
-            return;
-          }
-
-          if (!field.value?.trim()) {
-            valid = false;
-            firstError ??= card;
-          }
-        });
-
-        // Validasi khusus Checkbox Wajib (minimal 1 tercentang)
-        const requiredCheckboxes = card.querySelectorAll('input[type="checkbox"][data-required="1"]');
-        if (requiredCheckboxes.length > 0) {
-          const isAnyChecked = [...requiredCheckboxes].some(cb => cb.checked);
-          if (!isAnyChecked) {
-            valid = false;
-            firstError ??= card;
-          }
-        }
-      });
-
-      if (!valid && firstError) {
-        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        firstError.classList.add('border-danger');
-        setTimeout(() => firstError.classList.remove('border-danger'), 3000);
-      }
-
-      return valid;
-    }
-
-    function nextSection() {
-      if (!validateCurrentSection()) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Data Belum Lengkap',
-          text: 'Masih ada pertanyaan wajib yang belum diisi.',
-          confirmButtonColor: '#696cff'
-        });
-        return;
-      }
-      currentStep++;
-      renderWizard();
-    }
-
-    function prevSection() {
-      if (currentStep > 0) {
-        currentStep--;
-        renderWizard();
-      }
-    }
-
-    function toggleIndonesiaFields() {
-      const negara = document.getElementById('negara_id');
-      const isIndonesia = negara?.value === 'ID';
-      ['F5A1', 'F5A2'].forEach(kode => {
-        const el = document.querySelector(`[data-kode="${kode}"]`);
-        if (el) el.style.display = isIndonesia ? '' : 'none';
-      });
-    }
-
-    function checkIncomeF505() {
-      const rangeSelect = document.getElementById('range_F505');
-      const actualInput = document.getElementById('value_F505');
-      const warning = document.getElementById('warning_F505');
-
-      if (!rangeSelect || !actualInput) return true;
-
-      const selected = rangeSelect.options[rangeSelect.selectedIndex];
-      const min = parseInt(selected?.dataset.min || 0);
-      const max = parseInt(selected?.dataset.max || 999999999);
-      const actual = parseInt(actualInput.value || 0);
-
-      if (actual === 0 || rangeSelect.selectedIndex === 0) {
-        warning?.classList.add('d-none');
-        return true;
-      }
-
-      const valid = actual >= min && actual <= max;
-      warning?.classList.toggle('d-none', valid);
-      return valid;
-    }
-
-    /* Event Listeners Initialization */
-    document.addEventListener('change', renderWizard);
-    document.addEventListener('DOMContentLoaded', function() {
-      renderWizard();
-      toggleIndonesiaFields();
-
-      const negara = document.getElementById('negara_id');
-      if (negara) {
-        negara.addEventListener('change', toggleIndonesiaFields);
-      }
-
-      // Form Submit Validation
-      document.getElementById('formTracer')?.addEventListener('submit', function(e) {
-        document.querySelectorAll('input, select, textarea').forEach(el => {
-          if (el.offsetParent === null) {
-            el.required = false;
-          }
-        });
-
-        if (!checkIncomeF505()) {
-          e.preventDefault();
-          Swal.fire({
-            icon: 'warning',
-            title: 'Pendapatan Tidak Sesuai',
-            text: 'Rentang pendapatan yang dipilih tidak sesuai dengan pendapatan aktual.',
-            confirmButtonText: 'Perbaiki'
-          });
-          return false;
-        }
-      });
-
-      // Number Input Disabler
-      document.querySelectorAll('input[type="number"]').forEach(input => {
-        input.addEventListener('wheel', e => e.preventDefault());
-        input.addEventListener('keydown', e => {
-          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
-        });
-      });
-
-      // Format Rupiah
-      document.querySelectorAll('.rupiah-display').forEach(input => {
-        input.addEventListener('input', function() {
-          let angka = this.value.replace(/\D/g, '');
-          document.getElementById('value_' + this.dataset.target).value = angka;
-          this.value = angka ? new Intl.NumberFormat('id-ID').format(angka) : '';
-
-          if (this.dataset.target === 'F505') checkIncomeF505();
-        });
-      });
-
-      document.getElementById('range_F505')?.addEventListener('change', checkIncomeF505);
-
-      // Fetch Location F5A1/F5A2
-      const provinsiSelect = document.getElementById('f5a1');
-      const kotaSelect = document.getElementById('f5a2');
-
-      if (provinsiSelect && kotaSelect) {
-        async function loadKota(provinsiId) {
-          kotaSelect.innerHTML = '<option value="">Loading...</option>';
-          try {
-            const response = await fetch("{{ url('tracer/kota') }}/" + provinsiId);
-            const kotas = await response.json();
-
-            kotaSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
-            kotas.forEach(function(kota) {
-              kotaSelect.innerHTML += `<option value="${kota.kode}">${kota.nama}</option>`;
-            });
-
-            const selectedKota = kotaSelect.dataset.selected;
-            if (selectedKota) {
-              kotaSelect.value = String(selectedKota);
-            }
-          } catch (err) {
-            console.error(err);
-            kotaSelect.innerHTML = '<option value="">Gagal memuat data kota</option>';
-          }
-        }
-
-        provinsiSelect.addEventListener('change', function() {
-          if (this.value) loadKota(this.value);
-        });
-
-        if (provinsiSelect.value) loadKota(provinsiSelect.value);
-      }
-    });
-
-    $(document).ready(function () {
-
-      // Cache selector yang sering digunakan
-      const $bio05 = $('#bio05');
-      const $bio06 = $('#bio06');
-      const $bio07 = $('#bio07');
-
-      // Load data negara saat halaman dibuka
-      $.get('/ajax/negaras', function (data) {
-
-        let html = '<option value="">Pilih Negara</option>';
-
-        $.each(data, function (i, item) {
-          html += `<option value="${item.id}">${item.nama_negara}</option>`;
-        });
-
-        $bio05.html(html);
-
-        // Restore negara yang sebelumnya tersimpan
-        let selectedNegara = $bio05.data('selected');
-
-        if (selectedNegara) {
-          $bio05.val(String(selectedNegara));
-
-          setTimeout(() => {
-            $bio05.trigger('change');
-            renderWizard();
-          }, 100);
-        }
-      });
-
-      // Saat negara berubah, load provinsi
-      $(document).on('change', '#bio05', function () {
-
-        let negaraId = $(this).val();
-
-        // Reset dropdown turunan
-        $bio06.html('<option value="">Pilih Provinsi</option>');
-        $bio07.html('<option value="">Pilih Kabupaten/Kota</option>');
-
-        if (!negaraId) return;
-
-        $.get('/ajax/provinsis/' + negaraId, function (data) {
-
-          let html = '<option value="">Pilih Provinsi</option>';
-
-          $.each(data, function (i, item) {
-            html += `<option value="${item.id}">${item.nama_provinsi}</option>`;
-          });
-
-          $bio06.html(html);
-
-          // Restore provinsi yang sebelumnya tersimpan
-          let selectedProvinsi = $bio06.data('selected');
-
-          if (selectedProvinsi) {
-            $bio06.val(String(selectedProvinsi));
-
-            setTimeout(() => {
-              $bio06.trigger('change');
-            }, 100);
-          }
-        });
-      });
-
-      // Saat provinsi berubah, load kabupaten/kota
-      $(document).on('change', '#bio06', function () {
-
-        let provinsiId = $(this).val();
-
-        // Reset dropdown kota
-        $bio07.html('<option value="">Pilih Kabupaten/Kota</option>');
-
-        if (!provinsiId) return;
-
-        $.get('/ajax/kabupaten-kotas/' + provinsiId, function (data) {
-
-          let html = '<option value="">Pilih Kabupaten/Kota</option>';
-
-          $.each(data, function (i, item) {
-            html += `<option value="${item.id}">${item.nama_kabupaten_kota}</option>`;
-          });
-
-          $bio07.html(html);
-
-          // Restore kota yang sebelumnya tersimpan
-          let selectedKota = $bio07.data('selected');
-
-          if (selectedKota) {
-            $bio07.val(String(selectedKota));
-          }
-        });
-      });
-
-      // Otomatis memilih range F505 berdasarkan nilai numerik
-      let nilai = parseInt($('#value_F505').val() || 0);
-
-      $('#range_F505 option').each(function () {
-
-        let min = parseInt($(this).data('min'));
-        let max = parseInt($(this).data('max'));
-
-        if (nilai >= min && nilai <= max) {
-          $(this).prop('selected', true);
-          return false;
-        }
-      });
-
-    });
-  </script>
 @endpush
