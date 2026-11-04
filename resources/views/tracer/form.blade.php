@@ -8,11 +8,24 @@
       z-index: 100;
       backdrop-filter: blur(8px);
     }
-    #btnNext, #btnSubmit { min-width: 140px; }
+
+    #btnNext, #btnSubmit {
+      min-width: 140px;
+    }
+
     @media (max-width: 768px) {
-      .sticky-bottom .d-flex { flex-direction: column; gap: 10px; }
-      .sticky-bottom .d-flex:last-child { width: 100%; }
-      #btnPrev, #btnNext, #btnSubmit { width: 100%; }
+      .sticky-bottom .d-flex {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .sticky-bottom .d-flex:last-child {
+        width: 100%;
+      }
+
+      #btnPrev, #btnNext, #btnSubmit {
+        width: 100%;
+      }
     }
   </style>
 @endsection
@@ -43,30 +56,56 @@
         </div>
 
         {{-- Biodata Alumni --}}
+
         <div class="card shadow-lg border-0 mb-4">
           <div class="card-body">
             <div class="row align-items-center">
+
               <div class="col-auto">
-                <div class="avatar avatar-xl">
-                  <span class="avatar-initial rounded-circle bg-label-primary">
-                    {{ strtoupper(substr($dpAlumni->nama_mahasiswa, 0, 1)) }}
-                  </span>
+                <img
+                  src="{{ $fotoIjazah }}"
+                  alt="Foto Alumni"
+                  class="rounded-circle border shadow-sm"
+                  width="100"
+                  height="100"
+                  style="object-fit: cover;"
+                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+
+                <div class="avatar avatar-xl" style="display:none;">
+                    <span class="avatar-initial rounded-circle bg-label-primary">
+                        {{ strtoupper(substr($dpAlumni->nama_mahasiswa, 0, 1)) }}
+                    </span>
                 </div>
               </div>
+
               <div class="col">
-                <h4 class="mb-1 fw-bold">{{ $dpAlumni->nama_mahasiswa }}</h4>
-                <div class="text-muted">NIM : {{ $dpAlumni->nim }}</div>
-                <div class="small text-muted">{{ $dpAlumni->nama_program_studi }}</div>
+                <h4 class="mb-1 fw-bold">
+                  {{ $dpAlumni->nama_mahasiswa }}
+                </h4>
+
+                <div class="text-muted">
+                  NIM : {{ $dpAlumni->nim }}
+                </div>
+
+                <div class="small text-muted">
+                  {{ $dpAlumni->nama_program_studi }}
+                </div>
               </div>
+
               <div class="col-md-auto text-md-end">
-                <span class="badge bg-success">Alumni UT</span>
+                <span class="badge bg-success">
+                    Alumni UT
+                </span>
+
                 <div class="small text-muted mt-2">
                   Lulus {{ \Carbon\Carbon::parse($dpAlumni->tanggal_sk)->translatedFormat('d F Y') }}
                 </div>
               </div>
+
             </div>
           </div>
         </div>
+
 
         {{-- Section Wizard --}}
         @foreach($groupedSections as $sectionIndex => $sectionQuestions)
@@ -108,7 +147,9 @@
                     <span class="badge bg-label-primary">{{ $q->kode }}</span>
                     <h6 class="mt-2 mb-0">
                       {{ $q->pertanyaan }}
-                      @if($q->wajib) <span class="text-danger">*</span> @endif
+                      @if($q->wajib)
+                        <span class="text-danger">*</span>
+                      @endif
                     </h6>
                   </div>
 
@@ -202,18 +243,22 @@
                     <div class="row">
                       @foreach($q->opsi as $opsi)
                         <div class="col-lg-6 col-md-6 col-12 mb-2">
-                          <label class="option-card">
-                            <input
-                              type="radio"
-                              class="form-check-input me-2 trigger-conditional"
-                              name="jawaban[{{ $q->kode }}]"
-                              value="{{ $opsi->nilai }}"
-                              @checked(old('jawaban.'.$q->kode, $jawabanLama[$q->kode] ?? '') == $opsi->nilai)
-                              {{ $q->wajib ? 'required' : '' }}
-                              data-required="{{ $q->wajib ? 1 : 0 }}"
-                            >
-                            <span><strong>{{ $opsi->nilai }}</strong> - {{ $opsi->label }}</span>
-                          </label>
+                          <div class="input-group">
+                            <div class="input-group-text">
+                              <input
+                                type="radio"
+                                class="form-check-input mt-0 trigger-conditional"
+                                name="jawaban[{{ $q->kode }}]"
+                                value="{{ $opsi->nilai }}"
+                                @checked(old('jawaban.'.$q->kode, $jawabanLama[$q->kode] ?? '') == $opsi->nilai)
+                                {{ $q->wajib ? 'required' : '' }}
+                                data-required="{{ $q->wajib ? 1 : 0 }}">
+                            </div>
+
+                            <span class="form-control bg-white">
+                <strong>{{ $opsi->nilai }}</strong> - {{ $opsi->label }}
+            </span>
+                          </div>
                         </div>
                       @endforeach
                     </div>
@@ -223,35 +268,38 @@
                     <div class="row">
                       @foreach($q->opsi as $opsi)
                         <div
-                          class="col-lg-6 col-md-6 col-12 mb-2 opsi-wrapper"
-                          data-opsi-tampil-jika='@json($opsi->tampil_jika ?? [])'                        >
-                          <label class="option-card">
-                            <input
-                              type="checkbox"
-                              class="form-check-input me-2"
-                              name="jawaban[{{ $q->kode }}][]"
-                              value="{{ $opsi->nilai }}"
-                              data-required="{{ $q->wajib ? 1 : 0 }}"
-                              @checked(
-                                  in_array(
-                                      $opsi->nilai,
-                                      old(
-                                          'jawaban.'.$q->kode,
-                                          is_array($jawabanLama[$q->kode] ?? null)
-                                              ? $jawabanLama[$q->kode]
-                                              : (isset($jawabanLama[$q->kode]) ? json_decode($jawabanLama[$q->kode], true) ?? [] : [])
-                                      )
-                                  )
-                              )
-                            >
-                            <span>
-                    @if(str_starts_with($opsi->nilai, 'F'))
+                          class="col-12 mb-2 opsi-wrapper"
+                          data-opsi-tampil-jika='@json($opsi->tampil_jika ?? [])'>
+
+                          <div class="input-group">
+                            <div class="input-group-text">
+                              <input
+                                type="checkbox"
+                                class="form-check-input mt-0"
+                                name="jawaban[{{ $q->kode }}][]"
+                                value="{{ $opsi->nilai }}"
+                                data-required="{{ $q->wajib ? 1 : 0 }}"
+                                @checked(
+                                    in_array(
+                                        $opsi->nilai,
+                                        old(
+                                            'jawaban.'.$q->kode,
+                                            is_array($jawabanLama[$q->kode] ?? null)
+                                                ? $jawabanLama[$q->kode]
+                                                : (isset($jawabanLama[$q->kode])
+                                                    ? json_decode($jawabanLama[$q->kode], true) ?? []
+                                                    : [])
+                                        )
+                                    )
+                                )>
+                            </div>
+                            <span class="form-control bg-white">
+                              @if(str_starts_with($opsi->nilai, 'F'))
                                 <strong>[{{ $opsi->nilai }}]</strong>
                               @endif
-
                               {{ $opsi->label }}
-                </span>
-                          </label>
+                            </span>
+                          </div>
                         </div>
                       @endforeach
                     </div>

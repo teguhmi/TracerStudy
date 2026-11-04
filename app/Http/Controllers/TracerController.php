@@ -78,12 +78,21 @@ class TracerController extends Controller
 //    if ($dpAlumni) {
 //      $nimAlumni = Crypt::encrypt(session('nim'));
 //    }
+
+
+    $fotoIjazah = sprintf(
+      'https://aksi.ut.ac.id/storage/freeNAS/file_aksi/foto_ijazah/%s/%s/%s.jpg',
+      $dpAlumni->masa,
+      $dpAlumni->nim,
+      $dpAlumni->nim
+    );
+
     return view('tracer.form', compact(
       'periode', 'sections', 'negaras',
       'provinsis', 'kotas', 'dpAlumni', 'nimAlumni','jawabanLama',
     'valueBio05',
         'valueBio06',
-        'valueBio07'));
+        'valueBio07','fotoIjazah'));
   }
 
 

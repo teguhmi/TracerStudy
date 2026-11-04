@@ -16,6 +16,8 @@ class AjaxController extends Controller
         ->get()
     );
   }
+
+
   public function getProvinsis($negara)
   {
     return response()->json(
