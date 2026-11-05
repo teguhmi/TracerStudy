@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaporanTracerController;
+use App\Http\Controllers\LaporanTracerControllerRingkasan;
 use App\Http\Controllers\TracerController;
 use App\Http\Middleware\AlumniAuthenticated;
+use App\Models\query\LaporanQueryModel;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\authentications\Login;
-//use App\Http\Controllers\authentications\RegisterBasic;
 
 Route::get('/reload-captcha', function () {
   return response()->json([
@@ -18,33 +20,14 @@ Route::get('/reload-captcha', function () {
 Route::middleware(AlumniAuthenticated::class)->group(function () {
   Route::get('/tracer', [TracerController::class, 'index'])->name('tracer.index');
   Route::post('/tracer', [TracerController::class, 'store'])->name('tracer.simpan');
-//  Route::post('/tracer/submit', [TracerController::class, 'submit'])->name('tracer.submit');
-//  Route::get('/tracer/riwayat', [TracerController::class, 'riwayat'])->name('tracer.riwayat');
 
 });
 Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');
-
 Route::get('/ajax/negaras', [AjaxController::class, 'getNegaras']);
 Route::get('/ajax/provinsis/{negara}', [AjaxController::class, 'getProvinsis']);
 Route::get('/ajax/kabupaten-kotas/{provinsi}', [AjaxController::class, 'getKabupatenKotas']);
 
-//Route::get('/tracer',[TracerController::class, 'index'])->name('tracer.index');
-//Route::get('/tracer/kota/{provinsi}', [TracerController::class, 'getKotas'])->name('tracer.kotas');
-//Route::post('/tracer',[TracerController::class, 'store'])->name('tracer.simpan');
 
-//Route::post(
-//  '/tracer/submit',
-//  [TracerController::class, 'submit']
-//)->name('tracer.submit');
-
-//Route::get(
-//  '/tracer/riwayat',
-//  [TracerController::class, 'riwayat']
-//)->name('tracer.riwayat');
-
-// locale
-//Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
-//Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
 
 // authentication
 Route::get('/auth/login', [Login::class, 'index'])->name('login-alumni');
@@ -52,36 +35,20 @@ Route::post('/auth/login', [Login::class, 'login'])->name('auth-login-process');
 Route::POST('/auth/logout', [Login::class, 'logout'])->name('auth-logout');
 
 
-//Route::get('/auth/register', [RegisterBasic::class, 'index'])->name('auth-register');
-
-//Route::view('/', 'content.pages.welcome')->name('home');
 Route::get('/', [HomeController::class, 'index'])
   ->name('home');
 
-//Route::middleware(['auth'])->prefix('alumni')->group(function () {
-//
-//  Route::get('/dashboard', function () {
-//    return view('alumni.dashboard');
-//  })->name('alumni.dashboard');
-//
-//  Route::get('/profil', function () {
-//    return view('alumni.profil');
-//  })->name('alumni.profil');
-//
-//  Route::get('/tracer-study', function () {
-//    return view('alumni.tracer-study');
-//  })->name('alumni.tracer-study');
-//
-//  Route::get('/survey', function () {
-//    return view('alumni.survey');
-//  })->name('alumni.survey');
-//
-//  Route::get('/dana-abadi', function () {
-//    return view('alumni.dana-abadi');
-//  })->name('alumni.dana-abadi');
-//
-//
-//});
+Route::group(['prefix' => 'laporan'], function () {
+  Route::get('/', [LaporanTracerController::class, 'index'])->name('laporan-tracer.index');
+  Route::get('/ts/ri', [LaporanTracerControllerRingkasan::class, 'index'])->name('laporan.tracerRingkasan');
+  Route::get('/getTahunLulus', function () {return response()->json(LaporanQueryModel::class::getTahunLulus());})->name('laporan.getTahunLulus');
+  Route::get(
+    '/laporan/ts/ri/data',
+    [LaporanTracerControllerRingkasan::class, 'getData']
+  )->name('laporan.tracerRingkasan.data');
+});
+
+
 
 
 

@@ -27,11 +27,11 @@
     <ul class="menu-inner py-1">
         <!-- Dashboards -->
         @if (request()->is('kelulusan') || request()->is('kelulusan/*'))
-            <x-kelulusan-menu />
+            <x-menu_left />
         @elseif (request()->is('alumni') || request()->is('alumni/*'))
-            <x-alumni-menu />
+{{--            <x-alumni-menu />--}}
         @elseif (request()->is('suratketerangan') || request()->is('suratketerangan/*'))
-            <x-suratketerangan-menu />
+{{--            <x-suratketerangan-menu />--}}
         @endif
 
     </ul>
