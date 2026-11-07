@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BannerAlumni;
 use App\Models\PortalHero;
 use App\Services\Api\AlumniService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -14,11 +12,11 @@ class HomeController extends Controller
     protected AlumniService $alumniService
   ) {
   }
-  public function refreshCaptcha()
-  {
-    return response()->json(['captcha' => captcha_img()]);
-
-  }
+//  public function refreshCaptcha()
+//  {
+//    return response()->json(['captcha' => captcha_img()]);
+//
+//  }
 
   public function index()
   {
@@ -42,7 +40,7 @@ class HomeController extends Controller
       ->limit(6)
       ->get();
 
-    return view('frontpage.index', compact(
+    return view('content.frontpage.index', compact(
       'hero','setting',
       'layanans',
       'banner',

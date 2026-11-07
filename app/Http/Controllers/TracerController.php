@@ -11,12 +11,11 @@ use App\Models\tracer\TracerPertanyaan;
 use App\Models\tracer\TracerProvinsi;
 use App\Models\tracer\TracerResponden;
 use Exception;
-//use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-//use Illuminate\Validation\Rule;
+
 class TracerController extends Controller
 {
   public function index()
@@ -28,24 +27,23 @@ class TracerController extends Controller
     $nimAlumni = Crypt::encrypt(session('nim'));
     $dpAlumni = QueryAKSIModel::getYudisiumByNim(session('nim'));
 
-    $periode = TracerPeriode::where('aktif', true)->first();
-    $negaras = TracerNegara::orderBy('nama')->get();
-    $provinsis = TracerProvinsi::orderBy('nama')->get();
-    $kotas = TracerKota::orderBy('nama')->get();
+    $periode = TracerPeriode::query()->where('aktif', true)->first();
+    $negaras = TracerNegara::query()->orderBy('nama')->get();
+
+    $provinsis = TracerProvinsi::query()->orderBy('nama')->get();
+    $kotas = TracerKota::query()->orderBy('nama')->get();
 
     $jawabanLama = [];
 
-    $lastResponden = TracerResponden::where([
-      'nim'        => session('nim'),
+    $lastResponden = TracerResponden::query()->where([
+      'nim' => session('nim'),
       'periode_id' => $periode?->id,
     ])->first();
     $valueBio05 = $lastResponden?->negara_id;
     $valueBio06 = $lastResponden?->provinsi_id;
     $valueBio07 = $lastResponden?->kabupaten_id;
-
     if ($lastResponden) {
-
-      $jawabanLama = TracerJawaban::where(
+      $jawabanLama = TracerJawaban::query()->where(
         'responden_id',
         $lastResponden->id
       )
@@ -87,12 +85,12 @@ class TracerController extends Controller
       $dpAlumni->nim
     );
 
-    return view('tracer.form', compact(
+    return view('content.tracer.form', compact(
       'periode', 'sections', 'negaras',
-      'provinsis', 'kotas', 'dpAlumni', 'nimAlumni','jawabanLama',
-    'valueBio05',
-        'valueBio06',
-        'valueBio07','fotoIjazah'));
+      'provinsis', 'kotas', 'dpAlumni', 'nimAlumni', 'jawabanLama',
+      'valueBio05',
+      'valueBio06',
+      'valueBio07', 'fotoIjazah'));
   }
 
 
@@ -137,16 +135,16 @@ class TracerController extends Controller
 
       // Jika sudah punya tabel periode aktif gunakan:
 
-      $periode = TracerPeriode::where('aktif', 1)->first();
+      $periode = TracerPeriode::query()->where('aktif', 1)->first();
 
       if (!$periode) {
-          throw new \Exception('Periode tracer aktif tidak ditemukan.');
+        throw new \Exception('Periode tracer aktif tidak ditemukan.');
       }
 
       $periodeId = $periode->id;
 
-      $lastResponden = TracerResponden::where([
-        'nim'        => $nim,
+      $lastResponden = TracerResponden::query()->where([
+        'nim' => $nim,
         'periode_id' => $periodeId,
       ])->first();
 
@@ -163,7 +161,7 @@ class TracerController extends Controller
 
       $valueBio01 = $lastResponden?->npwp;
       $valueBio02 = $lastResponden?->email;
-      $valueBio03 = $lastResponden?->no_hp;
+      $valueBio03 = $lastResponden?->telepon;
       $valueBio04 = $lastResponden?->alamat_lengkap;
       $valueBio05 = $lastResponden?->negara_id;
       $valueBio06 = $lastResponden?->provinsi_id;
@@ -179,7 +177,7 @@ class TracerController extends Controller
 
       if ($negaraId) {
 
-        $negaraValid = TracerNegara::where(
+        $negaraValid = TracerNegara::query()->where(
           'id',
           $negaraId
         )->exists();
@@ -192,7 +190,7 @@ class TracerController extends Controller
       }
       if ($provinsiId) {
 
-        $kodeNegara = TracerNegara::where(
+        $kodeNegara = TracerNegara::query()->where(
           'id',
           $negaraId
         )->value('kode');
@@ -205,7 +203,7 @@ class TracerController extends Controller
       }
 
       if ($kabupatenId) {
-        TracerKota::where(
+        TracerKota::query()->where(
           'id',
           $kabupatenId
         )
@@ -223,25 +221,24 @@ class TracerController extends Controller
       }
 
 
-
-      $responden = TracerResponden::updateOrCreate(
+      $responden = TracerResponden::query()->updateOrCreate(
         [
-          'nim'        => $dpAlumni->nim,
+          'nim' => $dpAlumni->nim,
           'periode_id' => $periodeId,
         ],
         [
-          'nama'           => $dpAlumni->nama_mahasiswa,
-          'tanggal_lulus'  => $dpAlumni->tanggal_sk,
+          'nama' => $dpAlumni->nama_mahasiswa,
+          'tanggal_lulus' => $dpAlumni->tanggal_sk,
 
-          'npwp'           => $request->input('jawaban.BIO01', $valueBio01),
-          'email'          => $request->input('jawaban.BIO02', $valueBio02),
-          'no_hp'          => $request->input('jawaban.BIO03', $valueBio03),
+          'npwp' => $request->input('jawaban.BIO01', $valueBio01),
+          'email' => $request->input('jawaban.BIO02', $valueBio02),
+          'telepon' => $request->input('jawaban.BIO03', $valueBio03),
           'alamat_lengkap' => $request->input('jawaban.BIO04', $valueBio04),
-          'negara_id'      => $request->input('jawaban.BIO05', $valueBio05),
-          'provinsi_id'    => $request->input('jawaban.BIO06', $valueBio06),
-          'kabupaten_id'   => $request->input('jawaban.BIO07', $valueBio07),
+          'negara_id' => $request->input('jawaban.BIO05', $valueBio05),
+          'provinsi_id' => $request->input('jawaban.BIO06', $valueBio06),
+          'kabupaten_id' => $request->input('jawaban.BIO07', $valueBio07),
           'tanggal_mulai' => $lastResponden?->tanggal_mulai ?? now(),
-          'status'         => 'draft',
+          'status' => 'draft',
         ]
       );
 
@@ -254,7 +251,7 @@ class TracerController extends Controller
       | Daftar Pertanyaan Aktif
       |--------------------------------------------------------------------------
       */
-      $pertanyaans = TracerPertanyaan::where('aktif', 1)
+      $pertanyaans = TracerPertanyaan::query()->where('aktif', 1)
         ->orderBy('urutan')
         ->get();
 
@@ -276,7 +273,7 @@ class TracerController extends Controller
           ) &&
           !in_array(
             $pertanyaan->kode,
-            ['BIO05', 'BIO06', 'BIO07','F5A0','F5A1','F5A2']
+            ['BIO05', 'BIO06', 'BIO07', 'F5A0', 'F5A1', 'F5A2']
           )
 
         ) {
@@ -412,7 +409,7 @@ class TracerController extends Controller
             $opsiValid = $pertanyaan
               ->opsi()
               ->pluck('nilai')
-              ->map(fn ($x) => (string)$x)
+              ->map(fn($x) => (string)$x)
               ->toArray();
 
             foreach ($nilai as $item) {
@@ -500,14 +497,14 @@ class TracerController extends Controller
         | Simpan Jawaban
         |--------------------------------------------------------------------------
         */
-        TracerJawaban::updateOrCreate(
+        TracerJawaban::query()->updateOrCreate(
           [
-            'responden_id'    => $responden->id,
+            'responden_id' => $responden->id,
             'kode_pertanyaan' => $pertanyaan->kode,
           ],
           [
             'pertanyaan_id' => $pertanyaan->id,
-            'jawaban'       => is_array($nilai)
+            'jawaban' => is_array($nilai)
               ? json_encode($nilai, JSON_UNESCAPED_UNICODE)
               : $nilai,
           ]
@@ -522,7 +519,7 @@ class TracerController extends Controller
       if ($aksi === 'submit') {
 
         $responden->update([
-          'status'         => 'submitted',
+          'status' => 'submitted',
           'tanggal_submit' => now(),
         ]);
 
@@ -541,73 +538,26 @@ class TracerController extends Controller
 
       DB::commit();
 
-      return view('tracer.tracer_submit', [
+      return view('content.tracer.tracer_submit', [
         'responden' => $responden,
         'message' => $message,
       ]);
-    }
-    catch (\Throwable $e) {
+    } catch (\Throwable $e) {
 
       DB::rollBack();
-
-      dd([
-        'message' => $e->getMessage(),
+      Log::error('Tracer Store Error: ' . $e->getMessage(), [
+        'nim' => $nim,
         'line' => $e->getLine(),
         'file' => $e->getFile(),
       ]);
-    }
-
-//      Log::error('Tracer Error', [
-//        'nim' => $nim,
+//      dd([
 //        'message' => $e->getMessage(),
-//        'file' => $e->getFile(),
 //        'line' => $e->getLine(),
+//        'file' => $e->getFile(),
 //      ]);
-//
-//      return back()
-//        ->withInput()
-//        ->with(
-//          'error',
-//          'Terjadi kesalahan saat menyimpan data.'
-//        );
-//    }
-
+    }
+    return 0;
   }
-
-
-//  public function submit(Request $request)
-//  {
-//    $nim = session('nim');
-//    $periode = TracerPeriode::where(
-//      'aktif',
-//      true
-//    )->firstOrFail();
-//
-//    $responden = TracerResponden::where('periode_id', $periode->id)->where('nim', $nim)->firstOrFail();
-//
-//    $responden->update([
-//      'tanggal_submit' => now(),
-//      'status' => 'submitted',
-//    ]);
-//
-//    return view('tracer.tracer_submit', [
-//      'responden' => $responden,
-//    ]);
-//  }
-
-//  public function riwayat()
-//  {
-//
-//    $responden = TracerResponden::with([
-//      'jawabans.details'
-//    ])
-//      ->where('nim', session('nim'))->latest()->first();
-//
-//    return view(
-//      'tracer.riwayat',
-//      compact('responden')
-//    );
-//  }
 
   public function getKotas($provinsiId)
   {
@@ -619,7 +569,7 @@ class TracerController extends Controller
       abort(400);
     }
     return response()->json(
-      TracerKota::select(
+      TracerKota::query()->select(
         'kode',
         'nama'
       )->where(
@@ -631,4 +581,6 @@ class TracerController extends Controller
 
     );
   }
+
+
 }

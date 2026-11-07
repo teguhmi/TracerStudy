@@ -43,23 +43,10 @@ class QueryAKSIModel
         'sk.tanggal_sk'
       )
       ->where('y.nim', $nim)
-      ->whereDate('y.tanggal_lahir', $tanggalLahir)
+      ->where('y.tanggal_lahir', $tanggalLahir)
       ->first();
   }
 
-    /**
-     * Ambil 10 lulusan berdasarkan SK Rektor
-     */
-    public static function getDaftarLulusanBySK($nomorSkRektor,$kodeUpbjj)
-    {
-        return DB::connection('dbaksi')
-            ->table('t_yudisium')
-            ->where('nomor_sk_rektor', $nomorSkRektor)
-            ->where('kode_upbjj',$kodeUpbjj)
-            ->orderBy('nomor_urut_ijasah', 'desc')
-            ->limit(10)
-            ->get();
-    }
 
 
 }

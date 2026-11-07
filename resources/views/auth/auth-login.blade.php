@@ -1,26 +1,14 @@
 @include('_include._head')
 
 <body>
-
 <div class="login-background">
-
   <div class="min-vh-100 d-flex align-items-center justify-content-center p-4">
-
-    <div
-      class="card login-card border-0"
-      style="width: 100%; max-width: 440px;">
-
+    <div class="card login-card border-0" style="width: 100%; max-width: 440px;">
       <div class="card-body p-4 p-md-5">
-
         {{-- LOGO --}}
         <div class="text-center mb-5">
-
-          <div
-            class="d-inline-flex align-items-center justify-content-center
-                               bg-primary text-white rounded-3 mb-3"
-            style="width: 100%; height: 100%; object-fit: contain;">
-
-
+          <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 mb-3"
+               style="width: 100%; height: 100%; object-fit: contain;">
           </div>
           {{-- LOGO --}}
           <div class="text-center mb-4">
@@ -28,17 +16,15 @@
               src="{{ asset('images/logo-ut.png') }}"
               class="img-fluid rounded-3"
               style="width: 56px; height: 56px; object-fit: contain;"
-             alt="">
+              alt="">
           </div>
         </div>
 
         {{-- WELCOME --}}
         <div class="text-center mb-5">
-
           <h3 class="mb-2 fw-bold">
             Selamat Datang 👋
           </h3>
-
           <p class="text-muted mb-0">
             Silakan pilih jenis login untuk melanjutkan
           </p>
@@ -54,11 +40,9 @@
             <button
               type="button"
               id="btn-alumni"
-              class="btn btn-primary w-100"
-              onclick="switchLogin('alumni')">
+              class="btn btn-primary w-100">
 
               <i class="ri-graduation-cap-line me-1"></i>
-
               Alumni
 
             </button>
@@ -71,11 +55,9 @@
             <button
               type="button"
               id="btn-staff"
-              class="btn btn-outline-primary w-100"
-              onclick="switchLogin('staff')">
+              class="btn btn-outline-primary w-100">
 
               <i class="ri-user-line me-1"></i>
-
               Staff
 
             </button>
@@ -184,34 +166,34 @@
 
                 </div>
 
-{{--                <div class="col-3">--}}
+                {{--                <div class="col-3">--}}
 
-{{--                  <button--}}
-{{--                    type="button"--}}
-{{--                    id="reload-captcha"--}}
-{{--                    class="btn btn-primary w-100 h-100">--}}
+                {{--                  <button--}}
+                {{--                    type="button"--}}
+                {{--                    id="reload-captcha"--}}
+                {{--                    class="btn btn-primary w-100 h-100">--}}
 
-{{--                    <i class="ri-refresh-line"></i>--}}
+                {{--                    <i class="ri-refresh-line"></i>--}}
 
-{{--                  </button>--}}
-
-                </div>
+                {{--                  </button>--}}
 
               </div>
-
-              <input
-                type="text"
-                name="captcha"
-                class="form-control @error('captcha') is-invalid @enderror"
-                placeholder="Masukkan kode captcha">
-
-              @error('captcha')
-              <div class="invalid-feedback">
-                {{ $message }}
-              </div>
-              @enderror
 
             </div>
+
+            <input
+              type="text"
+              name="captcha"
+              class="form-control @error('captcha') is-invalid @enderror"
+              placeholder="Masukkan kode captcha">
+
+            @error('captcha')
+            <div class="invalid-feedback">
+              {{ $message }}
+            </div>
+            @enderror
+
+          </div>
 
 
           {{-- ===========================
@@ -253,39 +235,47 @@
               <label
                 for="password"
                 class="form-label fw-medium">
-                Password     <div class="input-group input-group-merge form-password-toggle">
+                Password
+              </label>
 
+              <div class="input-group input-group-merge form-password-toggle">
                 <span class="input-group-text">
-                    <i class="ri-lock-line"></i>
+                  <i class="ri-lock-line"></i>
+                </span>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="form-control"
+                  autocomplete="current-password"
+                  placeholder="Masukkan password">
+
+                <span class="input-group-text cursor-pointer">
+                  <i class="ri-eye-off-line"></i>
                 </span>
 
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    class="form-control"
-                    autocomplete="current-password"
-                    placeholder="Masukkan password">
-
-                  <span class="input-group-text cursor-pointer">
-                    <i class="ri-eye-off-line"></i>
-                </span>
-
-                </div>
-
+              </div>
             </div>
 
-            <div class="text-end mt-2 mb-4">
-              #
-              Lupa Password?
+            {{-- LOGIN SSO MICROSOFT --}}
+            <div class="d-grid mb-3">
+              <a href="{{ route('microsoft.login') }}"
+                 class="btn btn-outline-primary">
+                <i class="ri-microsoft-line me-2"></i>
+                Login dengan Microsoft 365
               </a>
+            </div>
+
+            <div class="text-center mb-3">
+              <small class="text-muted">
+                atau login menggunakan email dan password staff
+              </small>
             </div>
 
           </div>
 
           {{-- SUBMIT --}}
           <div class="d-grid mt-4">
-
             <button
               type="submit"
               class="btn btn-primary btn-lg">
@@ -297,109 +287,58 @@
               <i class="ri-arrow-right-line ms-1"></i>
 
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </div>
-
   </div>
-
 </div>
 
 
 @include('_include._script')
 <script>
   document.getElementById('reload-captcha').addEventListener('click', function() {
-
     fetch('{{ route("reload.captcha") }}')
       .then(response => response.json())
       .then(data => {
         document.getElementById('captcha-img').innerHTML = data.captcha;
       });
-
   });
 </script>
 
 <script>
+  const $ = id => document.getElementById(id);
+
   function switchLogin(type) {
 
-    const loginType = document.getElementById('login_type');
+    const alumni = type === 'alumni';
 
-    const formAlumni = document.getElementById('form-alumni');
-    const formStaff = document.getElementById('form-staff');
+    $('login_type').value = type;
 
-    const btnAlumni = document.getElementById('btn-alumni');
-    const btnStaff = document.getElementById('btn-staff');
+    $('form-alumni').classList.toggle('d-none', !alumni);
+    $('form-staff').classList.toggle('d-none', alumni);
 
-    const nim = document.getElementById('nim');
-    const tanggalLahir = document.getElementById('tanggal_lahir');
+    $('btn-alumni').className =
+      `btn ${alumni ? 'btn-primary' : 'btn-outline-primary'} w-100`;
 
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
+    $('btn-staff').className =
+      `btn ${alumni ? 'btn-outline-primary' : 'btn-primary'} w-100`;
 
-    const submitText = document.getElementById('submit-text');
+    $('nim').required = alumni;
+    $('tanggal_lahir').required = alumni;
+    $('email').required = !alumni;
+    $('password').required = !alumni;
 
-    loginType.value = type;
-
-
-    if (type === 'alumni') {
-
-      formAlumni.classList.remove('d-none');
-      formStaff.classList.add('d-none');
-
-      btnAlumni.classList.remove('btn-outline-primary');
-      btnAlumni.classList.add('btn-primary');
-
-      btnStaff.classList.remove('btn-primary');
-      btnStaff.classList.add('btn-outline-primary');
-
-      nim.required = true;
-      tanggalLahir.required = true;
-
-      email.required = false;
-      password.required = false;
-
-      submitText.textContent = 'Masuk sebagai Alumni';
-
-
-    } else {
-
-      formAlumni.classList.add('d-none');
-      formStaff.classList.remove('d-none');
-
-      btnAlumni.classList.remove('btn-primary');
-      btnAlumni.classList.add('btn-outline-primary');
-
-      btnStaff.classList.remove('btn-outline-primary');
-      btnStaff.classList.add('btn-primary');
-
-      nim.required = false;
-      tanggalLahir.required = false;
-
-      email.required = true;
-      password.required = true;
-
-      submitText.textContent = 'Masuk sebagai Staff';
-
-      loginInfo.textContent =
-        'Gunakan email dan password akun staff.';
-    }
+    $('submit-text').textContent =
+      alumni ? 'Masuk sebagai Alumni' : 'Masuk sebagai Staff';
   }
 
-
-  document.addEventListener('DOMContentLoaded', function () {
-
-    const loginType = document.getElementById('login_type');
-
-    switchLogin(loginType.value || 'alumni');
-
+  document.addEventListener('DOMContentLoaded', () => {
+    $('btn-alumni').onclick = () => switchLogin('alumni');
+    $('btn-staff').onclick = () => switchLogin('staff');
+    switchLogin($('login_type').value || 'alumni');
   });
 </script>
-
 
 <style>
 
@@ -416,13 +355,12 @@
 
     min-height: 100vh;
 
-    background-image:
-      linear-gradient(
-        90deg,
-        rgba(7, 38, 91, 0.40),
-        rgba(7, 38, 91, 0.15)
-      ),
-      url('/images/login-bg.png');
+    background-image: linear-gradient(
+      90deg,
+      rgba(7, 38, 91, 0.40),
+      rgba(7, 38, 91, 0.15)
+    ),
+    url('{{ asset('images/login-bg.png') }}');
 
     background-size: cover;
 
@@ -440,8 +378,7 @@
 
   .login-card {
 
-    background:
-      rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.95);
 
     backdrop-filter: blur(12px);
 
@@ -449,9 +386,7 @@
 
     border-radius: 1.25rem;
 
-    box-shadow:
-      0 1.5rem 4rem
-      rgba(10, 30, 70, 0.27);
+    box-shadow: 0 1.5rem 4rem rgba(10, 30, 70, 0.27);
   }
 
 
@@ -462,8 +397,7 @@
   .login-card .form-control,
   .login-card .input-group-text {
 
-    background-color:
-      rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.85);
   }
 
 
@@ -475,8 +409,7 @@
 
     .login-background {
 
-      background-position:
-        38% center;
+      background-position: 38% center;
     }
 
   }
@@ -486,14 +419,12 @@
 
     .login-background {
 
-      background-attachment:
-        scroll;
+      background-attachment: scroll;
     }
 
     .login-card {
 
-      border-radius:
-        1rem;
+      border-radius: 1rem;
     }
 
   }

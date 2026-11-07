@@ -3,10 +3,11 @@
 namespace App\Models\query;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class LaporanQueryModel
 {
-  public static function getTahunLulus()
+  public static function getTahunLulus(): Collection
   {
     return DB::table('m_sk_rektor as a')
       ->selectRaw("DISTINCT DATE_FORMAT(a.tanggal_sk,'%Y') AS tahun_lulus")
@@ -15,23 +16,82 @@ class LaporanQueryModel
       ->pluck('tahun_lulus');
   }
 
-  public static function getRekapFakultas($tahun)
+  public static function getRekapFakultas($tahun): Collection
   {
     return DB::table('t_yudisium as a')
-      ->join('m_sk_rektor as sk', 'a.nomor_sk_rektor', '=', 'sk.nomor_sk_rektor')
-      ->leftJoin('tracer_dikti_v1 as t', 'a.nim', '=', 't.nim')
+      ->join(
+        'm_sk_rektor as sk',
+        'a.nomor_sk_rektor',
+        '=',
+        'sk.nomor_sk_rektor'
+      )
+
+      ->leftJoin(
+        'tracer_respondens as tr',
+        'a.nim',
+        '=',
+        'tr.nim'
+      )
+
+      ->leftJoin(
+        'tracer_jawabans as tj',
+        'tr.id',
+        '=',
+        'tj.responden_id'
+      )
 
       ->select(
         'a.singkatan as fakultas',
         'a.nama_singkat_ps as program_studi'
       )
 
-      ->selectRaw('COUNT(DISTINCT a.nim) AS jumlah_lulusan')
-      ->selectRaw('COUNT(DISTINCT t.nim) AS sudah_isi_tracer')
-      ->selectRaw('COUNT(DISTINCT a.nim) - COUNT(DISTINCT t.nim) AS belum_isi_tracer')
-      ->selectRaw('ROUND((COUNT(DISTINCT t.nim) * 100.0 / COUNT(DISTINCT a.nim)),1) AS persentase')
+      ->selectRaw('
+            COUNT(DISTINCT a.nim) AS jumlah_lulusan
+        ')
 
-      ->whereYear('sk.tanggal_sk', $tahun)
+      ->selectRaw("
+            COUNT(
+                DISTINCT CASE
+                    WHEN tj.jawaban IS NOT NULL
+                    THEN a.nim
+                END
+            ) AS sudah_isi_tracer
+        ")
+
+      ->selectRaw("
+            COUNT(DISTINCT a.nim)
+            -
+            COUNT(
+                DISTINCT CASE
+                    WHEN tj.jawaban IS NOT NULL
+                    THEN a.nim
+                END
+            ) AS belum_isi_tracer
+        ")
+
+      ->selectRaw("
+            ROUND(
+                (
+                    COUNT(
+                        DISTINCT CASE
+                            WHEN tj.jawaban IS NOT NULL
+                            THEN a.nim
+                        END
+                    ) * 100
+                )
+                /
+                NULLIF(
+                    COUNT(DISTINCT a.nim),
+                    0
+                ),
+                1
+            ) AS persentase
+        ")
+
+      ->whereYear(
+        'sk.tanggal_sk',
+        $tahun
+      )
 
       ->groupBy(
         'a.singkatan',
@@ -44,12 +104,29 @@ class LaporanQueryModel
       ->get();
   }
 
-  public static function getRekapUPBJJ($tahun)
+  public static function getRekapUPBJJ($tahun): Collection
   {
     return DB::table('t_yudisium as y')
-      ->join('m_sk_rektor as sk', 'y.nomor_sk_rektor', '=', 'sk.nomor_sk_rektor')
+      ->join(
+        'm_sk_rektor as sk',
+        'y.nomor_sk_rektor',
+        '=',
+        'sk.nomor_sk_rektor'
+      )
 
-      ->leftJoin('tracer_dikti_v1 as tr', 'y.nim', '=', 'tr.nim')
+      ->leftJoin(
+        'tracer_respondens as tr',
+        'y.nim',
+        '=',
+        'tr.nim'
+      )
+
+      ->leftJoin(
+        'tracer_jawabans as tj',
+        'tr.id',
+        '=',
+        'tj.responden_id'
+      )
 
       ->selectRaw("
             y.nama_upbjj as upbjj,
@@ -58,17 +135,16 @@ class LaporanQueryModel
 
             COUNT(
                 DISTINCT CASE
-                    WHEN tr.nim IS NOT NULL
+                    WHEN tj.responden_id IS NOT NULL
                     THEN y.nim
                 END
             ) AS sudah_isi_tracer,
 
-            COUNT(
-                DISTINCT y.nim
-            ) -
+            COUNT(DISTINCT y.nim)
+            -
             COUNT(
                 DISTINCT CASE
-                    WHEN tr.nim IS NOT NULL
+                    WHEN tj.responden_id IS NOT NULL
                     THEN y.nim
                 END
             ) AS belum_isi_tracer,
@@ -77,7 +153,7 @@ class LaporanQueryModel
                 (
                     COUNT(
                         DISTINCT CASE
-                            WHEN tr.nim IS NOT NULL
+                            WHEN tj.responden_id IS NOT NULL
                             THEN y.nim
                         END
                     ) * 100
@@ -91,7 +167,10 @@ class LaporanQueryModel
             ) AS persentase
         ")
 
-      ->whereYear('sk.tanggal_sk', $tahun)
+      ->whereYear(
+        'sk.tanggal_sk',
+        $tahun
+      )
 
       ->groupBy('y.nama_upbjj')
 
@@ -100,12 +179,29 @@ class LaporanQueryModel
       ->get();
   }
 
-  public static function getRekapFakultasUPBJJ($tahun)
+  public static function getRekapFakultasUPBJJ($tahun): Collection
   {
     return DB::table('t_yudisium as y')
-      ->join('m_sk_rektor as sk', 'y.nomor_sk_rektor', '=', 'sk.nomor_sk_rektor')
+      ->join(
+        'm_sk_rektor as sk',
+        'y.nomor_sk_rektor',
+        '=',
+        'sk.nomor_sk_rektor'
+      )
 
-      ->leftJoin('tracer_dikti_v1 as tr', 'y.nim', '=', 'tr.nim')
+      ->leftJoin(
+        'tracer_respondens as tr',
+        'y.nim',
+        '=',
+        'tr.nim'
+      )
+
+      ->leftJoin(
+        'tracer_jawabans as tj',
+        'tr.id',
+        '=',
+        'tj.responden_id'
+      )
 
       ->selectRaw("
             y.nama_upbjj,
@@ -115,7 +211,7 @@ class LaporanQueryModel
 
             COUNT(
                 DISTINCT CASE
-                    WHEN tr.nim IS NOT NULL
+                    WHEN tj.jawaban IS NOT NULL
                     THEN y.nim
                 END
             ) AS sudah_isi_tracer,
@@ -124,7 +220,7 @@ class LaporanQueryModel
             -
             COUNT(
                 DISTINCT CASE
-                    WHEN tr.nim IS NOT NULL
+                    WHEN tj.jawaban IS NOT NULL
                     THEN y.nim
                 END
             ) AS belum_isi_tracer,
@@ -133,7 +229,7 @@ class LaporanQueryModel
                 (
                     COUNT(
                         DISTINCT CASE
-                            WHEN tr.nim IS NOT NULL
+                            WHEN tj.jawaban IS NOT NULL
                             THEN y.nim
                         END
                     ) * 100
@@ -147,7 +243,10 @@ class LaporanQueryModel
             ) AS persentase
         ")
 
-      ->whereYear('sk.tanggal_sk', $tahun)
+      ->whereYear(
+        'sk.tanggal_sk',
+        $tahun
+      )
 
       ->groupBy(
         'y.nama_upbjj',

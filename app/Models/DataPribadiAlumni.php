@@ -10,9 +10,7 @@ use Illuminate\Support\Str;
 class DataPribadiAlumni extends Model
 {
 
-
     protected $connection = 'pgsql';
-
     protected $table = 'm_data_pribadi_alumni';
     protected $primaryKey = 'nim';
     public $incrementing = false;

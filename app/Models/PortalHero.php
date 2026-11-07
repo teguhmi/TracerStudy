@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+
 class PortalHero extends Model
 {
   protected $table = 'portal_heroes';

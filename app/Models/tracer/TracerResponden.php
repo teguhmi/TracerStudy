@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class TracerResponden extends Model
 {
   protected $table = 'tracer_respondens';
@@ -22,7 +23,7 @@ class TracerResponden extends Model
     // Biodata
     'npwp',
     'email',
-    'no_hp',
+    'telepon',
     'alamat_lengkap',
     'negara_id',
     'provinsi_id',

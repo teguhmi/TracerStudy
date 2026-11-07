@@ -13,11 +13,18 @@ class AlumniAuthenticated
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
-    {
-      if (!session('alumni_authenticated') || !session('nim')) {
-        return redirect()->route('login-alumni');
-      }
-        return $next($request);
+  public function handle(Request $request, Closure $next)
+  {
+    if (
+      session('login_type') !== 'alumni' ||
+      !session('alumni_authenticated') ||
+      !session()->has('nim')
+    ) {
+      return redirect()
+        ->route('login-alumni')
+        ->with('error', 'Silakan login terlebih dahulu.');
     }
+
+    return $next($request);
+  }
 }

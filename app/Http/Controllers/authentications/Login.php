@@ -4,10 +4,8 @@ namespace App\Http\Controllers\authentications;
 
 use App\Http\Controllers\Controller;
 use App\Models\query\QueryAKSIModel;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
@@ -15,39 +13,33 @@ class Login extends Controller
 {
   public function index()
   {
+    // User/Admin sudah login
+    if (Auth::check()) {
+      return redirect()->route('home');
+    }
 
-
-    // User Laravel sudah login
-//    if (Auth::check()) {
-//      return redirect()->route('home');
-//    }
-//
-//    // Alumni sudah login
-//    if (session('alumni_authenticated')) {
-//      return redirect()->route('home');
-//    }
+    // Alumni sudah login
+    if (
+      session('login_type') === 'alumni' &&
+      session('alumni_authenticated') &&
+      session()->has('nim')
+    ) {
+      return redirect()->route('tracer.index');
+    }
 
     return view('auth.auth-login');
   }
 
-
   public function login(Request $request)
   {
-    /*
-    |--------------------------------------------------------------------------
-    | Tentukan jenis login
-    |--------------------------------------------------------------------------
-    */
-
     $request->validate([
       'login_type' => 'required|in:alumni,user',
     ]);
-    if ($request->login_type === 'alumni') {
-      return $this->loginAlumni($request);
-    }
-    return $this->loginUser($request);
-  }
 
+    return $request->login_type === 'alumni'
+      ? $this->loginAlumni($request)
+      : $this->loginUser($request);
+  }
 
   /*
   |--------------------------------------------------------------------------
@@ -57,108 +49,99 @@ class Login extends Controller
 
   private function loginAlumni(Request $request)
   {
-    $request->validate([
-      'nim' => [
-        'required',
-        'string',
-        'max:9',
-      ],
-
-      'tanggal_lahir' => [
-        'required',
-        'date_format:d/m/Y',
-      ],
-      'captcha' => ['required', 'captcha'],
-    ],
+    $request->validate(
       [
-        'nim.required' =>
-          'NIM wajib diisi.',
+        'nim' => [
+          'required',
+          'digits:9',
+        ],
+        'tanggal_lahir' => [
+          'required',
+          'date_format:d/m/Y',
+        ],
+        'captcha' => [
+          'required',
+          'captcha',
+        ],
+      ],
+      [
+        'nim.required' => 'NIM wajib diisi.',
+        'nim.digits'   => 'NIM harus 9 digit angka.',
 
-        'tanggal_lahir.required' =>
-          'Tanggal lahir wajib diisi.',
-
-        'tanggal_lahir.date_format' =>
-          'Format tanggal lahir harus DD/MM/YYYY.',
+        'tanggal_lahir.required'    => 'Tanggal lahir wajib diisi.',
+        'tanggal_lahir.date_format' => 'Format tanggal lahir harus DD/MM/YYYY.',
 
         'captcha.required' => 'Kode captcha wajib diisi.',
         'captcha.captcha'  => 'Kode captcha yang Anda masukkan tidak sesuai.',
-      ]);
+      ]
+    );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Konversi tanggal
-    |--------------------------------------------------------------------------
-    |
-    | 24/01/1983
-    | menjadi
-    | 1983-01-24
-    |
-    */
-
-//    $tanggalLahir = Carbon::createFromFormat(
-//      'Y-m-d',
-//      $request->tanggal_lahir
-//    )->format('d-m-Y');
-
-    $tanggalLahir = $request->tanggal_lahir;
-    /*
-    |--------------------------------------------------------------------------
-    | Cari data alumni
-    |--------------------------------------------------------------------------
-    */
     $key = 'login-alumni:' . Str::lower($request->nim) . '|' . $request->ip();
-    $keyNim = 'login-alumni-nim:' . Str::lower($request->nim);
+    $keyNim = 'login-alumni-nim:' . $request->nim;
 
-    if (RateLimiter::tooManyAttempts($key, 5) || RateLimiter::tooManyAttempts($keyNim,
-        20)) {
-      return back()->withErrors(['login' => 'Terlalu banyak percobaan. Coba lagi nanti.']);
+    /*
+    |--------------------------------------------------------------------------
+    | Rate Limiter Alumni
+    |--------------------------------------------------------------------------
+    */
+    if (
+      RateLimiter::tooManyAttempts($key, 5) ||
+      RateLimiter::tooManyAttempts($keyNim, 20)
+    ) {
+      $seconds = max(
+        RateLimiter::availableIn($key),
+        RateLimiter::availableIn($keyNim)
+      );
+
+      return back()
+        ->withInput($request->only('login_type', 'nim'))
+        ->withErrors([
+          'login' => "Terlalu banyak percobaan login. Coba lagi dalam $seconds detik.",
+        ]);
     }
 
-    $alumni = QueryAKSIModel::getDpByNimTanggalLahir($request->nim, $tanggalLahir);
-    /*
-    |--------------------------------------------------------------------------
-    | Login gagal
-    |--------------------------------------------------------------------------
-    */
+    $alumni = QueryAKSIModel::getDpByNimTanggalLahir(
+      $request->nim,
+      $request->tanggal_lahir
+    );
+
     if (!$alumni) {
       RateLimiter::hit($key, 900);
       RateLimiter::hit($keyNim, 3600);
-      return back()->withErrors(['login' => 'NIM atau tanggal lahir tidak sesuai.']);
-    }
-    RateLimiter::clear($key);
 
-    if (!$alumni) {
       return back()
-        ->withInput($request->only('login_type', 'alumni'))->withErrors(['login' => 'NIM atau tanggal lahir tidak sesuai.']);
+        ->withInput([
+          'login_type' => 'alumni',
+          'nim'        => $request->nim,
+        ])
+        ->withErrors([
+          'login' => 'NIM atau tanggal lahir tidak sesuai.',
+        ]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Regenerate session
-    |--------------------------------------------------------------------------
-    */
+    RateLimiter::clear($key);
+    RateLimiter::clear($keyNim);
+
+    $request->session()->forget([
+      'login_type',
+      'alumni_authenticated',
+      'nim',
+      'nama_mahasiswa',
+      'tanggal_lulus',
+    ]);
 
     $request->session()->regenerate();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Session Alumni
-    |--------------------------------------------------------------------------
-    */
     session([
-      'login_type' => 'alumni',
+      'login_type'           => 'alumni',
       'alumni_authenticated' => true,
-      'nim' => $alumni->nim,
-      'nama_mahasiswa' => $alumni->nama_mahasiswa,
-      'tanggal_lulus' => $alumni->tanggal_sk,
-      'alumni' => $alumni,
+      'nim'                  => $alumni->nim,
+      'nama_mahasiswa'       => $alumni->nama_mahasiswa,
+      'tanggal_lulus'        => $alumni->tanggal_sk,
     ]);
 
-
-    return redirect()
-      ->intended(route('tracer.index'));
+    return redirect()->route('tracer.index');
   }
-
 
   /*
   |--------------------------------------------------------------------------
@@ -173,64 +156,57 @@ class Login extends Controller
         'required',
         'email',
       ],
-
       'password' => [
         'required',
         'string',
       ],
     ]);
 
-
     /*
     |--------------------------------------------------------------------------
-    | Laravel Authentication
+    | Rate Limiter User/Admin (Proteksi Brute-Force)
     |--------------------------------------------------------------------------
     */
+    $key = 'login-user:' . Str::lower($request->email) . '|' . $request->ip();
 
-    if (!Auth::attempt(
-      $credentials,
-      $request->boolean('remember')
-    )) {
+    if (RateLimiter::tooManyAttempts($key, 5)) {
+      $seconds = RateLimiter::availableIn($key);
 
       return back()
-        ->withInput(
-          $request->only(
-            'login_type',
-            'email'
-          )
-        )
+        ->withInput($request->only('login_type', 'email'))
         ->withErrors([
-          'login' =>
-            'Email atau password tidak sesuai.'
+          'login' => "Terlalu banyak percobaan login. Coba lagi dalam $seconds detik.",
         ]);
     }
 
+    if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+      RateLimiter::hit($key, 300);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Regenerate session
-    |--------------------------------------------------------------------------
-    */
+      return back()
+        ->withInput($request->only('login_type', 'email'))
+        ->withErrors([
+          'login' => 'Email atau password tidak sesuai.',
+        ]);
+    }
+
+    RateLimiter::clear($key);
+
+    $request->session()->forget([
+      'login_type',
+      'alumni_authenticated',
+      'nim',
+      'nama_mahasiswa',
+      'tanggal_lulus',
+    ]);
 
     $request->session()->regenerate();
 
+    session([
+      'login_type' => 'user',
+    ]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Jenis login
-    |--------------------------------------------------------------------------
-    */
-
-    $request->session()->put(
-      'login_type',
-      'user'
-    );
-
-
-    return redirect()
-      ->intended(route('dashboard'));
+    return redirect()->intended(route('home'));
   }
-
 
   /*
   |--------------------------------------------------------------------------
@@ -240,26 +216,11 @@ class Login extends Controller
 
   public function logout(Request $request)
   {
-    /*
-    |--------------------------------------------------------------------------
-    | Logout Laravel Auth jika user login
-    |--------------------------------------------------------------------------
-    */
-
-    if (Auth::check()) {
-      Auth::logout();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Hapus session
-    |--------------------------------------------------------------------------
-    */
+    Auth::logout();
 
     $request->session()->invalidate();
-
     $request->session()->regenerateToken();
-    return redirect()
-      ->route('home');
+
+    return redirect()->route('home');
   }
 }

@@ -5,6 +5,7 @@ namespace App\Models\tracer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+
 class TracerSection extends Model
 {
   protected $table = 'tracer_sections';

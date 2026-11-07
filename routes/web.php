@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\Auth\MicrosoftController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LaporanTracerController;
 use App\Http\Controllers\LaporanTracerControllerRingkasan;
@@ -48,7 +49,11 @@ Route::group(['prefix' => 'laporan'], function () {
   )->name('laporan.tracerRingkasan.data');
 });
 
+Route::get('/auth/microsoft', [MicrosoftController::class, 'redirect'])
+  ->name('microsoft.login');
 
+Route::get('/auth/microsoft/callback', [MicrosoftController::class, 'callback'])
+  ->name('microsoft.callback');
 
 
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\query\LaporanQueryModel;
 use Illuminate\Http\Request;
 
@@ -10,45 +9,40 @@ class LaporanTracerControllerRingkasan extends Controller
 {
   public function index()
   {
-    return view('laporan.laporan_tracer_ringkasan');
+    return view('content.laporan.laporan_tracer_ringkasan');
   }
 
-  public function getTahunLulus()
-  {
-    return response()->json(
-      LaporanQueryModel::getTahunLulus()
-    );
-  }
-
-//  public function getData(Request $request)
+//  public function getTahunLulus()
 //  {
 //    return response()->json(
-//      LaporanQueryModel::getRekapFakultas(
-//        $request->tahun_lulus
-//      )
+//      LaporanQueryModel::getTahunLulus()
 //    );
 //  }
 
+
   public function getData(Request $request)
   {
-    $tahun = $request->tahun_lulus;
-    $jenis = $request->jenis ?? 'fakultas';
+    $validated = $request->validate([
+      'tahun_lulus' => [
+        'required',
+        'digits:4',
+        'integer',
+        'between:2020,' . date('Y')
+      ],
+      'jenis' => [
+        'required',
+        'in:fakultas,upbjj,fakultas_upbjj'
+      ]
+    ]);
 
-    switch ($jenis) {
+    $tahun = $validated['tahun_lulus'];
+    $jenis = $validated['jenis'];
 
-      case 'upbjj':
-
-        $data = LaporanQueryModel::getRekapUPBJJ($tahun);
-        break;
-
-      case 'fakultas_upbjj':
-        $data = LaporanQueryModel::getRekapFakultasUPBJJ($tahun);
-        break;
-
-      default:
-        $data = LaporanQueryModel::getRekapFakultas($tahun);
-        break;
-    }
+    $data = match ($jenis) {
+      'upbjj' => LaporanQueryModel::getRekapUPBJJ($tahun),
+      'fakultas_upbjj' => LaporanQueryModel::getRekapFakultasUPBJJ($tahun),
+      default => LaporanQueryModel::getRekapFakultas($tahun),
+    };
 
     return response()->json($data);
   }

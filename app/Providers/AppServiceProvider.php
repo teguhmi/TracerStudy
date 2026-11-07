@@ -5,6 +5,9 @@ namespace App\Providers;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Event;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Microsoft\MicrosoftExtendSocialite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,5 +35,10 @@ class AppServiceProvider extends ServiceProvider
 
       Carbon::setLocale('id');
       setlocale(LC_TIME, 'id_ID.UTF-8');
+
+      Event::listen(
+        SocialiteWasCalled::class,
+        MicrosoftExtendSocialite::class
+      );
     }
 }

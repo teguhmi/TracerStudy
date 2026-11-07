@@ -126,14 +126,7 @@
       function loadTahunLulus() {
 
         fetch("{{ route('laporan.getTahunLulus') }}")
-          .then(async response => {
-
-            const text = await response.text();
-
-            console.log(text);
-
-            return JSON.parse(text);
-          })
+          .then(response => response.json())
           .then(data => {
 
             let html =

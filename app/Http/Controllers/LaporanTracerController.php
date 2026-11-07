@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 
 class LaporanTracerController extends Controller
 {
@@ -16,6 +15,6 @@ class LaporanTracerController extends Controller
 
     $menuData = $data['menu'] ?? [];
 
-    return view('laporan.laporan_index', compact('menuData'));
+    return view('content.laporan.laporan_index', compact('menuData'));
   }
 }
