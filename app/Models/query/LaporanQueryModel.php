@@ -3,11 +3,10 @@
 namespace App\Models\query;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
 
 class LaporanQueryModel
 {
-  public static function getTahunLulus(): Collection
+  public static function getTahunLulus()
   {
     return DB::table('m_sk_rektor as a')
       ->selectRaw("DISTINCT DATE_FORMAT(a.tanggal_sk,'%Y') AS tahun_lulus")
@@ -16,7 +15,7 @@ class LaporanQueryModel
       ->pluck('tahun_lulus');
   }
 
-  public static function getRekapFakultas($tahun): Collection
+  public static function getRekapFakultas($tahun)
   {
     return DB::table('t_yudisium as a')
       ->join(
@@ -104,7 +103,7 @@ class LaporanQueryModel
       ->get();
   }
 
-  public static function getRekapUPBJJ($tahun): Collection
+  public static function getRekapUPBJJ($tahun)
   {
     return DB::table('t_yudisium as y')
       ->join(
@@ -179,7 +178,7 @@ class LaporanQueryModel
       ->get();
   }
 
-  public static function getRekapFakultasUPBJJ($tahun): Collection
+  public static function getRekapFakultasUPBJJ($tahun)
   {
     return DB::table('t_yudisium as y')
       ->join(
