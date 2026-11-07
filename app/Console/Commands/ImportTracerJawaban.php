@@ -35,6 +35,8 @@ class ImportTracerJawaban extends Command
     $deleted = DB::table('tracer_dikti_v1')
       ->whereRaw('CHAR_LENGTH(TRIM(nim)) > 9')
       ->orWhereRaw('CHAR_LENGTH(TRIM(email)) > 150')
+      ->orWhereRaw('CHAR_LENGTH(TRIM(tahun_lulus)) > 4')
+
       ->delete();
 
     $this->warn(
