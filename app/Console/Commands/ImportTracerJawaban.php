@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ImportTracerJawaban extends Command
 {
@@ -11,7 +12,7 @@ class ImportTracerJawaban extends Command
 
   protected $description = 'Import tracer_dikti_v1 ke tracer_respondens dan tracer_jawabans';
 
-  public function handle()
+  public function handle(): int
   {
     ini_set('memory_limit', '1024M');
     set_time_limit(0);
@@ -35,36 +36,58 @@ class ImportTracerJawaban extends Command
 
         foreach ($rows as $row) {
 
-          $nim     = trim((string) ($row->nim ?? ''));
-          $nama    = trim((string) ($row->nama_mahasiswa ?? ''));
-          $email   = trim((string) ($row->email ?? ''));
-          $telepon = trim((string) ($row->telepon ?? ''));
-          $npwp    = trim((string) ($row->npwp ?? ''));
+          try {
 
-          $payload[] = [
-            'nim'        => $nim,
-            'nama'       => $nama ?: null,
-            'email'      => $email ?: null,
-            'telepon'    => $telepon ?: null,
-            'npwp'       => $npwp ?: null,
-            'created_at' => now(),
-            'updated_at' => now(),
-          ];
+            $nim     = trim((string) ($row->nim ?? ''));
+            $nama    = trim((string) ($row->nama_mahasiswa ?? ''));
+            $email   = trim((string) ($row->email ?? ''));
+            $telepon = trim((string) ($row->telepon ?? ''));
+            $npwp    = trim((string) ($row->npwp ?? ''));
+
+            $payload[] = [
+              'nim'        => $nim,
+              'nama'       => $nama ?: null,
+              'email'      => $email ?: null,
+              'telepon'    => $telepon ?: null,
+              'npwp'       => $npwp ?: null,
+              'created_at' => now(),
+              'updated_at' => now(),
+            ];
+          } catch (Throwable $e) {
+
+            $this->error(
+              'Error responden NIM '
+              . ($row->nim ?? '-')
+              . ' : '
+              . $e->getMessage()
+            );
+
+            continue;
+          }
         }
 
         if (!empty($payload)) {
 
-          DB::table('tracer_respondens')->upsert(
-            $payload,
-            ['nim'],
-            [
-              'nama',
-              'email',
-              'telepon',
-              'npwp',
-              'updated_at'
-            ]
-          );
+          try {
+
+            DB::table('tracer_respondens')->upsert(
+              $payload,
+              ['nim'],
+              [
+                'nama',
+                'email',
+                'telepon',
+                'npwp',
+                'updated_at',
+              ]
+            );
+          } catch (Throwable $e) {
+
+            $this->error(
+              'Gagal upsert responden : '
+              . $e->getMessage()
+            );
+          }
         }
       });
 
@@ -135,114 +158,136 @@ class ImportTracerJawaban extends Command
 
         foreach ($rows as $row) {
 
-          $nim = trim((string) ($row->nim ?? ''));
+          try {
 
-          if (!isset($respondenMap[$nim])) {
-            continue;
-          }
+            $nim = trim((string) ($row->nim ?? ''));
 
-          $respondenId = $respondenMap[$nim];
-
-          /*
-          |--------------------------------------------------------------------------
-          | Normalisasi seluruh kolom sumber
-          |--------------------------------------------------------------------------
-          */
-          $rowData = [];
-
-          foreach ((array) $row as $key => $val) {
-
-            $key = strtolower($key);
-
-            if ($val === null) {
-              $rowData[$key] = null;
+            if (!isset($respondenMap[$nim])) {
               continue;
             }
 
-            $val = trim((string) $val);
-
-            $rowData[$key] = $val === ''
-              ? null
-              : $val;
-          }
-
-          /*
-          |--------------------------------------------------------------------------
-          | Loop seluruh pertanyaan
-          |--------------------------------------------------------------------------
-          */
-          foreach ($pertanyaanMap as $kode => $pertanyaan) {
-
-            $field = $kodeToField[$kode]
-              ?? strtolower($kode);
-
-            $value = $rowData[$field] ?? null;
+            $respondenId = $respondenMap[$nim];
 
             /*
             |--------------------------------------------------------------------------
-            | Checkbox => JSON
+            | Normalisasi seluruh kolom sumber
             |--------------------------------------------------------------------------
             */
-            if ($pertanyaan->jenis === 'checkbox') {
+            $rowData = [];
 
-              if ($value !== null) {
+            foreach ((array) $row as $key => $val) {
 
-                $items = preg_split(
-                  '/[,;|]/',
-                  (string) $value
-                );
+              $key = strtolower($key);
 
-                $items = array_values(
-                  array_filter(
-                    array_map(
-                      'trim',
-                      $items
-                    ),
-                    fn($item) => $item !== ''
-                  )
-                );
+              if ($val === null) {
+                $rowData[$key] = null;
+                continue;
+              }
 
-                $value = empty($items)
-                  ? null
-                  : json_encode(
-                    $items,
-                    JSON_UNESCAPED_UNICODE
+              $val = trim((string) $val);
+
+              $rowData[$key] = $val === ''
+                ? null
+                : $val;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Loop seluruh pertanyaan
+            |--------------------------------------------------------------------------
+            */
+            foreach ($pertanyaanMap as $kode => $pertanyaan) {
+
+              $field = $kodeToField[$kode]
+                ?? strtolower($kode);
+
+              $value = $rowData[$field] ?? null;
+
+              /*
+              |--------------------------------------------------------------------------
+              | Checkbox => JSON
+              |--------------------------------------------------------------------------
+              */
+              if ($pertanyaan->jenis === 'checkbox') {
+
+                if ($value !== null) {
+
+                  $items = preg_split(
+                    '/[,;|]/',
+                    (string) $value
                   );
+
+                  $items = array_values(
+                    array_filter(
+                      array_map(
+                        'trim',
+                        $items
+                      ),
+                      fn($item) => $item !== ''
+                    )
+                  );
+
+                  $value = empty($items)
+                    ? null
+                    : json_encode(
+                      $items,
+                      JSON_UNESCAPED_UNICODE
+                    );
+                }
+              }
+
+              $payload[] = [
+                'responden_id'    => $respondenId,
+                'pertanyaan_id'   => $pertanyaan->id,
+                'kode_pertanyaan' => $kode,
+                'jawaban'         => $value,
+                'created_at'      => now(),
+                'updated_at'      => now(),
+              ];
+
+              if (count($payload) >= 1000) {
+
+                try {
+
+                  DB::table('tracer_jawabans')->upsert(
+                    $payload,
+                    [
+                      'responden_id',
+                      'pertanyaan_id',
+                    ],
+                    [
+                      'jawaban',
+                      'updated_at',
+                    ]
+                  );
+
+                  $totalJawaban += count($payload);
+
+                  $this->line(
+                    'Jawaban : '
+                    . number_format($totalJawaban)
+                  );
+                } catch (Throwable $e) {
+
+                  $this->error(
+                    'Gagal upsert batch : '
+                    . $e->getMessage()
+                  );
+                }
+
+                $payload = [];
               }
             }
+          } catch (Throwable $e) {
 
-            $payload[] = [
-              'responden_id'    => $respondenId,
-              'pertanyaan_id'   => $pertanyaan->id,
-              'kode_pertanyaan' => $kode,
-              'jawaban'         => $value,
-              'created_at'      => now(),
-              'updated_at'      => now(),
-            ];
+            $this->error(
+              'Error NIM '
+              . ($row->nim ?? '-')
+              . ' : '
+              . $e->getMessage()
+            );
 
-            if (count($payload) >= 1000) {
-
-              DB::table('tracer_jawabans')->upsert(
-                $payload,
-                [
-                  'responden_id',
-                  'pertanyaan_id'
-                ],
-                [
-                  'jawaban',
-                  'updated_at'
-                ]
-              );
-
-              $totalJawaban += count($payload);
-
-              $this->line(
-                'Jawaban : ' .
-                number_format($totalJawaban)
-              );
-
-              $payload = [];
-            }
+            continue;
           }
         }
 
@@ -253,24 +298,33 @@ class ImportTracerJawaban extends Command
         */
         if (!empty($payload)) {
 
-          DB::table('tracer_jawabans')->upsert(
-            $payload,
-            [
-              'responden_id',
-              'pertanyaan_id'
-            ],
-            [
-              'jawaban',
-              'updated_at'
-            ]
-          );
+          try {
 
-          $totalJawaban += count($payload);
+            DB::table('tracer_jawabans')->upsert(
+              $payload,
+              [
+                'responden_id',
+                'pertanyaan_id',
+              ],
+              [
+                'jawaban',
+                'updated_at',
+              ]
+            );
 
-          $this->line(
-            'Jawaban : ' .
-            number_format($totalJawaban)
-          );
+            $totalJawaban += count($payload);
+
+            $this->line(
+              'Jawaban : '
+              . number_format($totalJawaban)
+            );
+          } catch (Throwable $e) {
+
+            $this->error(
+              'Gagal upsert batch akhir : '
+              . $e->getMessage()
+            );
+          }
         }
 
         unset(
@@ -283,7 +337,10 @@ class ImportTracerJawaban extends Command
     $this->newLine();
     $this->info('====================================');
     $this->info('IMPORT SELESAI');
-    $this->info('Total Jawaban : ' . number_format($totalJawaban));
+    $this->info(
+      'Total Jawaban : '
+      . number_format($totalJawaban)
+    );
     $this->info('====================================');
 
     return self::SUCCESS;
