@@ -556,7 +556,7 @@ class TracerController extends Controller
 //        'file' => $e->getFile(),
 //      ]);
     }
-    return 0;
+
   }
 
   public function getKotas($provinsiId)
