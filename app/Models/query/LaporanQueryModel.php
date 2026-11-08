@@ -106,27 +106,35 @@ class LaporanQueryModel
 
   public static function getRekapFakultas($tahun): Collection
   {
+    // Subquery: Mengambil NIM alumni secara UNIK yang benar-benar punya jawaban
+    $tracerSub = DB::table('tracer_respondens as tr')
+      ->whereExists(function ($query) {
+        $query->select(DB::raw(1))
+          ->from('tracer_jawabans as tj')
+          ->whereColumn('tj.responden_id', 'tr.id');
+      })
+      ->select('tr.nim')
+      ->groupBy('tr.nim');
+
     return DB::table('t_yudisium as a')
       ->join('m_sk_rektor as sk', 'a.nomor_sk_rektor', '=', 'sk.nomor_sk_rektor')
-      ->leftJoin('tracer_respondens as tr', function ($join) {
+      ->leftJoinSub($tracerSub, 'tr', function ($join) {
         $join->on('a.nim', '=', 'tr.nim');
-        // Opsional: tambahkan jika hanya menghitung yang statusnya disubmit
-        // $join->where('tr.status', '=', 'submitted');
       })
       ->select(
         'a.singkatan as fakultas',
         'a.nama_singkat_ps as program_studi'
       )
       ->selectRaw('COUNT(a.nim) AS jumlah_lulusan')
-      ->selectRaw('COUNT(tr.id) AS sudah_isi_tracer')
-      ->selectRaw('COUNT(a.nim) - COUNT(tr.id) AS belum_isi_tracer')
+      ->selectRaw('COUNT(tr.nim) AS sudah_isi_tracer')
+      ->selectRaw('COUNT(a.nim) - COUNT(tr.nim) AS belum_isi_tracer')
       ->selectRaw('
             ROUND(
-                (COUNT(tr.id) * 100.0) / NULLIF(COUNT(a.nim), 0),
+                (COUNT(tr.nim) * 100.0) / NULLIF(COUNT(a.nim), 0),
                 1
             ) AS persentase
         ')
-      ->whereYear('sk.tanggal_sk', $tahun)
+      ->whereBetween('sk.tanggal_sk', ["{$tahun}-01-01", "{$tahun}-12-31"])
       ->groupBy('a.singkatan', 'a.nama_singkat_ps')
       ->orderBy('a.singkatan')
       ->orderBy('a.nama_singkat_ps')
@@ -135,20 +143,31 @@ class LaporanQueryModel
 
   public static function getRekapUPBJJ($tahun): Collection
   {
+    // Subquery: Mengambil NIM alumni secara UNIK yang benar-benar punya jawaban
+    $tracerSub = DB::table('tracer_respondens as tr')
+      ->whereExists(function ($query) {
+        $query->select(DB::raw(1))
+          ->from('tracer_jawabans as tj')
+          ->whereColumn('tj.responden_id', 'tr.id');
+      })
+      ->select('tr.nim')
+      ->groupBy('tr.nim');
+
     return DB::table('t_yudisium as y')
       ->join('m_sk_rektor as sk', 'y.nomor_sk_rektor', '=', 'sk.nomor_sk_rektor')
-      ->leftJoin('tracer_respondens as tr', 'y.nim', '=', 'tr.nim')
+      ->leftJoinSub($tracerSub, 'tr', function ($join) {
+        $join->on('y.nim', '=', 'tr.nim');
+      })
       ->select('y.nama_upbjj as upbjj')
       ->selectRaw('COUNT(y.nim) AS jumlah_lulusan')
-      ->selectRaw('COUNT(tr.id) AS sudah_isi_tracer')
-      ->selectRaw('COUNT(y.nim) - COUNT(tr.id) AS belum_isi_tracer')
+      ->selectRaw('COUNT(tr.nim) AS sudah_isi_tracer')
+      ->selectRaw('COUNT(y.nim) - COUNT(tr.nim) AS belum_isi_tracer')
       ->selectRaw('
             ROUND(
-                (COUNT(tr.id) * 100.0) / NULLIF(COUNT(y.nim), 0),
+                (COUNT(tr.nim) * 100.0) / NULLIF(COUNT(y.nim), 0),
                 1
             ) AS persentase
         ')
-      // Optimasi SARGable: Memungkinkan MySQL menggunakan indeks rentang tanggal
       ->whereBetween('sk.tanggal_sk', ["{$tahun}-01-01", "{$tahun}-12-31"])
       ->groupBy('y.nama_upbjj')
       ->orderBy('y.nama_upbjj')
