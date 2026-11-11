@@ -41,16 +41,16 @@
               class="form-select">
 
               <option value="fakultas">
-                Berdasarkan Fakultas
+                Jumlah Tracer Berdasarkan Fakultas
               </option>
 
               <option value="upbjj">
-                Berdasarkan UT Daerah
+                Persentase UT Daerah
               </option>
 
-              <option value="fakultas_upbjj">
-                Fakultas per UT Daerah
-              </option>
+{{--              <option value="fakultas_upbjj">--}}
+{{--                Fakultas per UT Daerah--}}
+{{--              </option>--}}
 
             </select>
           </div>

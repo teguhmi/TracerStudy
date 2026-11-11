@@ -3,9 +3,11 @@
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\Auth\MicrosoftController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaporanIKPS;
 use App\Http\Controllers\LaporanTracerController;
 use App\Http\Controllers\LaporanTracerControllerRingkasan;
 use App\Http\Controllers\TracerController;
+use App\Http\Controllers\TracerPddiktiController;
 use App\Http\Middleware\AlumniAuthenticated;
 use App\Models\query\LaporanQueryModel;
 use Illuminate\Support\Facades\Route;
@@ -44,9 +46,12 @@ Route::group(['prefix' => 'laporan'], function () {
   Route::get('/ts/ri', [LaporanTracerControllerRingkasan::class, 'index'])->name('laporan.tracerRingkasan');
   Route::get('/getTahunLulus', function () {return response()->json(LaporanQueryModel::class::getTahunLulus());})->name('laporan.getTahunLulus');
   Route::get(
-    '/laporan/ts/ri/data',
+    '/ts/ri/data',
     [LaporanTracerControllerRingkasan::class, 'getData']
   )->name('laporan.tracerRingkasan.data');
+
+  Route::get('/ts/ikps',[LaporanIKPS::class, 'index'])->name('laporan.ikps');
+  Route::get('/ts/ikps/data',[LaporanIKPS::class, 'getData'])->name('laporan.ikps.data');
 });
 
 Route::get('/auth/microsoft', [MicrosoftController::class, 'redirect'])
@@ -55,6 +60,8 @@ Route::get('/auth/microsoft', [MicrosoftController::class, 'redirect'])
 Route::get('/auth/microsoft/callback', [MicrosoftController::class, 'callback'])
   ->name('microsoft.callback');
 
-
-
+Route::get(
+  '/tracer/export-pddikti/{tahun}',
+  [TracerPddiktiController::class, 'export']
+);
 

@@ -327,4 +327,62 @@ class LaporanQueryModel
 
       ->get();
   }
+
+
+  public static function getIKPS30142(mixed $tahun)
+  {
+    return 'getIKPS30142';
+  }
+
+  public static function getIKPS32131(mixed $tahun)
+  {
+    return 'getIKPS32131';
+  }
+
+  public static function getIKPS35211(mixed $tahun)
+  {
+    return 'getIKPS35211';
+  }
+
+  public static function getIKPS35212($tahun): Collection
+  {
+    $tracerSub = DB::table('tracer_respondens as tr')
+      ->whereExists(function ($query) {
+        $query->select(DB::raw(1))
+          ->from('tracer_jawabans as tj')
+          ->whereColumn('tj.responden_id', 'tr.id');
+      })
+      ->select('tr.nim')
+      ->groupBy('tr.nim');
+
+    return DB::table('t_yudisium as y')
+      ->join(
+        'm_sk_rektor as sk',
+        'y.nomor_sk_rektor',
+        '=',
+        'sk.nomor_sk_rektor'
+      )
+      ->leftJoinSub($tracerSub, 'tr', function ($join) {
+        $join->on('y.nim', '=', 'tr.nim');
+      })
+      ->selectRaw("
+            YEAR(sk.tanggal_sk) AS tahun_lulusan
+        ")
+      ->selectRaw("
+            y.nama_upbjj AS unit
+        ")
+      ->selectRaw("
+            COUNT(DISTINCT tr.nim) AS jumlah_responden
+        ")
+      ->selectRaw("
+            COUNT(DISTINCT y.nim) AS jumlah_lulusan
+        ")
+      ->whereYear('sk.tanggal_sk', $tahun)
+      ->groupBy(
+        DB::raw('YEAR(sk.tanggal_sk)'),
+        'y.nama_upbjj'
+      )
+      ->orderBy('y.nama_upbjj')
+      ->get();
+  }
 }

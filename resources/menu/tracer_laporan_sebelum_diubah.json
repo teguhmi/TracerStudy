@@ -1,0 +1,87 @@
+{
+    "menu": [
+      {
+        "url": "/",
+        "name": "Dashboard",
+        "icon": "ri ri-home-smile-line",
+        "slug": "pages-dashboard"
+      },
+
+
+      {
+        "menuHeader": "Laporan"
+      },
+      {
+        "name": "Exit Survey",
+        "icon": "ri ri-git-repository-commits-fill",
+        "slug": "pages-parent",
+        "submenu": [
+          {
+            "url": "#",
+            "name": "Daftar Sudah Mengisi",
+            "icon": "",
+            "slug": "daftar-sudah-mengisi"
+          },
+          {
+            "url": "@",
+            "name": "Daftar Belum Mengisi",
+            "icon": "",
+            "slug": "daftar-belum_mengisi",
+            "target": "_self"
+          }
+        ]
+      },
+
+      {
+        "name": "Tracer Study",
+        "icon": "ri ri-pass-valid-line",
+        "slug": "auth-parent",
+        "submenu": [
+          {
+            "route": "laporan.tracerRingkasan",
+            "name": "Ringkasan Data",
+            "icon": "",
+            "slug": "ringkasan-data",
+            "target": "_self"
+          },
+          {
+            "url": "#",
+            "name": "IKPS",
+            "icon": "",
+            "slug": "ikps",
+            "target": "_self"
+          }
+        ]
+      },
+
+      {
+        "name": "Survey Pengguna",
+        "icon": "ri ri-newspaper-fill",
+        "slug": "ijazah",
+        "submenu": [
+          {
+            "url": "#",
+            "name": "Data Survey",
+            "icon": "",
+            "slug": "ijazah-masuk",
+            "target": "_self"
+          }
+        ]
+      },
+
+      {
+        "name": "IKPS",
+        "icon": "ri ri-git-repository-commits-fill",
+        "slug": "pages-parent",
+        "submenu": [
+          {
+            "url": "#",
+            "name": "IKPS",
+            "icon": "",
+            "slug": "ikps"
+          }
+
+        ]
+      }
+    ]
+}

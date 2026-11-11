@@ -21,6 +21,7 @@ class TracerResponden extends Model
     'tanggal_submit',
 
     // Biodata
+    'nik',
     'npwp',
     'email',
     'telepon',

@@ -87,6 +87,17 @@ class ImportTracerJawaban extends Command
 
     $this->info('Import responden selesai');
 
+    $this->info('Update tanggal lulus dari SK Rektor...');
+
+    DB::table('tracer_respondens as tr')
+      ->join('t_yudisium as y', 'y.NIM', '=', 'tr.nim')
+      ->join('m_sk_rektor as sk', 'sk.nomor_sk_rektor', '=', 'y.nomor_sk_rektor')
+      ->whereNotNull('sk.tanggal_sk')
+      ->update([
+        'tr.tanggal_lulus' => DB::raw('sk.tanggal_sk')
+      ]);
+
+    $this->info('Update tanggal lulus selesai');
     /*
     |--------------------------------------------------------------------------
     | MAPPING PERTANYAAN
