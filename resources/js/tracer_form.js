@@ -393,6 +393,10 @@ export default function initTracerForm() {
         });
       }
 
+
+
+
+
       $(document).on('change', '#bio05', function () {
         let negaraId = $(this).val();
         $bio06.html('<option value="">Pilih Provinsi</option>');
@@ -444,6 +448,70 @@ export default function initTracerForm() {
           return false;
         }
       });
+
+
+      const $f18b = $('#f18b');
+      const $f18c = $('#f18c');
+
+      if ($f18b.length) {
+        // load perguruan tinggi
+        $.get('/ajax/perguruan-tinggis', function (data) {
+          let html = '<option value="">Pilih Perguruan Tinggi</option>';
+
+          $.each(data, function (_, item) {
+            html += `
+                <option value="${item.id}">
+                    ${item.nama}
+                </option>
+            `;
+          });
+
+          $f18b.html(html);
+
+          let selectedPt = $f18b.data('selected');
+
+          if (selectedPt) {
+            $f18b.val(String(selectedPt));
+            setTimeout(() => {
+              $f18b.trigger('change');
+            }, 100);
+          }
+        });
+
+        // pilih perguruan tinggi
+        $(document).on('change', '#f18b', function () {
+          const ptId = $(this).val();
+
+          $f18c.html('<option value="">Pilih Program Studi</option>');
+
+          if (!ptId) {
+            return;
+          }
+
+          $.get('/ajax/program-studis/' + ptId, function (data) {
+            let html = '<option value="">Pilih Program Studi</option>';
+
+            $.each(data, function (_, item) {
+              html += `
+                    <option value="${item.id}">
+                        ${item.nama}
+                    </option>
+                `;
+            });
+
+            $f18c.html(html);
+
+            let selectedProdi = $f18c.data('selected');
+
+            if (selectedProdi) {
+              $f18c.val(String(selectedProdi));
+              setTimeout(() => {
+                $f18c.trigger('change');
+              }, 100);
+            }
+          });
+        });
+      }
     });
   }
 }

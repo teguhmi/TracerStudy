@@ -398,6 +398,31 @@
                         </select>
                         @break
 
+                      @case('F18B')
+                        <select
+                          id="f18b"
+                          name="{{ $name }}"
+                          class="form-select"
+                          data-selected="{{ old('jawaban.F18B', $jawabanLama['F18B'] ?? '') }}"
+                          data-required="{{ $q->wajib ? 1 : 0 }}"
+                        >
+                          <option value="">Pilih Perguruan Tinggi</option>
+                        </select>
+                        @break
+
+                      @case('F18C')
+                        <select
+                          id="f18c"
+                          name="{{ $name }}"
+                          class="form-select"
+                          data-selected="{{ old('jawaban.F18C', $jawabanLama['F18C'] ?? '') }}"
+                          data-required="{{ $q->wajib ? 1 : 0 }}"
+                        >
+                          <option value="">Pilih Program Studi</option>
+                        </select>
+                        @break
+
+
                       @default
                         <select class="form-select" name="{{ $name }}">
                           <option value="">Pilih</option>

@@ -10,7 +10,7 @@ class TracerProvinsiSeeder extends Seeder
 {
   public function run(): void
   {
-    $rows = Excel::toArray([], database_path('data/tracer_provinsi.xlsx'));
+    $rows = Excel::toArray((object)[], database_path('data/tracer_provinsi.xlsx'));
 
     $data = [];
 

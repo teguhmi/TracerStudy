@@ -38,4 +38,21 @@ class AjaxController extends Controller
         ->get()
     );
   }
+
+  public function getPerguruanTinggis()
+  {
+    return DB::table('master_perguruan_tinggis')
+      ->select('id', 'nama')
+      ->orderBy('nama')
+      ->get();
+  }
+
+  public function getProgramStudis($ptId)
+  {
+    return DB::table('master_program_studis')
+      ->select('id', 'nama')
+      ->where('perguruan_tinggi_id', $ptId)
+      ->orderBy('nama')
+      ->get();
+  }
 }

@@ -38,6 +38,7 @@ class LaporanIKPS extends Controller
 
     $tahun = $validated['tahun_lulus'];
     $jenis = $validated['jenis'];
+
     switch ($jenis) {
 
       case 'ikps30142':

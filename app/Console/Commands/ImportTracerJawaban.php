@@ -36,7 +36,6 @@ class ImportTracerJawaban extends Command
       ->whereRaw('CHAR_LENGTH(TRIM(nim)) > 9')
       ->orWhereRaw('CHAR_LENGTH(TRIM(email)) > 150')
       ->orWhereRaw('CHAR_LENGTH(TRIM(tahun_lulus)) > 4')
-
       ->delete();
 
     $this->warn(
@@ -52,18 +51,19 @@ class ImportTracerJawaban extends Command
 
         foreach ($rows as $row) {
 
-          $nim     = trim((string) ($row->nim ?? ''));
-          $nama    = trim((string) ($row->nama_mahasiswa ?? ''));
-          $email   = trim((string) ($row->email ?? ''));
-          $telepon = trim((string) ($row->telepon ?? ''));
-          $npwp    = trim((string) ($row->npwp ?? ''));
+          $nim = trim((string)($row->nim ?? ''));
+          $nama = trim((string)($row->nama_mahasiswa ?? ''));
+          $email = trim((string)($row->email ?? ''));
+          $telepon = trim((string)($row->telepon ?? ''));
+          $npwp = trim((string)($row->npwp ?? ''));
 
           $payload[] = [
-            'nim'        => $nim,
-            'nama'       => $nama ?: null,
-            'email'      => $email ?: null,
-            'telepon'    => $telepon ?: null,
-            'npwp'       => $npwp ?: null,
+            'nim' => $nim,
+            'nama' => $nama ?: null,
+            'email' => $email ?: null,
+            'telepon' => $telepon ?: null,
+            'npwp' => $npwp ?: null,
+            'kategori_id' => 2,
             'created_at' => now(),
             'updated_at' => now(),
           ];
@@ -75,6 +75,7 @@ class ImportTracerJawaban extends Command
             $payload,
             ['nim'],
             [
+              'kategori_id',
               'nama',
               'email',
               'telepon',
@@ -89,15 +90,46 @@ class ImportTracerJawaban extends Command
 
     $this->info('Update tanggal lulus dari SK Rektor...');
 
-    DB::table('tracer_respondens as tr')
-      ->join('t_yudisium as y', 'y.NIM', '=', 'tr.nim')
-      ->join('m_sk_rektor as sk', 'sk.nomor_sk_rektor', '=', 'y.nomor_sk_rektor')
-      ->whereNotNull('sk.tanggal_sk')
-      ->update([
-        'tr.tanggal_lulus' => DB::raw('sk.tanggal_sk')
-      ]);
+    DB::statement("
+    UPDATE tracer_respondens tr
+    INNER JOIN t_yudisium y
+        ON y.NIM = tr.nim
+    INNER JOIN m_sk_rektor sk
+        ON sk.nomor_sk_rektor = y.nomor_sk_rektor
+    INNER JOIN tracer_periodes p
+        ON YEAR(sk.tanggal_sk) = p.tahun_mulai
+    SET
+        tr.tanggal_lulus = sk.tanggal_sk,
+        tr.periode_id = p.id
+    WHERE sk.tanggal_sk IS NOT NULL
+");
+//    DB::table('tracer_respondens as tr')
+//      ->join('t_yudisium as y', 'y.NIM', '=', 'tr.nim')
+//      ->join('m_sk_rektor as sk', 'sk.nomor_sk_rektor', '=', 'y.nomor_sk_rektor')
+//      ->whereNotNull('sk.tanggal_sk')
+//      ->update([
+//        'tr.tanggal_lulus' => DB::raw('sk.tanggal_sk')
+//      ]);
 
-    $this->info('Update tanggal lulus selesai');
+//    $this->info('Update tanggal lulus selesai');
+
+//    $this->info('Update periode berdasarkan tahun lulus...');
+//
+//    DB::table('tracer_respondens as tr')
+//      ->join('tracer_periodes as p', function ($join) {
+//        $join->on(
+//          DB::raw('CAST(YEAR(tr.tanggal_lulus) AS CHAR(4))'),
+//          '=',
+//          'p.tahun_mulai'
+//        );
+//      })
+//      ->whereNotNull('tr.tanggal_lulus')
+//      ->update([
+//        'tr.periode_id' => DB::raw('p.id')
+//      ]);
+//
+//    $this->info('Update periode selesai');
+
     /*
     |--------------------------------------------------------------------------
     | MAPPING PERTANYAAN
@@ -120,7 +152,7 @@ class ImportTracerJawaban extends Command
     |--------------------------------------------------------------------------
     */
     $fieldToKode = [
-      'nik'  => 'BIO01',
+      'nik' => 'BIO01',
       'npwp' => 'BIO02',
       'f506' => 'F510',
     ];
@@ -135,7 +167,6 @@ class ImportTracerJawaban extends Command
     |--------------------------------------------------------------------------
     */
     $this->info('Import jawaban...');
-
     DB::table('tracer_dikti_v1')
       ->orderBy('nim')
       ->chunk(500, function (
@@ -149,7 +180,7 @@ class ImportTracerJawaban extends Command
         $nims = collect($rows)
           ->pluck('nim')
           ->filter()
-          ->map(fn($x) => trim((string) $x))
+          ->map(fn($x) => trim((string)$x))
           ->unique()
           ->values()
           ->toArray();
@@ -163,7 +194,7 @@ class ImportTracerJawaban extends Command
 
         foreach ($rows as $row) {
 
-          $nim = trim((string) ($row->nim ?? ''));
+          $nim = trim((string)($row->nim ?? ''));
 
           if (!isset($respondenMap[$nim])) {
             continue;
@@ -178,7 +209,7 @@ class ImportTracerJawaban extends Command
           */
           $rowData = [];
 
-          foreach ((array) $row as $key => $val) {
+          foreach ((array)$row as $key => $val) {
 
             $key = strtolower($key);
 
@@ -187,7 +218,7 @@ class ImportTracerJawaban extends Command
               continue;
             }
 
-            $val = trim((string) $val);
+            $val = trim((string)$val);
 
             $rowData[$key] = $val === ''
               ? null
@@ -217,7 +248,7 @@ class ImportTracerJawaban extends Command
 
                 $items = preg_split(
                   '/[,;|]/',
-                  (string) $value
+                  (string)$value
                 );
 
                 $items = array_values(
@@ -240,12 +271,12 @@ class ImportTracerJawaban extends Command
             }
 
             $payload[] = [
-              'responden_id'    => $respondenId,
-              'pertanyaan_id'   => $pertanyaan->id,
+              'responden_id' => $respondenId,
+              'pertanyaan_id' => $pertanyaan->id,
               'kode_pertanyaan' => $kode,
-              'jawaban'         => $value,
-              'created_at'      => now(),
-              'updated_at'      => now(),
+              'jawaban' => $value,
+              'created_at' => now(),
+              'updated_at' => now(),
             ];
 
             if (count($payload) >= 1000) {

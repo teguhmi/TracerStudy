@@ -229,7 +229,6 @@ class TracerController extends Controller
         [
           'nama' => $dpAlumni->nama_mahasiswa,
           'tanggal_lulus' => $dpAlumni->tanggal_sk,
-
           'npwp' => $request->input('jawaban.BIO01', $valueBio01),
           'email' => $request->input('jawaban.BIO02', $valueBio02),
           'telepon' => $request->input('jawaban.BIO03', $valueBio03),
@@ -241,6 +240,8 @@ class TracerController extends Controller
           'status' => 'draft',
         ]
       );
+
+      $responden->kategori_id = '2';
 
       if (!$responden) {
         throw new Exception('Data responden tidak ditemukan.');
@@ -273,7 +274,7 @@ class TracerController extends Controller
           ) &&
           !in_array(
             $pertanyaan->kode,
-            ['BIO05', 'BIO06', 'BIO07', 'F5A0', 'F5A1', 'F5A2']
+            ['BIO05', 'BIO06', 'BIO07', 'F5A0', 'F5A1', 'F5A2','F18B','F18C']
           )
 
         ) {

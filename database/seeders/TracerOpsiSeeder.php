@@ -168,29 +168,7 @@ class TracerOpsiSeeder extends Seeder
       [5, 'Sangat Tinggi'],
     ];
 
-    foreach ($kodePertanyaan as $kode) {
-
-      $pertanyaan = TracerPertanyaan::where('kode', $kode)->first();
-
-      if (!$pertanyaan) {
-        continue;
-      }
-
-      foreach ($opsi as $urutan => $item) {
-
-        TracerOpsi::updateOrCreate(
-          [
-            'pertanyaan_id' => $pertanyaan->id,
-            'nilai' => $item[0],
-          ],
-          [
-            'label' => $item[1],
-            'urutan' => $urutan + 1,
-            'aktif' => true,
-          ]
-        );
-      }
-    }
+    $this->extracted($kodePertanyaan, $opsi);
   }
   private function seedPembelajaran(): void
   {
@@ -214,29 +192,7 @@ class TracerOpsiSeeder extends Seeder
       ['1', 'Sangat Besar'],
     ];
 
-    foreach ($kodePertanyaans as $kode) {
-
-      $pertanyaan = TracerPertanyaan::where('kode', $kode)->first();
-
-      if (!$pertanyaan) {
-        continue;
-      }
-
-      foreach ($opsi as $urutan => $item) {
-
-        TracerOpsi::updateOrCreate(
-          [
-            'pertanyaan_id' => $pertanyaan->id,
-            'nilai' => $item[0],
-          ],
-          [
-            'label' => $item[1],
-            'urutan' => $urutan + 1,
-            'aktif' => true,
-          ]
-        );
-      }
-    }
+    $this->extracted($kodePertanyaans, $opsi);
   }
 
   private function seedF301(): void
@@ -410,5 +366,37 @@ class TracerOpsiSeeder extends Seeder
       ['nilai' => '1', 'label' => 'Biaya Sendiri'],
       ['nilai' => '2', 'label' => 'Beasiswa'],
     ]);
+  }
+
+  /**
+   * @param array $kodePertanyaans
+   * @param array $opsi
+   * @return void
+   */
+  private function extracted(array $kodePertanyaans, array $opsi): void
+  {
+    foreach ($kodePertanyaans as $kode) {
+
+      $pertanyaan = TracerPertanyaan::where('kode', $kode)->first();
+
+      if (!$pertanyaan) {
+        continue;
+      }
+
+      foreach ($opsi as $urutan => $item) {
+
+        TracerOpsi::updateOrCreate(
+          [
+            'pertanyaan_id' => $pertanyaan->id,
+            'nilai' => $item[0],
+          ],
+          [
+            'label' => $item[1],
+            'urutan' => $urutan + 1,
+            'aktif' => true,
+          ]
+        );
+      }
+    }
   }
 }

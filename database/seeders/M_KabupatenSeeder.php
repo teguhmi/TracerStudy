@@ -14,7 +14,7 @@ class M_KabupatenSeeder extends Seeder
   public function run(): void
   {
     $rows = Excel::toArray(
-      [],
+      (object)[],
       database_path('data/m_kabupaten_kota.xlsx')
     );
 

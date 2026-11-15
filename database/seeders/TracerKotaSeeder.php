@@ -11,7 +11,7 @@ class TracerKotaSeeder extends Seeder
   public function run(): void
   {
     $rows = Excel::toArray(
-      [],
+      (object)[],
       database_path('data/tracer_kota.xlsx')
     );
 

@@ -30,7 +30,8 @@ Route::get('/ajax/negaras', [AjaxController::class, 'getNegaras']);
 Route::get('/ajax/provinsis/{negara}', [AjaxController::class, 'getProvinsis']);
 Route::get('/ajax/kabupaten-kotas/{provinsi}', [AjaxController::class, 'getKabupatenKotas']);
 
-
+Route::get('/ajax/perguruan-tinggis', [AjaxController::class, 'getPerguruanTinggis']);
+Route::get('/ajax/program-studis/{ptId}', [AjaxController::class, 'getProgramStudis']);
 
 // authentication
 Route::get('/auth/login', [Login::class, 'index'])->name('login-alumni');
@@ -44,14 +45,16 @@ Route::get('/', [HomeController::class, 'index'])
 Route::group(['prefix' => 'laporan'], function () {
   Route::get('/', [LaporanTracerController::class, 'index'])->name('laporan-tracer.index');
   Route::get('/ts/ri', [LaporanTracerControllerRingkasan::class, 'index'])->name('laporan.tracerRingkasan');
-  Route::get('/getTahunLulus', function () {return response()->json(LaporanQueryModel::class::getTahunLulus());})->name('laporan.getTahunLulus');
+  Route::get('/getTahunLulus', function () {
+    return response()->json(LaporanQueryModel::class::getTahunLulus());
+  })->name('laporan.getTahunLulus');
   Route::get(
     '/ts/ri/data',
     [LaporanTracerControllerRingkasan::class, 'getData']
   )->name('laporan.tracerRingkasan.data');
 
-  Route::get('/ts/ikps',[LaporanIKPS::class, 'index'])->name('laporan.ikps');
-  Route::get('/ts/ikps/data',[LaporanIKPS::class, 'getData'])->name('laporan.ikps.data');
+  Route::get('/ts/ikps', [LaporanIKPS::class, 'index'])->name('laporan.ikps');
+  Route::get('/ts/ikps/data', [LaporanIKPS::class, 'getData'])->name('laporan.ikps.data');
 });
 
 Route::get('/auth/microsoft', [MicrosoftController::class, 'redirect'])

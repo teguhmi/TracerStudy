@@ -14,15 +14,13 @@ return new class extends Migration
       $table->string('kode', 50)->unique();
       $table->string('nama');
       $table->text('deskripsi')->nullable();
+      $table->json('tampil_jika')->nullable();
 
       $table->integer('urutan')->default(0);
-
       $table->boolean('aktif')->default(true);
 
       $table->timestamps();
     });
-
-
   }
 
   public function down(): void

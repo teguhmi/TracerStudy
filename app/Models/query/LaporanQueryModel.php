@@ -2,6 +2,8 @@
 
 namespace App\Models\query;
 
+use App\Models\tracer\TracerResponden;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
@@ -331,7 +333,42 @@ class LaporanQueryModel
 
   public static function getIKPS30142(mixed $tahun)
   {
-    return 'getIKPS30142';
+
+
+    $pertanyaan = [
+      'q1' => 'Etika',
+      'q2' => 'Keahlian pada bidang ilmu (kompetensi utama)',
+      'q3' => 'Kemampuan berbahasa asing',
+      'q4' => 'Penggunaan teknologi informasi',
+      'q5' => 'Kemampuan berkomunikasi',
+      'q6' => 'Kerjasama',
+      'q7' => 'Pengembangan diri',
+    ];
+
+    $unionQuery = null;
+
+    foreach ($pertanyaan as $kolom => $label) {
+      $sub = DB::table('tbl_kuesioner_pengguna')
+        ->selectRaw("? AS jenis_kemampuan, {$kolom} AS nilai", [$label])
+        ->whereNotNull($kolom);
+
+      $unionQuery = $unionQuery ? $unionQuery->unionAll($sub) : $sub;
+    }
+
+    return DB::query()
+      ->fromSub($unionQuery, 'x')
+      ->select([
+        'jenis_kemampuan',
+        DB::raw("CONCAT(SUM(CASE WHEN nilai = 4 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 4 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS sangat_baik"),
+        DB::raw("CONCAT(SUM(CASE WHEN nilai = 3 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 3 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS baik"),
+        DB::raw("CONCAT(SUM(CASE WHEN nilai = 2 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 2 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS cukup"),
+        DB::raw("CONCAT(SUM(CASE WHEN nilai = 1 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 1 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS kurang"),
+        DB::raw('COUNT(nilai) AS jumlah_responden'),
+      ])
+      ->groupBy('jenis_kemampuan')
+      ->orderByRaw('FIELD(jenis_kemampuan, ?, ?, ?, ?, ?, ?, ?)', array_values($pertanyaan))
+      ->get();
+
   }
 
   public static function getIKPS32131(mixed $tahun)
@@ -339,11 +376,190 @@ class LaporanQueryModel
     return 'getIKPS32131';
   }
 
-  public static function getIKPS35211(mixed $tahun)
+  public static function getIKPS35211($tahun): Collection
   {
-    return 'getIKPS35211';
-  }
+    $awalTahun = "{$tahun}-01-01";
+    $tahunBerikutnya = ((int) $tahun + 1) . "-01-01";
 
+    $sql = "
+        SELECT
+            ? AS tahun,
+            l.jumlah_lulusan,
+
+            -- Tabel 1: Bekerja (kode f8 = '1')
+            COALESCE(SUM(CASE
+                WHEN t.status = '1'
+                     AND t.masa_tunggu <= 6
+                     AND t.upah >= (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS dibawah_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '1'
+                     AND t.masa_tunggu > 6
+                     AND t.masa_tunggu <= 12
+                     AND t.upah >= (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS diatas_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '1'
+                     AND t.masa_tunggu <= 12
+                     AND t.upah < (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS dibawah_ump_12,
+
+            -- Tabel 2: Wirausaha (kode f8 = '3')
+            COALESCE(SUM(CASE
+                WHEN t.status = '3'
+                     AND t.masa_tunggu <= 6
+                     AND t.upah >= (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS wirausaha_dibawah_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '3'
+                     AND t.masa_tunggu > 6
+                     AND t.upah >= (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS wirausaha_diatas_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '3'
+                     AND t.masa_tunggu <= 6
+                     AND t.upah < (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS wirausaha_dibawah_ump_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '3'
+                     AND t.masa_tunggu > 6
+                     AND t.upah < (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS wirausaha_dibawah_ump_diatas_6,
+
+            -- Tabel 3: Freelancer (kode f8 = '6')
+            COALESCE(SUM(CASE
+                WHEN t.status = '6'
+                     AND t.masa_tunggu <= 6
+                     AND t.upah >= (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS freelancer_dibawah_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '6'
+                     AND t.masa_tunggu > 6
+                     AND t.upah >= (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS freelancer_diatas_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '6'
+                     AND t.masa_tunggu <= 6
+                     AND t.upah < (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS freelancer_dibawah_ump_6,
+
+            COALESCE(SUM(CASE
+                WHEN t.status = '6'
+                     AND t.masa_tunggu > 6
+                     AND t.upah < (1.2 * d.upah)
+                     AND d.upah IS NOT NULL
+                THEN 1 ELSE 0
+            END), 0) AS freelancer_dibawah_ump_diatas_6,
+
+            -- Tabel 4: Melanjutkan Studi (kode f8 = '4') & Tidak Masuk Kriteria
+            COALESCE(SUM(CASE
+                WHEN t.status = '4'
+                THEN 1 ELSE 0
+            END), 0) AS melanjutkan_studi,
+
+            COALESCE(SUM(CASE
+                WHEN t.status IS NOT NULL
+                     AND NOT (
+                         (t.status = '1' AND t.masa_tunggu <= 12 AND t.upah IS NOT NULL AND d.upah IS NOT NULL)
+                         OR (t.status IN ('3', '6') AND t.masa_tunggu IS NOT NULL AND t.upah IS NOT NULL AND d.upah IS NOT NULL)
+                         OR (t.status = '4')
+                     )
+                THEN 1 ELSE 0
+            END), 0) AS tidak_masuk_kriteria
+
+        FROM (
+            SELECT COUNT(DISTINCT y.nim) AS jumlah_lulusan
+            FROM t_yudisium y
+            JOIN m_sk_rektor sk
+                ON sk.nomor_sk_rektor = y.nomor_sk_rektor
+            WHERE sk.tanggal_sk >= ?
+              AND sk.tanggal_sk < ?
+        ) l
+
+        LEFT JOIN (
+            SELECT
+                b.tahun_mulai,
+                a.id AS responden_id,
+                MAX(CASE WHEN c.kode_pertanyaan = 'f8' THEN c.jawaban END) AS status,
+
+                CAST(
+                    NULLIF(
+                        MAX(CASE WHEN c.kode_pertanyaan = 'f502' THEN c.jawaban END),
+                        ''
+                    ) AS SIGNED
+                ) AS masa_tunggu,
+
+                CAST(
+                    NULLIF(
+                        MAX(CASE WHEN c.kode_pertanyaan = 'f505'
+                            THEN REPLACE(c.jawaban, '.', '')
+                        END),
+                        ''
+                    ) AS DECIMAL(15,2)
+                ) AS upah,
+
+                MAX(CASE WHEN c.kode_pertanyaan = 'f5a1' THEN c.jawaban END) AS provinsi
+
+            FROM tracer_respondens a
+            JOIN tracer_periodes b
+                ON b.id = a.periode_id
+            JOIN tracer_jawabans c
+                ON c.responden_id = a.id
+
+            WHERE a.tanggal_lulus >= ?
+              AND a.tanggal_lulus < ?
+              AND a.kategori_id = 2
+              AND c.kode_pertanyaan IN ('f8', 'f502', 'f505', 'f5a1')
+
+            GROUP BY
+                b.tahun_mulai,
+                a.id
+
+            HAVING MAX(CASE WHEN c.kode_pertanyaan = 'f8' THEN c.jawaban END) IS NOT NULL
+        ) t ON 1 = 1
+
+        LEFT JOIN tracer_upah d
+            ON d.kode = t.provinsi
+            AND d.tahun = t.tahun_mulai
+
+        GROUP BY l.jumlah_lulusan
+    ";
+
+    return collect(DB::select($sql, [
+      $tahun,
+      $awalTahun,
+      $tahunBerikutnya,
+      $awalTahun,
+      $tahunBerikutnya,
+    ]));
+  }
   public static function getIKPS35212($tahun): Collection
   {
     $tracerSub = DB::table('tracer_respondens as tr')
