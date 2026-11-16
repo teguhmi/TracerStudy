@@ -48,9 +48,9 @@
                 Persentase UT Daerah
               </option>
 
-{{--              <option value="fakultas_upbjj">--}}
-{{--                Fakultas per UT Daerah--}}
-{{--              </option>--}}
+              {{--              <option value="fakultas_upbjj">--}}
+              {{--                Fakultas per UT Daerah--}}
+              {{--              </option>--}}
 
             </select>
           </div>
@@ -309,7 +309,7 @@
 
                     <td></td>
 
-                    <td>${row.program_studi}</td>
+                    <td>${row.nama_prodi_dikti}</td>
 
                     <td class="text-center">
                         ${Number(row.jumlah_lulusan).toLocaleString('id-ID')}

@@ -125,24 +125,23 @@ class LaporanQueryModel
       })
       ->select(
         'a.singkatan as fakultas',
-        'a.nama_singkat_ps as program_studi'
+        'a.nama_prodi_dikti'
       )
       ->selectRaw('COUNT(a.nim) AS jumlah_lulusan')
       ->selectRaw('COUNT(tr.nim) AS sudah_isi_tracer')
       ->selectRaw('COUNT(a.nim) - COUNT(tr.nim) AS belum_isi_tracer')
       ->selectRaw('
-            ROUND(
-                (COUNT(tr.nim) * 100.0) / NULLIF(COUNT(a.nim), 0),
-                1
-            ) AS persentase
-        ')
+          ROUND(
+              (COUNT(tr.nim) * 100.0) / NULLIF(COUNT(a.nim), 0),
+              1
+          ) AS persentase
+      ')
       ->whereBetween('sk.tanggal_sk', ["{$tahun}-01-01", "{$tahun}-12-31"])
-      ->groupBy('a.singkatan', 'a.nama_singkat_ps')
+      ->groupBy('a.singkatan', 'a.nama_prodi_dikti')
       ->orderBy('a.singkatan')
-      ->orderBy('a.nama_singkat_ps')
+      ->orderBy('a.nama_prodi_dikti')
       ->get();
   }
-
   public static function getRekapUPBJJ($tahun): Collection
   {
     // Subquery: Mengambil NIM alumni secara UNIK yang benar-benar punya jawaban
