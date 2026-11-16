@@ -123,7 +123,8 @@
             </form>
           @else
             <a
-              href="{{ route('login-alumni') }}"
+{{--              href="{{ route('login-alumni') }}"--}}
+              href="{{ route('under-development') }}"
               class="hidden lg:inline-flex items-center px-6 py-3 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-500 transition">
               Login
             </a>
@@ -344,7 +345,8 @@
 
           <div class="mt-8 flex flex-wrap gap-4">
 
-            <a href="{{route('tracer.index')}}"
+{{--            <a href="{{route('tracer.index')}}"--}}
+            <a href="{{route('under-development')}}"
                target="_blank" rel="noopener noreferrer"
                class="px-8 py-4 bg-ut-yellow text-ut-navy rounded-xl font-bold hover:scale-105 transition">
               Isi Tracer Study
@@ -489,7 +491,8 @@
         <ul class="space-y-3 text-white/80">
 
           <li>
-            <a href="{{ route('tracer.index') }}"
+{{--            <a href="{{ route('tracer.index') }}"--}}
+            <a href="{{ route('under-development') }}"
                class="hover:text-yellow-300 transition">
               Tracer Study
             </a>

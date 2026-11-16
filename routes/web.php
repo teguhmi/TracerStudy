@@ -68,3 +68,5 @@ Route::get(
   [TracerPddiktiController::class, 'export']
 );
 
+Route::view('/sedang-dikembangkan', 'under_development')
+  ->name('under-development');
