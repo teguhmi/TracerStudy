@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\Event;
@@ -40,5 +41,9 @@ class AppServiceProvider extends ServiceProvider
         SocialiteWasCalled::class,
         MicrosoftExtendSocialite::class
       );
+
+      if (app()->environment('production')) {
+        URL::forceScheme('https');
+      }
     }
 }
