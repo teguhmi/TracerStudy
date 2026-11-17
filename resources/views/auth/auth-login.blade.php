@@ -25,7 +25,7 @@
           </p>
         </div>
 
-        {{-- PESAN ERROR UMUM (JIKA ADA) --}}
+        {{-- ALERT ERROR --}}
         @if ($errors->any())
           <div class="alert alert-danger py-2 px-3 mb-4" role="alert">
             <small>{{ $errors->first() }}</small>
@@ -55,7 +55,7 @@
           </div>
         </div>
 
-        <form id="login-form" method="POST" action="{{ route('auth-login-process') }}">
+        <form id="login-form" method="POST" action="{{ route('auth-login-process', [], false) }}" novalidate>
           @csrf
 
           <input
@@ -105,15 +105,13 @@
                     name="tanggal_lahir"
                     value="{{ old('tanggal_lahir') }}"
                     class="form-control"
-                    placeholder="dd/mm/yyyy"
-                    pattern="^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$"
-                    title="Gunakan format dd/mm/yyyy, contoh: 17/08/1998">
+                    placeholder="dd/mm/yyyy">
                 </div>
               </div>
             </div>
 
             <div class="form-text mb-4">
-              Gunakan tanggal lahir yang terdaftar (format: dd/mm/yyyy).
+              Gunakan tanggal lahir yang terdaftar.
             </div>
 
             {{-- CAPTCHA --}}
@@ -122,17 +120,21 @@
                 Verifikasi Keamanan
               </label>
 
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <div id="captcha-img">
-                  {!! captcha_img('flat') !!}
+              <div class="row g-2 mb-2">
+                <div class="col-9">
+                  <div class="captcha-container mb-2">
+                    <div id="captcha-img">
+                      {!! captcha_img('flat') !!}
+                    </div>
+                    <button
+                      type="button"
+                      id="reload-captcha"
+                      class="btn btn-sm btn-primary captcha-reload"
+                      title="Muat ulang captcha">
+                      <i class="ri-refresh-line"></i>
+                    </button>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  id="reload-captcha"
-                  class="btn btn-sm btn-primary"
-                  title="Muat ulang captcha">
-                  <i class="ri-refresh-line"></i>
-                </button>
               </div>
 
               <input
@@ -198,7 +200,7 @@
 
             {{-- LOGIN SSO MICROSOFT --}}
             <div class="d-grid mb-3">
-              <a href="{{ route('microsoft.login') }}" class="btn btn-outline-primary">
+              <a href="{{ route('microsoft.login', [], false) }}" class="btn btn-outline-primary">
                 <i class="ri-microsoft-line me-2"></i>
                 Login dengan Microsoft 365
               </a>
@@ -239,27 +241,34 @@
       const isAlumni = type === 'alumni';
 
       getEl('login_type').value = type;
+
       getEl('form-alumni').classList.toggle('d-none', !isAlumni);
       getEl('form-staff').classList.toggle('d-none', isAlumni);
 
       getEl('btn-alumni').className = `btn ${isAlumni ? 'btn-primary' : 'btn-outline-primary'} w-100`;
       getEl('btn-staff').className = `btn ${isAlumni ? 'btn-outline-primary' : 'btn-primary'} w-100`;
 
-      getEl('nim').required = isAlumni;
-      getEl('tanggal_lahir').required = isAlumni;
-      getEl('captcha').required = isAlumni;
+      // Nonaktifkan field pada tab yang tidak aktif agar tidak menghalangi submit di Chrome
+      getEl('nim').disabled = !isAlumni;
+      getEl('tanggal_lahir').disabled = !isAlumni;
+      getEl('captcha').disabled = !isAlumni;
 
-      getEl('email').required = !isAlumni;
-      getEl('password').required = !isAlumni;
+      getEl('email').disabled = isAlumni;
+      getEl('password').disabled = isAlumni;
 
       getEl('submit-text').textContent = isAlumni ? 'Masuk sebagai Alumni' : 'Masuk sebagai Staff';
     }
 
-    getEl('btn-alumni')?.addEventListener('click', () => switchLogin('alumni'));
-    getEl('btn-staff')?.addEventListener('click', () => switchLogin('staff'));
+    getEl('btn-alumni')?.addEventListener('click', function () {
+      switchLogin('alumni');
+    });
+
+    getEl('btn-staff')?.addEventListener('click', function () {
+      switchLogin('staff');
+    });
 
     getEl('reload-captcha')?.addEventListener('click', function () {
-      fetch('{{ route("reload.captcha") }}')
+      fetch('{{ route("reload.captcha", [], false) }}')
         .then((response) => response.json())
         .then((data) => {
           getEl('captcha-img').innerHTML = data.captcha;
@@ -268,8 +277,10 @@
 
     getEl('login-form')?.addEventListener('submit', function () {
       const btnSubmit = getEl('btn-submit');
-      btnSubmit.disabled = true;
-      getEl('submit-text').textContent = 'Memproses...';
+      setTimeout(function () {
+        btnSubmit.disabled = true;
+        getEl('submit-text').textContent = 'Memproses...';
+      }, 0);
     });
 
     switchLogin(getEl('login_type').value || 'alumni');
@@ -323,4 +334,5 @@
     }
   }
 </style>
+
 </body>

@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-      if ($this->app->environment('production')) {
+      if ($this->app->environment('production') || request()->header('X-Forwarded-Proto') === 'https') {
         URL::forceScheme('https');
       }
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
