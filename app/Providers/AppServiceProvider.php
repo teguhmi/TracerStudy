@@ -25,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+      if ($this->app->environment('production')) {
+        URL::forceScheme('https');
+      }
         Vite::useStyleTagAttributes(function (?string $src, string $url, ?array $chunk, ?array $manifest) {
             if ($src !== null) {
                 return [
@@ -41,9 +44,5 @@ class AppServiceProvider extends ServiceProvider
         SocialiteWasCalled::class,
         MicrosoftExtendSocialite::class
       );
-
-      if (app()->environment('production')) {
-        URL::forceScheme('https');
-      }
     }
 }
