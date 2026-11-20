@@ -26,7 +26,7 @@ class LaporanIKPS extends Controller
 
 
     return view(
-      'content.laporan.ikps.laporan_tracer_ikps',
+      'content.laporan.laporan_tracer_ikps',
       compact('tahun', 'ikps', 'data','units')
     );
   }
@@ -92,9 +92,8 @@ class LaporanIKPS extends Controller
 
     $ikps = MasterIKPS::orderBy('nama')->get();
 
-
     return view(
-      'content.laporan.ikps.laporan_tracer_ikps',
+      'content.laporan.laporan_tracer_ikps',
       [
         'tahun' => $tahunList,
         'ikps'  => $ikps,
