@@ -11,5 +11,6 @@ class MasterIKPS extends Model
   protected $fillable = [
     'kode',
     'nama',
+    'keterangan',
   ];
 }

@@ -13,6 +13,21 @@
       },
 
       {
+        "name": "Exit Survey",
+        "icon": "ri ri-git-repository-commits-fill",
+        "slug": "auth-parent",
+        "submenu": [
+          {
+            "url": "#",
+            "name": "Ringkasan Data Exit Survey",
+            "icon": "",
+            "slug": "ringkasan-data-exit-survey",
+            "target": "_self"
+          }
+        ]
+      },
+
+      {
         "name": "Tracer Study",
         "icon": "ri ri-pass-valid-line",
         "slug": "auth-parent",

@@ -330,10 +330,8 @@ class LaporanQueryModel
   }
 
 
-  public static function getIKPS30142(mixed $tahun)
+  public static function getIKPS30142(mixed $tahun, mixed $unit = 0)
   {
-
-
     $pertanyaan = [
       'q1' => 'Etika',
       'q2' => 'Keahlian pada bidang ilmu (kompetensi utama)',
@@ -344,32 +342,200 @@ class LaporanQueryModel
       'q7' => 'Pengembangan diri',
     ];
 
+    $unitInt = ($unit === 'X3000') ? 0 : (int) $unit;
+    $isFakultas = ($unitInt >= 1 && $unitInt <= 6);
+    $isUpbjj = ($unitInt > 9);
+    $isGroupByProdi = ($isFakultas || $isUpbjj);
+
     $unionQuery = null;
 
     foreach ($pertanyaan as $kolom => $label) {
-      $sub = DB::table('tbl_kuesioner_pengguna')
-        ->selectRaw("? AS jenis_kemampuan, {$kolom} AS nilai", [$label])
-        ->whereNotNull($kolom);
 
-      $unionQuery = $unionQuery ? $unionQuery->unionAll($sub) : $sub;
+      $selectRaw = "
+          '" . addslashes($label) . "' AS jenis_kemampuan,
+          a.{$kolom} AS nilai
+      ";
+
+      if ($isGroupByProdi) {
+        $selectRaw .= ",
+              y.kode_prodi_dikti,
+              y.nama_prodi_dikti,
+              y.singkatan
+          ";
+      }
+
+      $sub = DB::table('tbl_kuesioner_pengguna as a')
+        ->join('t_yudisium as y', 'y.nim', '=', 'a.nim')
+        ->join(
+          'm_sk_rektor as sk',
+          'sk.nomor_sk_rektor',
+          '=',
+          'y.nomor_sk_rektor'
+        )
+        ->selectRaw($selectRaw)
+        ->whereNotNull("a.{$kolom}")
+        ->where('sk.tanggal_sk', '>=', "{$tahun}-01-01")
+        ->where('sk.tanggal_sk', '<', ((int) $tahun + 1) . '-01-01');
+
+      // Ketentuan 2: unit_id 1 - 6 -> filter kode_fakultas
+      if ($isFakultas) {
+        $sub->where('y.kode_fakultas', $unit);
+      }
+      // Ketentuan 3: unit_id > 9 -> filter kode_upbjj pada t_yudisium
+      elseif ($isUpbjj) {
+        $sub->where('y.kode_upbjj', $unit);
+      }
+      // Ketentuan 1: unit_id = 0 -> keseluruhan (filter tahun saja)
+
+      $unionQuery = $unionQuery
+        ? $unionQuery->unionAll($sub)
+        : $sub;
     }
 
+    $selectAgregat = [
+      'jenis_kemampuan',
+
+      DB::raw("
+            CONCAT(
+                SUM(CASE WHEN nilai = 4 THEN 1 ELSE 0 END),
+                ' (',
+                ROUND(
+                    SUM(CASE WHEN nilai = 4 THEN 1 ELSE 0 END) * 100 / COUNT(nilai),
+                    2
+                ),
+                '%)'
+            ) AS sangat_baik
+        "),
+
+      DB::raw("
+            CONCAT(
+                SUM(CASE WHEN nilai = 3 THEN 1 ELSE 0 END),
+                ' (',
+                ROUND(
+                    SUM(CASE WHEN nilai = 3 THEN 1 ELSE 0 END) * 100 / COUNT(nilai),
+                    2
+                ),
+                '%)'
+            ) AS baik
+        "),
+
+      DB::raw("
+            CONCAT(
+                SUM(CASE WHEN nilai = 2 THEN 1 ELSE 0 END),
+                ' (',
+                ROUND(
+                    SUM(CASE WHEN nilai = 2 THEN 1 ELSE 0 END) * 100 / COUNT(nilai),
+                    2
+                ),
+                '%)'
+            ) AS cukup
+        "),
+
+      DB::raw("
+            CONCAT(
+                SUM(CASE WHEN nilai = 1 THEN 1 ELSE 0 END),
+                ' (',
+                ROUND(
+                    SUM(CASE WHEN nilai = 1 THEN 1 ELSE 0 END) * 100 / COUNT(nilai),
+                    2
+                ),
+                '%)'
+            ) AS kurang
+        "),
+
+      DB::raw('COUNT(nilai) AS jumlah_responden'),
+    ];
+
+    $orderByKemampuan = "
+        FIELD(
+            jenis_kemampuan,
+            'Etika',
+            'Keahlian pada bidang ilmu (kompetensi utama)',
+            'Kemampuan berbahasa asing',
+            'Penggunaan teknologi informasi',
+            'Kemampuan berkomunikasi',
+            'Kerjasama',
+            'Pengembangan diri'
+        )
+    ";
+
+    /*
+    |--------------------------------------------------------------------------
+    | KETENTUAN 3: UNIT_ID > 9 (UT DAERAH)
+    | Data keseluruhan di paling atas + rincian group by nama_prodi_dikti (singkatan)
+    |--------------------------------------------------------------------------
+    */
+    if ($isUpbjj) {
+      $keseluruhan = DB::query()
+        ->fromSub(clone $unionQuery, 'x')
+        ->select(array_merge([
+          DB::raw("'keseluruhan' AS tipe_data"),
+          DB::raw('NULL AS kode_prodi_dikti'),
+          DB::raw('NULL AS nama_prodi_dikti'),
+          DB::raw('NULL AS singkatan'),
+        ], $selectAgregat))
+        ->groupBy('jenis_kemampuan')
+        ->orderByRaw($orderByKemampuan)
+        ->get();
+
+      $perProdi = DB::query()
+        ->fromSub(clone $unionQuery, 'x')
+        ->select(array_merge([
+          DB::raw("'prodi' AS tipe_data"),
+          'kode_prodi_dikti',
+          'nama_prodi_dikti',
+          DB::raw('MAX(singkatan) AS singkatan'),
+        ], $selectAgregat))
+        ->groupBy(
+          'kode_prodi_dikti',
+          'nama_prodi_dikti',
+          'jenis_kemampuan'
+        )
+        ->orderBy('nama_prodi_dikti')
+        ->orderByRaw($orderByKemampuan)
+        ->get();
+
+      return $keseluruhan->concat($perProdi);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | KETENTUAN 2: UNIT_ID 1 - 6 (FAKULTAS) → GROUP BY NAMA_PRODI_DIKTI (SINGKATAN)
+    |--------------------------------------------------------------------------
+    */
+    if ($isFakultas) {
+      return DB::query()
+        ->fromSub($unionQuery, 'x')
+        ->select(array_merge([
+          DB::raw("'prodi' AS tipe_data"),
+          'kode_prodi_dikti',
+          'nama_prodi_dikti',
+          DB::raw('MAX(singkatan) AS singkatan'),
+        ], $selectAgregat))
+        ->groupBy(
+          'kode_prodi_dikti',
+          'nama_prodi_dikti',
+          'jenis_kemampuan'
+        )
+        ->orderBy('nama_prodi_dikti')
+        ->orderByRaw($orderByKemampuan)
+        ->get();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | KETENTUAN 1: UNIT_ID = 0 → DATA KESELURUHAN
+    |--------------------------------------------------------------------------
+    */
     return DB::query()
       ->fromSub($unionQuery, 'x')
-      ->select([
-        'jenis_kemampuan',
-        DB::raw("CONCAT(SUM(CASE WHEN nilai = 4 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 4 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS sangat_baik"),
-        DB::raw("CONCAT(SUM(CASE WHEN nilai = 3 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 3 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS baik"),
-        DB::raw("CONCAT(SUM(CASE WHEN nilai = 2 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 2 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS cukup"),
-        DB::raw("CONCAT(SUM(CASE WHEN nilai = 1 THEN 1 ELSE 0 END), ' (', ROUND(SUM(CASE WHEN nilai = 1 THEN 1 ELSE 0 END) * 100 / COUNT(nilai), 2), '%)') AS kurang"),
-        DB::raw('COUNT(nilai) AS jumlah_responden'),
-      ])
+      ->select(array_merge([
+        DB::raw("'keseluruhan' AS tipe_data"),
+      ], $selectAgregat))
       ->groupBy('jenis_kemampuan')
-      ->orderByRaw('FIELD(jenis_kemampuan, ?, ?, ?, ?, ?, ?, ?)', array_values($pertanyaan))
+      ->orderByRaw($orderByKemampuan)
       ->get();
-
   }
-
   public static function getIKPS32131(mixed $tahun)
   {
     return 'getIKPS32131';

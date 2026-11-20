@@ -10,7 +10,7 @@ class LaporanTracerControllerRingkasan extends Controller
 {
   public function index()
   {
-    return view('content.laporan.laporan_tracer_ringkasan');
+    return view('content.laporan.tracer_ringkasan.laporan_tracer_ringkasan');
   }
 
   public function getTahunLulus()
